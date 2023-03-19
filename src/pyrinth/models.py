@@ -1,7 +1,9 @@
 from pyrinth.modrinth import Modrinth
 from pyrinth.projects import *
 from pyrinth.util import *
-import json, re
+import json
+import re
+from typing import Optional
 
 
 class ProjectModel:
@@ -10,11 +12,10 @@ class ProjectModel:
         description: str, categories: list[str],
         client_side: str, server_side: str, body: str,
         license_id: str, project_type: str,
-        additional_categories: list[str] = None,
-        issues_url: str = None, source_url: str = None,
-        wiki_url: str = None, discord_url: str = None,
-        donation_urls: list[Project.Donation] = None,
-        license_url: str = None
+        additional_categories: Optional[list[str]] = None,
+        issues_url: Optional[str] = None, source_url: Optional[str] = None,
+        wiki_url: Optional[str] = None, discord_url: Optional[str] = None,
+        license_url: Optional[str] = None
     ) -> None:
         self.slug = slug
         self.title = title
@@ -23,38 +24,38 @@ class ProjectModel:
         self.client_side = client_side
         self.server_side = server_side
         self.body = body
-        self.license_id = Project.License(
-            license_id['id'], license_id['name'], license_id['url']
-        ) if type(license_id) == dict else license_id
+        if type(license_id) == dict:
+            Project.License(
+                license_id['id'], license_id['name'], license_id['url']
+            )
+        else:
+            self.license_id = license_id
         self.project_type = project_type
         self.additional_categories = additional_categories
         self.issues_url = issues_url
         self.source_url = source_url
         self.wiki_url = wiki_url
         self.discord_url = discord_url
-        self.donation_urls = None
-        if donation_urls:
-            self.donation_urls = []
-            for donation_url in donation_urls:
-                self.donation_urls.append(Project.Donation.from_json(donation_url))
-                ...
         self.license_url = license_url
+        self.donation_urls = None
         self.id = None
         self.downloads = None
 
     # Returns ProjectModel
-    def from_json(json: dict) -> object:
-        
+    @ staticmethod
+    def from_json(json: dict) -> 'ProjectModel':
+
         result = ProjectModel(
             json['slug'], json['title'], json['description'],
             json['categories'], json['client_side'], json['server_side'],
             json['body'], json['license']['id'], json['project_type'],
             json['additional_categories'], json['issues_url'], json['source_url'],
-            json['wiki_url'], json['discord_url'], json['donation_urls'],
+            json['wiki_url'], json['discord_url'],
             json['license']['url']
         )
         result.id = json['id']
         result.downloads = json['downloads']
+        result.donation_urls = json['donation_urls']
         return result
 
     def to_json(self) -> dict:
@@ -87,92 +88,72 @@ class ProjectModel:
 
 
 class SearchResultModel:
-    # Commented out because I figure that you dont need to initalize this class. But I might be wrong...
+    def __init__(self, slug: str, title: str, description: str, client_side: str, server_side: str, project_type: str, downloads: int, project_id: str, author: str, versions: list[str], follows: int, date_created, date_modified, license, categories: list[str], icon_url: None, color: None, display_categories: list[str], latest_version: str, gallery: list[str], featured_gallery: None) -> None:
+        self.slug = slug
+        self.title = title
+        self.description = description
+        self.client_side = client_side
+        self.server_side = server_side
+        self.project_type = project_type
+        self.downloads = downloads
+        self.project_id = project_id
+        self.author = author
+        self.versions = versions
+        self.follows = follows
+        self.date_created = date_created
+        self.date_modified = date_modified
+        self.license = license
+        self.categories = categories
+        self.icon_url = icon_url
+        self.color = color
+        self.display_categories = display_categories
+        self.latest_version = latest_version
+        self.gallery = gallery
+        self.featured_gallery = featured_gallery
 
-    # def __init__(self, slug: str, title: str, description: str, client_side: str, server_side: str, project_type: str, downloads: int, project_id: str, author: str, versions: list[str], follows: int, date_created, date_modified, license, categories: list[str], icon_url: None, color: None, display_categories: list[str], latest_version: str, gallery: list[str], featured_gallery: None) -> None:
-    #     self.slug = slug
-    #     self.title = title
-    #     self.description = description
-    #     self.client_side = client_side
-    #     self.server_side = server_side
-    #     self.project_type = project_type
-    #     self.downloads = downloads
-    #     self.project_id = project_id
-    #     self.author = author
-    #     self.versions = versions
-    #     self.follows = follows
-    #     self.date_created = date_created
-    #     self.date_modified = date_modified
-    #     self.license = license
-    #     self.categories = categories
-    #     self.icon_url = icon_url
-    #     self.color = color
-    #     self.display_categories = display_categories
-    #     self.latest_version = latest_version
-    #     self.gallery = gallery
-    #     self.featured_gallery = featured_gallery
-
-    # Returns SearchResultModel
+    @ staticmethod
     def from_json(json: dict) -> object:
-        result = SearchResultModel()
-        result.slug = json['slug']
-        result.title = json['title']
-        result.description = json['description']
-        result.client_side = json['client_side']
-        result.server_side = json['server_side']
-        result.project_type = json['project_type']
-        result.downloads = json['downloads']
-        result.project_id = json['project_id']
-        result.author = json['author']
-        result.versions = json['versions']
-        result.follows = json['follows']
-        result.date_created = json['date_created']
-        result.date_modified = json['date_modified']
-        result.license = json['license']
-        result.categories = json['categories']
-        result.icon_url = json['icon_url']
-        result.color = json['color']
-        result.display_categories = json['display_categories']
-        result.latest_version = json['latest_version']
-        result.gallery = json['gallery']
-        result.featured_gallery = json['featured_gallery']
+        result = SearchResultModel(
+            json['slug'], json['title'], json['description'], json['client_side'], json['server_side'], json['project_type'], json['downloads'], json['project_id'], json['author'], json['versions'], json['follows'], json[
+                'date_created'], json['date_modified'], json['license'], json['categories'], json['icon_url'], json['color'], json['display_categories'], json['latest_version'], json['gallery'], json['featured_gallery']
+        )
 
         return result
 
-    # def to_json(self):
-    #     result = {
-    #         'slug': self.slug,
-    #         'title': self.title,
-    #         'description': self.description,
-    #         'client_side': self.client_side,
-    #         'server_side': self.server_side,
-    #         'project_type': self.project_type,
-    #         'downloads': self.downloads,
-    #         'project_id': self.project_id,
-    #         'author': self.author,
-    #         'versions': self.versions,
-    #         'follows': self.follows,
-    #         'date_created': self.date_created,
-    #         'date_modified': self.date_modified,
-    #         'license': self.license,
-    #         'categories': self.categories,
-    #         'icon_url': self.icon_url,
-    #         'color': self.color,
-    #         'display_categories': self.display_categories,
-    #         'latest_version': self.latest_version,
-    #         'gallery': self.gallery,
-    #         'featured_gallery': self.featured_gallery
-    #     }
-    #     result = remove_null_values(result)
-    #     return result
+    def to_json(self):
+        result = {
+            'slug': self.slug,
+            'title': self.title,
+            'description': self.description,
+            'client_side': self.client_side,
+            'server_side': self.server_side,
+            'project_type': self.project_type,
+            'downloads': self.downloads,
+            'project_id': self.project_id,
+            'author': self.author,
+            'versions': self.versions,
+            'follows': self.follows,
+            'date_created': self.date_created,
+            'date_modified': self.date_modified,
+            'license': self.license,
+            'categories': self.categories,
+            'icon_url': self.icon_url,
+            'color': self.color,
+            'display_categories': self.display_categories,
+            'latest_version': self.latest_version,
+            'gallery': self.gallery,
+            'featured_gallery': self.featured_gallery
+        }
+        result = remove_null_values(result)
+        return result
 
-    # def to_bytes(self):
-    #     return json.dumps(self.to_json()).encode()
+    def to_bytes(self):
+        return json.dumps(self.to_json()).encode()
 
 
 class VersionModel:
     def __init__(
-        self, name: str, version_number: str, dependencies: list[dict], game_versions: list[str], version_type: str, loaders: list[str], featured: bool, file_parts: list[str], changelog:str=None, status:str=None, requested_status:str=None
+        self, name: str, version_number: str, dependencies: list[dict], game_versions: list[str], version_type: str, loaders: list[str], featured: bool, file_parts: list[str], changelog: Optional[str] = None, status: Optional[str] = None, requested_status: Optional[str] = None
     ) -> None:
         self.name = name
         self.version_number = version_number
@@ -192,10 +173,12 @@ class VersionModel:
         self.author_id = None
         self.date_published = None
         self.downloads = None
-    
+
+    @ staticmethod
     def from_json(json: dict) -> object:
         result = VersionModel(
-            json['name'],json['version_number'],json['dependencies'],json['game_versions'],json['version_type'],json['loaders'],json['featured'],json['files'],json['changelog'],json['status'],json['requested_status']
+            json['name'], json['version_number'], json['dependencies'], json['game_versions'], json['version_type'], json[
+                'loaders'], json['featured'], json['files'], json['changelog'], json['status'], json['requested_status']
         )
         return result
 
@@ -227,7 +210,7 @@ class VersionModel:
 
 class UserModel:
     def __init__(
-        self, username: str, id: str, avatar_url: str, created, role: str, name: str = None, email: str = None, bio: str = None, payout_data=None, github_id: str = None, badges: int = None
+        self, username: str, id: str, avatar_url: str, created, role: str, name: Optional[str] = None, email: Optional[str] = None, bio: Optional[str] = None, payout_data=None, github_id: Optional[str] = None, badges: Optional[int] = None
     ) -> None:
         self.username = username
         self.id = id
@@ -242,6 +225,7 @@ class UserModel:
         self.badges = badges
 
     # Returns VersionModel
+    @ staticmethod
     def from_json(json: dict) -> object:
         result = VersionModel(
             json['username'], json['id'], json['avatar_url'],
@@ -271,10 +255,14 @@ class UserModel:
     def to_bytes(self) -> bytes:
         return json.dumps(self.to_json()).encode()
 
+
 class Dependency:
     def __init__(self, project_slug, type, version: str = '', operator: str = ''):
         self.version_id = None
-        self.project_id = Modrinth.get_project(project_slug).project_model.id
+        self.project = Modrinth.get_project(project_slug)
+        if not self.project:
+            raise Exception(f"Could not find project '{project_slug}'")
+        self.project_id = self.project.project_model.id
         self.project_slug = project_slug
         self.version = version
         self.operator = operator
@@ -285,7 +273,8 @@ class Dependency:
         return f"Dependency: {self.project_slug}"
 
     # Returns DependencyModel
-    def from_json(json):
+    @staticmethod
+    def from_json(json: dict):
         result = Dependency(
             json['version_id'], json['project_id'],
             json['file_name'], json['dependency_type']

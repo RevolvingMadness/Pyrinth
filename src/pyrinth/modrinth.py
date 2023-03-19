@@ -1,3 +1,4 @@
+from typing import Union
 import requests as r
 import json
 from pyrinth.projects import Project
@@ -10,7 +11,7 @@ class Modrinth:
 
     # Returns Project
     @staticmethod
-    def get_project(id: str, auth: str = '') -> object:
+    def get_project(id: str, auth: str = '') -> Union[Project, None]:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/project/{id}',
             headers={
@@ -18,10 +19,10 @@ class Modrinth:
             }
         )
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content}")
+            print(f"Invalid Request: {raw_response.content!r}")
             return None
         response = json.loads(raw_response.content)
-        return Project(response, auth)
+        return Project(response)
 
     # Returns list[Project]
     @staticmethod
@@ -46,13 +47,13 @@ class Modrinth:
             f'https://api.modrinth.com/v2/version/{id}'
         )
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content}")
+            print(f"Invalid Request: {raw_response.content!r}")
             return None
         response = json.loads(raw_response.content)
         return Project.Version(response)
 
     @staticmethod
-    def get_random_projects(count: int = 1) -> list:
+    def get_random_projects(count: int = 1) -> list | None:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/projects_random',
             params={
@@ -60,7 +61,7 @@ class Modrinth:
             }
         )
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content}")
+            print(f"Invalid Request: {raw_response.content!r}")
             return None
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
@@ -77,7 +78,7 @@ class Modrinth:
 
     @staticmethod
     # Returns list[Modrinth.SearchResult]
-    def search_projects(query: str = '', facets: list[list[str]] = [], index: str = "relevance", offset: int = 0, limit: int = 10, filters: int = []) -> list[object]:
+    def search_projects(query: str = '', facets: list[list[str]] = [], index: str = "relevance", offset: int = 0, limit: int = 10, filters: list[str] = []) -> list[object] | None:
         if query == '' and facets == [] and index == 'relevance' and offset == 0 and limit == 10 and filters == []:
             raise Exception("Please specify a parameter to search")
         params = {}
@@ -88,9 +89,9 @@ class Modrinth:
         if index != 'relevance':
             params.update({'index': index})
         if offset != 0:
-            params.update({'offset': offset})
+            params.update({'offset': str(offset)})
         if limit != 10:
-            params.update({'limit': limit})
+            params.update({'limit': str(limit)})
         if filters != []:
             params.update({'filters': json.dumps(filters)})
         raw_response = r.get(
@@ -98,7 +99,7 @@ class Modrinth:
             params=params
         )
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content}")
+            print(f"Invalid Request: {raw_response.content!r}")
             return None
         response = json.loads(raw_response.content)
         return [Modrinth.SearchResult(project) for project in response['hits']]

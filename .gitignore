@@ -3,6 +3,7 @@ main*.py
 test.py
 *.zip
 test*.*
+.dmypy.json
 
 # Folders
 .vscode/
@@ -10,8 +11,8 @@ references/
 imgs/
 dist/
 
-# Any folder that starts with 'private'
-private*/
+# Any file/folder that starts with 'private'
+private*
 
 # Every '__pycache__' folder
 **/__pycache__
