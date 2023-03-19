@@ -112,7 +112,7 @@ class SearchResultModel:
         self.featured_gallery = featured_gallery
 
     @ staticmethod
-    def from_json(json: dict) -> object:
+    def from_json(json: dict) -> 'SearchResultModel':
         result = SearchResultModel(
             json['slug'], json['title'], json['description'], json['client_side'], json['server_side'], json['project_type'], json['downloads'], json['project_id'], json['author'], json['versions'], json['follows'], json[
                 'date_created'], json['date_modified'], json['license'], json['categories'], json['icon_url'], json['color'], json['display_categories'], json['latest_version'], json['gallery'], json['featured_gallery']
@@ -175,7 +175,7 @@ class VersionModel:
         self.downloads = None
 
     @ staticmethod
-    def from_json(json: dict) -> object:
+    def from_json(json: dict) -> 'VersionModel':
         result = VersionModel(
             json['name'], json['version_number'], json['dependencies'], json['game_versions'], json['version_type'], json[
                 'loaders'], json['featured'], json['files'], json['changelog'], json['status'], json['requested_status']
@@ -224,9 +224,8 @@ class UserModel:
         self.github_id = github_id
         self.badges = badges
 
-    # Returns VersionModel
     @ staticmethod
-    def from_json(json: dict) -> object:
+    def from_json(json: dict) -> 'VersionModel':
         result = VersionModel(
             json['username'], json['id'], json['avatar_url'],
             json['created'], json['role'], json['name'],

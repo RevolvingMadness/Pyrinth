@@ -26,7 +26,7 @@ class Modrinth:
 
     # Returns list[Project]
     @staticmethod
-    def get_projects(ids: list[str]) -> list[object]:
+    def get_projects(ids: list[str]) -> list['Project']:
         if ids == []:
             raise Exception(
                 "Please specify project IDs to get project details. Or use this method on an instanced class"
@@ -40,9 +40,8 @@ class Modrinth:
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
 
-    # Returns Project.Version
     @staticmethod
-    def get_version(id: str) -> object:
+    def get_version(id: str) -> Union['Project.Version', None]:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/version/{id}'
         )
@@ -53,7 +52,7 @@ class Modrinth:
         return Project.Version(response)
 
     @staticmethod
-    def get_random_projects(count: int = 1) -> list | None:
+    def get_random_projects(count: int = 1) -> Union[list, None]:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/projects_random',
             params={
@@ -68,17 +67,17 @@ class Modrinth:
 
     # Returns User
     @staticmethod
-    def get_user_from_id(id: str) -> object:
+    def get_user_from_id(id: str) -> Union['User', None]:
         return User.from_id(id)
 
     # Returns User
     @staticmethod
-    def get_user_from_auth(auth: str) -> object:
-        return User.from_id(auth)
+    def get_user_from_auth(auth: str) -> Union['User', None]:
+        return User.from_auth(auth)
 
     @staticmethod
     # Returns list[Modrinth.SearchResult]
-    def search_projects(query: str = '', facets: list[list[str]] = [], index: str = "relevance", offset: int = 0, limit: int = 10, filters: list[str] = []) -> list[object] | None:
+    def search_projects(query: str = '', facets: list[list[str]] = [], index: str = "relevance", offset: int = 0, limit: int = 10, filters: list[str] = []) -> Union[list['SearchResult'], None]:
         if query == '' and facets == [] and index == 'relevance' and offset == 0 and limit == 10 and filters == []:
             raise Exception("Please specify a parameter to search")
         params = {}

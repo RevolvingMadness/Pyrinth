@@ -1,7 +1,7 @@
 import requests as r
 import json
 from pyrinth.util import remove_file_path, remove_null_values, json_to_query_params, to_sentence_case
-from typing import Optional
+from typing import Optional, Union
 
 
 class Project:
@@ -14,14 +14,14 @@ class Project:
     def __repr__(self) -> str:
         return f"Project: {self.project_model.title}"
 
-    def get_latest_version(self, loaders: Optional[list[str]] = None, game_versions: Optional[list[str]] = None, featured: Optional[bool] = None) -> object | None:
+    def get_latest_version(self, loaders: Optional[list[str]] = None, game_versions: Optional[list[str]] = None, featured: Optional[bool] = None) -> Union['Project.Version', None]:
         versions = self.get_versions(loaders, game_versions, featured)
         if versions:
             return versions[0]
 
         return None
 
-    def get_specific_version(self, schematic_versioning: str) -> object | None:
+    def get_specific_version(self, schematic_versioning: str) -> Union['Project.Version', None]:
         versions = self.get_versions()
         if versions:
             for version in versions:
@@ -29,7 +29,7 @@ class Project:
                     return version
         return None
 
-    def get_oldest_version(self, loaders=None, game_versions=None, featured=None) -> object | None:
+    def get_oldest_version(self, loaders=None, game_versions=None, featured=None) -> Union['Project.Version', None]:
         versions = self.get_versions(loaders, game_versions, featured)
         if versions:
             return versions[-1]
@@ -45,7 +45,7 @@ class Project:
     def get_name(self) -> str:
         return to_sentence_case(self.project_model.slug)
 
-    def get_versions(self, loaders=None, game_versions=None, featured=None, auth: str = '') -> list['Version'] | None:
+    def get_versions(self, loaders=None, game_versions=None, featured=None, auth: str = '') -> Union[list['Version'], None]:
         filters = {
             'loaders': loaders,
             'game_versions': game_versions,
@@ -73,7 +73,7 @@ class Project:
         return [self.Version(version) for version in response]
 
     @staticmethod
-    def get_version(id: str) -> object | None:
+    def get_version(id: str) -> Union['Project.Version', None]:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/version/{id}'
         )
@@ -85,7 +85,7 @@ class Project:
         response = json.loads(raw_response.content)
         return Project.Version(response)
 
-    def create_version(self, auth: str, version_model) -> int | None:
+    def create_version(self, auth: str, version_model) -> Union[int, None]:
         version_model.project_id = self.project_model.id
 
         files = {
@@ -112,7 +112,7 @@ class Project:
 
         return 1
 
-    def change_icon(self, file_path: str, auth: str) -> int | None:
+    def change_icon(self, file_path: str, auth: str) -> Union[int, None]:
         raw_response = r.patch(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/icon',
 
@@ -133,7 +133,7 @@ class Project:
 
         return 1
 
-    def delete_icon(self, auth: str) -> int | None:
+    def delete_icon(self, auth: str) -> Union[int, None]:
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/icon',
             headers={
@@ -147,7 +147,7 @@ class Project:
 
         return 1
 
-    def add_gallery_image(self, auth: str, image: 'Project.GalleryImage') -> int | None:
+    def add_gallery_image(self, auth: str, image: 'Project.GalleryImage') -> Union[int, None]:
         raw_response = r.post(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/gallery',
             headers={
@@ -164,7 +164,7 @@ class Project:
 
         return 1
 
-    def modify_gallery_image(self, auth: str, url: str, featured: Optional[bool] = None, title: Optional[str] = None, description: Optional[str] = None, ordering: Optional[int] = None) -> int | None:
+    def modify_gallery_image(self, auth: str, url: str, featured: Optional[bool] = None, title: Optional[str] = None, description: Optional[str] = None, ordering: Optional[int] = None) -> Union[int, None]:
         modified_json = {
             'url': url,
             'featured': featured,
@@ -192,7 +192,7 @@ class Project:
 
         return 1
 
-    def delete_gallery_image(self, url: str, auth: str) -> int | None:
+    def delete_gallery_image(self, url: str, auth: str) -> Union[int, None]:
         if '-raw' in url:
             raise Exception(
                 "Please use cdn.modrinth.com instead of cdn-raw.modrinth.com"
@@ -223,7 +223,7 @@ class Project:
         response = json.loads(raw_response.content)
         return (True if response['id'] else False)
 
-    def modify(self, auth: str, slug: Optional[str] = None, title: Optional[str] = None, description: Optional[str] = None, categories: Optional[list[str]] = None, client_side: Optional[str] = None, server_side: Optional[str] = None, body: Optional[str] = None, additional_categories: Optional[list[str]] = None, issues_url: Optional[str] = None, source_url: Optional[str] = None, wiki_url: Optional[str] = None, discord_url: Optional[str] = None, donation_urls: Optional[list[object]] = None, license_id: Optional[str] = None, license_url: Optional[str] = None, status: Optional[str] = None, requested_status: Optional[str] = None, moderation_message: Optional[str] = None, moderation_message_body: Optional[str] = None) -> int | None:
+    def modify(self, auth: str, slug: Optional[str] = None, title: Optional[str] = None, description: Optional[str] = None, categories: Optional[list[str]] = None, client_side: Optional[str] = None, server_side: Optional[str] = None, body: Optional[str] = None, additional_categories: Optional[list[str]] = None, issues_url: Optional[str] = None, source_url: Optional[str] = None, wiki_url: Optional[str] = None, discord_url: Optional[str] = None, license_id: Optional[str] = None, license_url: Optional[str] = None, status: Optional[str] = None, requested_status: Optional[str] = None, moderation_message: Optional[str] = None, moderation_message_body: Optional[str] = None) -> Union[int, None]:
         modified_json = {
             'slug': slug,
             'title': title,
@@ -237,7 +237,6 @@ class Project:
             'source_url': source_url,
             'wiki_url': wiki_url,
             'discord_url': discord_url,
-            'donation_urls': donation_urls,
             'license_id': license_id,
             'license_url': license_url,
             'status': status,
@@ -266,7 +265,7 @@ class Project:
 
         return 1
 
-    def delete(self, auth: str) -> int | None:
+    def delete(self, auth: str) -> Union[int, None]:
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}',
             headers={
@@ -280,7 +279,7 @@ class Project:
 
         return 1
 
-    def get_dependencies(self) -> list[object] | None:
+    def get_dependencies(self) -> Union[list['Project'], None]:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/dependencies'
         )
@@ -301,7 +300,7 @@ class Project:
                 self.version_model = version_model
             self.version_model = version_model
 
-        def get_dependencies(self) -> list[object]:
+        def get_dependencies(self) -> list[dict]:
             return self.version_model.dependencies
 
         def get_files(self) -> list:
@@ -330,7 +329,7 @@ class Project:
             self.ordering = ordering
 
         @staticmethod
-        def from_json(json: dict) -> object:
+        def from_json(json: dict) -> 'Project.GalleryImage':
             result = Project.GalleryImage(
                 json['url'], json['featured'], json['title'],
                 json['description'], json['ordering']
@@ -365,7 +364,7 @@ class Project:
             return True
 
         @staticmethod
-        def from_json(json: dict) -> object:
+        def from_json(json: dict) -> 'Project.File':
             result = Project.File(
                 json['hashes'],
                 json['url'],
@@ -386,7 +385,7 @@ class Project:
             self.url = url
 
         @staticmethod
-        def from_json(json: dict) -> object:
+        def from_json(json: dict) -> 'Project.License':
             result = Project.License(
                 json['id'],
                 json['name'],

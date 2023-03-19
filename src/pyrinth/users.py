@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, Union
 import requests as r
 import json
 from pyrinth.projects import Project
@@ -38,7 +38,7 @@ class User:
         self.payout_data = self.response['payout_data']
 
     # Returns list[Project]
-    def get_followed_projects(self) -> Sequence[object] | None:
+    def get_followed_projects(self) -> Union[list['Project'], None]:
         if self.auth == '':
             raise Exception("get_followed_projects needs an auth token.")
         raw_response = r.get(
@@ -61,7 +61,7 @@ class User:
         return followed_projects
 
     # Returns list[User.Notification]
-    def get_notifications(self) -> list[object] | None:
+    def get_notifications(self) -> Union[list['User.Notification'], None]:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user/{self.username}/notifications',
             headers={
@@ -77,7 +77,7 @@ class User:
         response = json.loads(raw_response.content)
         return [User.Notification(notification) for notification in response]
 
-    def get_amount_of_projects(self) -> int | list[object]:
+    def get_amount_of_projects(self) -> Union[int, list['Project']]:
         projs = self.get_projects()
 
         if not projs:
@@ -85,7 +85,7 @@ class User:
 
         return projs
 
-    def create_project(self, project_model, icon: str = '') -> int | None:
+    def create_project(self, project_model, icon: str = '') -> Union[int, None]:
         raw_response = r.post(
             'https://api.modrinth.com/v2/project',
             files={
@@ -105,7 +105,7 @@ class User:
         return 1
 
     # Returns list[Project]
-    def get_projects(self) -> list[object] | None:
+    def get_projects(self) -> Union[list['Project'], None]:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user/{self.id}/projects'
         )
@@ -119,7 +119,7 @@ class User:
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
 
-    def follow_project(self, id: str) -> int | None:
+    def follow_project(self, id: str) -> Union[int, None]:
         raw_response = r.post(
             f'https://api.modrinth.com/v2/project/{id}/follow',
             headers={
@@ -134,7 +134,7 @@ class User:
 
         return 1
 
-    def unfollow_project(self, id: str) -> int | None:
+    def unfollow_project(self, id: str) -> Union[int, None]:
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{id}/follow',
             headers={
@@ -151,7 +151,7 @@ class User:
 
     # Returns User
     @staticmethod
-    def from_auth(auth: str) -> object:
+    def from_auth(auth: str) -> Union['User', None]:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user',
             headers={
@@ -169,7 +169,7 @@ class User:
 
     # Returns User
     @staticmethod
-    def from_id(id: str) -> object:
+    def from_id(id: str) -> Union['User', None]:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user/{id}'
         )
@@ -184,7 +184,7 @@ class User:
 
     # Returns list[User]
     @staticmethod
-    def from_ids(ids: list[str]) -> list[object]:
+    def from_ids(ids: list[str]) -> list['User']:
         raw_response = r.get(
             'https://api.modrinth.com/v2/users',
             params={
