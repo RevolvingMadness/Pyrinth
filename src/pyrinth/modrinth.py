@@ -9,7 +9,6 @@ class Modrinth:
     def __init__(self) -> None:
         raise Exception("This class cannot be initalized!")
 
-    # Returns Project
     @staticmethod
     def get_project(id: str, auth: str = '') -> Union[Project, None]:
         raw_response = r.get(
@@ -24,7 +23,6 @@ class Modrinth:
         response = json.loads(raw_response.content)
         return Project(response)
 
-    # Returns list[Project]
     @staticmethod
     def get_projects(ids: list[str]) -> list['Project']:
         if ids == []:
@@ -65,18 +63,15 @@ class Modrinth:
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
 
-    # Returns User
     @staticmethod
     def get_user_from_id(id: str) -> Union['User', None]:
         return User.from_id(id)
 
-    # Returns User
     @staticmethod
     def get_user_from_auth(auth: str) -> Union['User', None]:
         return User.from_auth(auth)
 
     @staticmethod
-    # Returns list[Modrinth.SearchResult]
     def search_projects(query: str = '', facets: list[list[str]] = [], index: str = "relevance", offset: int = 0, limit: int = 10, filters: list[str] = []) -> Union[list['SearchResult'], None]:
         if query == '' and facets == [] and index == 'relevance' and offset == 0 and limit == 10 and filters == []:
             raise Exception("Please specify a parameter to search")

@@ -300,16 +300,16 @@ class Project:
                 self.version_model = version_model
             self.version_model = version_model
 
-        def get_dependencies(self) -> list[dict]:
+        def get_dependencies(self) -> list['Project.Dependency']:
             return self.version_model.dependencies
 
-        def get_files(self) -> list:
+        def get_files(self) -> list['Project.File']:
             result = []
             for file in self.version_model.files:
                 result.append(Project.File.from_json(file))
             return result
 
-        def get_primary_files(self) -> list:
+        def get_primary_files(self) -> list['Project.File']:
             result = []
             for file in self.get_files():
                 if file.primary:
@@ -415,3 +415,49 @@ class Project:
 
         def __repr__(self) -> str:
             return f"Donation: {self.platform}"
+
+    class Dependency:
+        def __init__(self, version_id, project_id, file_name, dependency_type):
+            self.version_id = version_id
+            self.project_id = project_id
+            self.file_name = file_name
+            self.dependency_type = dependency_type
+
+        @staticmethod
+        def from_json(json_: dict) -> 'Project.Dependency':
+            result = Project.Dependency(
+                json_['version_id'],
+                json_['project_id'],
+                json_['file_name'],
+                json_['dependency_type']
+            )
+
+            return result
+
+        def to_json(self) -> dict:
+            result = {
+                'version_id': self.version_id,
+                'project_id': self.project_id,
+                'file_name': self.file_name,
+                'dependency_type': self.dependency_type
+            }
+
+            return result
+
+        def __repr__(self):
+            return self.get_version()
+
+        def get_version(self) -> 'Project.Version':
+            from pyrinth.modrinth import Modrinth
+            if not self.project_id:
+                return Modrinth.get_version(self.version_id)
+            return Modrinth.get_project(self.project_id).get_latest_version()
+
+        def is_required(self) -> bool:
+            return (True if self.dependency_type == "required" else False)
+
+        def is_optional(self) -> bool:
+            return (True if self.dependency_type == "optional" else False)
+
+        def is_incompatible(self) -> bool:
+            return (True if self.dependency_type == "incompatible" else False)

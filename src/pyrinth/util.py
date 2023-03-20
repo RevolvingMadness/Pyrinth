@@ -31,6 +31,11 @@ def remove_file_path(file):
 def json_to_dependencies(json):
     from pyrinth.modrinth import Modrinth
     result = []
+    '''
+    Expects: {
+        "project-id": "required/optional"
+    }
+    '''
 
     for name, dep_type in json.items():
         project = Modrinth.get_project(name)

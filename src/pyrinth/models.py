@@ -1,8 +1,6 @@
-from pyrinth.modrinth import Modrinth
 from pyrinth.projects import *
 from pyrinth.util import *
 import json
-import re
 from typing import Optional
 
 
@@ -25,9 +23,7 @@ class ProjectModel:
         self.server_side = server_side
         self.body = body
         if type(license_id) == dict:
-            Project.License(
-                license_id['id'], license_id['name'], license_id['url']
-            )
+            self.license_id = license_id['id']
         else:
             self.license_id = license_id
         self.project_type = project_type
@@ -41,8 +37,7 @@ class ProjectModel:
         self.id = None
         self.downloads = None
 
-    # Returns ProjectModel
-    @ staticmethod
+    @staticmethod
     def from_json(json: dict) -> 'ProjectModel':
 
         result = ProjectModel(
@@ -111,7 +106,7 @@ class SearchResultModel:
         self.gallery = gallery
         self.featured_gallery = featured_gallery
 
-    @ staticmethod
+    @staticmethod
     def from_json(json: dict) -> 'SearchResultModel':
         result = SearchResultModel(
             json['slug'], json['title'], json['description'], json['client_side'], json['server_side'], json['project_type'], json['downloads'], json['project_id'], json['author'], json['versions'], json['follows'], json[
@@ -158,9 +153,7 @@ class VersionModel:
         self.name = name
         self.version_number = version_number
         self.changelog = changelog
-
-        self.dependencies = dependencies
-
+        self.dependencies = self.to_project_dependencies(dependencies)
         self.game_versions = game_versions
         self.version_type = version_type
         self.loaders = loaders
@@ -174,7 +167,15 @@ class VersionModel:
         self.date_published = None
         self.downloads = None
 
-    @ staticmethod
+    def to_project_dependencies(self, dependencies: dict) -> list['Project']:
+        result = []
+
+        for dependency in dependencies:
+            result.append(Project.Dependency.from_json(dependency))
+
+        return result
+
+    @staticmethod
     def from_json(json: dict) -> 'VersionModel':
         result = VersionModel(
             json['name'], json['version_number'], json['dependencies'], json['game_versions'], json['version_type'], json[
@@ -224,7 +225,7 @@ class UserModel:
         self.github_id = github_id
         self.badges = badges
 
-    @ staticmethod
+    @staticmethod
     def from_json(json: dict) -> 'VersionModel':
         result = VersionModel(
             json['username'], json['id'], json['avatar_url'],
@@ -247,45 +248,6 @@ class UserModel:
             'payout_data': self.payout_data,
             'github_id': self.github_id,
             'badges': self.badges
-        }
-        result = remove_null_values(result)
-        return result
-
-    def to_bytes(self) -> bytes:
-        return json.dumps(self.to_json()).encode()
-
-
-class Dependency:
-    def __init__(self, project_slug, type, version: str = '', operator: str = ''):
-        self.version_id = None
-        self.project = Modrinth.get_project(project_slug)
-        if not self.project:
-            raise Exception(f"Could not find project '{project_slug}'")
-        self.project_id = self.project.project_model.id
-        self.project_slug = project_slug
-        self.version = version
-        self.operator = operator
-        self.file_name = None
-        self.dependency_type = type
-
-    def __repr__(self) -> str:
-        return f"Dependency: {self.project_slug}"
-
-    # Returns DependencyModel
-    @staticmethod
-    def from_json(json: dict):
-        result = Dependency(
-            json['version_id'], json['project_id'],
-            json['file_name'], json['dependency_type']
-        )
-        return result
-
-    def to_json(self) -> dict:
-        result = {
-            'version_id': self.version_id,
-            'project_id': self.project_id,
-            'file_name': self.file_name,
-            'dependency_type': self.dependency_type
         }
         result = remove_null_values(result)
         return result
