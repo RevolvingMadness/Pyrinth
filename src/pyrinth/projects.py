@@ -1,6 +1,6 @@
 import requests as r
 import json
-from pyrinth.util import remove_file_path, remove_null_values, json_to_query_params, to_sentence_case
+from pyrinth.util import remove_null_values, json_to_query_params, to_sentence_case, remove_file_path
 from typing import Optional, Union
 
 
@@ -92,8 +92,8 @@ class Project:
             "data": version_model.to_bytes()
         }
 
-        # key = name
-        # value = path
+        print(files)
+
         for file in version_model.files:
             files.update({remove_file_path(file): open(file, "rb").read()})
 
@@ -293,21 +293,28 @@ class Project:
         return [Project(dependency) for dependency in response['projects']]
 
     class Version:
-        def __init__(self, version_model=None) -> None:
+        def __init__(self, version_model) -> None:
+            from pyrinth.models import VersionModel
             if type(version_model) == dict:
-                from pyrinth.models import VersionModel
                 version_model = VersionModel.from_json(version_model)
                 self.version_model = version_model
             self.version_model = version_model
 
         def get_dependencies(self) -> list['Project.Dependency']:
-            return self.version_model.dependencies
+            result = []
+            for dependency in self.version_model.dependencies:
+                result.append(Project.Dependency.from_json(dependency))
+            return result
 
         def get_files(self) -> list['Project.File']:
             result = []
             for file in self.version_model.files:
                 result.append(Project.File.from_json(file))
             return result
+
+        def get_project(self) -> 'Project':
+            from pyrinth.modrinth import Modrinth
+            return Modrinth.get_project(self.version_model.project_id)
 
         def get_primary_files(self) -> list['Project.File']:
             result = []
@@ -417,47 +424,54 @@ class Project:
             return f"Donation: {self.platform}"
 
     class Dependency:
-        def __init__(self, version_id, project_id, file_name, dependency_type):
-            self.version_id = version_id
-            self.project_id = project_id
-            self.file_name = file_name
+        def __init__(self, dependency_type, id, dependency_option):
+            from pyrinth.modrinth import Modrinth
             self.dependency_type = dependency_type
+            self.id = id
+            if dependency_type == "project":
+                self.id = Modrinth.get_project(self.id).get_id()
+            self.dependency_option = dependency_option
 
-        @staticmethod
-        def from_json(json_: dict) -> 'Project.Dependency':
+        def to_json(self):
+            result = {
+                "version_id": None,
+                "project_id": None,
+                "file_name": None,
+                "dependency_type": self.dependency_option
+            }
+            if self.dependency_type == "project":
+                result.update({"project_id": self.id})
+            elif self.dependency_type == "version":
+                result.update({"version_id": self.id})
+            return result
+
+        def from_json(json: dict) -> 'Project.Dependency':
+            dependency_type = "project"
+            id = json['project_id']
+            if json['version_id']:
+                dependency_type = "version"
+                id = json['version_id']
+
             result = Project.Dependency(
-                json_['version_id'],
-                json_['project_id'],
-                json_['file_name'],
-                json_['dependency_type']
+                dependency_type,
+                id,
+                json['dependency_type']
             )
 
             return result
 
-        def to_json(self) -> dict:
-            result = {
-                'version_id': self.version_id,
-                'project_id': self.project_id,
-                'file_name': self.file_name,
-                'dependency_type': self.dependency_type
-            }
-
-            return result
-
-        def __repr__(self):
-            return self.get_version()
-
-        def get_version(self) -> 'Project.Version':
+        def get_project(self):
             from pyrinth.modrinth import Modrinth
-            if not self.project_id:
-                return Modrinth.get_version(self.version_id)
-            return Modrinth.get_project(self.project_id).get_latest_version()
+            if self.dependency_type == "version":
+                version = Modrinth.get_version(self.id)
+                return version.get_project()
+            return Modrinth.get_project(self.id)
 
         def is_required(self) -> bool:
-            return (True if self.dependency_type == "required" else False)
+            return (True if self.dependency_option == "required" else False)
 
         def is_optional(self) -> bool:
-            return (True if self.dependency_type == "optional" else False)
+            return (True if self.dependency_option == "optional" else False)
 
         def is_incompatible(self) -> bool:
-            return (True if self.dependency_type == "incompatible" else False)
+            return (True if self.dependency_option == "incompatible" else False)

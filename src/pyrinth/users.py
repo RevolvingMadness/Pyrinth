@@ -1,4 +1,4 @@
-from typing import Sequence, Union
+from typing import Union
 import requests as r
 import json
 from pyrinth.projects import Project

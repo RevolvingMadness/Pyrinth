@@ -10,7 +10,7 @@ class Modrinth:
         raise Exception("This class cannot be initalized!")
 
     @staticmethod
-    def get_project(id: str, auth: str = '') -> Union[Project, None]:
+    def get_project(id: str, auth: str = '') -> Union['Project', None]:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/project/{id}',
             headers={

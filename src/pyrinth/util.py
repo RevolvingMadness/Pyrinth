@@ -26,27 +26,3 @@ def json_to_query_params(json_: dict) -> str:
 
 def remove_file_path(file):
     return ''.join(file.split('/')[-1])
-
-
-def json_to_dependencies(json):
-    from pyrinth.modrinth import Modrinth
-    result = []
-    '''
-    Expects: {
-        "project-id": "required/optional"
-    }
-    '''
-
-    for name, dep_type in json.items():
-        project = Modrinth.get_project(name)
-        if not project:
-            print(f"Dependency '{name}' not found")
-            return None
-        project_id = project.get_id()
-        dep = {
-            "project_id": project_id,
-            "dependency_type": dep_type
-        }
-        result.append(dep)
-
-    return result

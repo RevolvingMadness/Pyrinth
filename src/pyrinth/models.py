@@ -1,7 +1,7 @@
-from pyrinth.projects import *
-from pyrinth.util import *
-import json
 from typing import Optional
+from pyrinth.util import remove_null_values
+from pyrinth.projects import Project
+import json
 
 
 class ProjectModel:
@@ -148,12 +148,12 @@ class SearchResultModel:
 
 class VersionModel:
     def __init__(
-        self, name: str, version_number: str, dependencies: list[dict], game_versions: list[str], version_type: str, loaders: list[str], featured: bool, file_parts: list[str], changelog: Optional[str] = None, status: Optional[str] = None, requested_status: Optional[str] = None
+        self, name: str, version_number: str, dependencies: list['Project.Dependency'], game_versions: list[str], version_type: str, loaders: list[str], featured: bool, file_parts: list[str], changelog: Optional[str] = None, status: Optional[str] = None, requested_status: Optional[str] = None
     ) -> None:
         self.name = name
         self.version_number = version_number
         self.changelog = changelog
-        self.dependencies = self.to_project_dependencies(dependencies)
+        self.dependencies = self.format_dependencies(dependencies)
         self.game_versions = game_versions
         self.version_type = version_type
         self.loaders = loaders
@@ -167,20 +167,30 @@ class VersionModel:
         self.date_published = None
         self.downloads = None
 
-    def to_project_dependencies(self, dependencies: dict) -> list['Project']:
+    def format_dependencies(self, dependencies: list['Project.Dependency']) -> list[dict]:
         result = []
 
-        for dependency in dependencies:
-            result.append(Project.Dependency.from_json(dependency))
+        for dep in dependencies:
+            if type(dep) != dict:
+                result.append(dep.to_json())
+            else:
+                result.append(dep)
 
         return result
 
     @staticmethod
     def from_json(json: dict) -> 'VersionModel':
         result = VersionModel(
-            json['name'], json['version_number'], json['dependencies'], json['game_versions'], json['version_type'], json[
-                'loaders'], json['featured'], json['files'], json['changelog'], json['status'], json['requested_status']
+            json['name'], json['version_number'], json['dependencies'],
+            json['game_versions'], json['version_type'], json['loaders'],
+            json['featured'], json['files'], json['changelog'],
+            json['status'], json['requested_status']
         )
+        result.project_id = json['project_id']
+        result.id = json['id']
+        result.author_id = json['author_id']
+        result.date_published = json['date_published']
+        result.downloads = json['downloads']
         return result
 
     def to_json(self) -> dict:
