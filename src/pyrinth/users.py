@@ -1,15 +1,26 @@
+"""
+Used for users
+"""
+
 from typing import Union
-import requests as r
 import json
+import requests as r
 from pyrinth.projects import Project
 
 
 class User:
-    def __init__(self, username: str, authorization: str = '', ignore_warning: bool = False) -> None:
+    """
+    Contains information about users
+    """
+
+    def __init__(
+        self, username: str, authorization: str = '',
+        ignore_warning: bool = False
+    ) -> None:
         self.auth = authorization
         if self.auth != '':
             self.raw_response = r.get(
-                f'https://api.modrinth.com/v2/user',
+                'https://api.modrinth.com/v2/user',
                 headers={
                     'authorization': self.auth
                 }
@@ -38,8 +49,12 @@ class User:
         self.payout_data = self.response['payout_data']
 
     def get_followed_projects(self) -> Union[list['Project'], None]:
-        if self.auth == '':
-            raise Exception("get_followed_projects needs an auth token.")
+        """Gets a users followed projects
+
+        Returns:
+            list[Project]: The users followed projects
+        """
+
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user/{self.username}/follows',
             headers={
@@ -49,7 +64,8 @@ class User:
 
         if not raw_response.ok:
             print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}")
+                f"Invalid Request: {json.loads(raw_response.content)['description']}"
+            )
             return None
 
         followed_projects = []
@@ -60,6 +76,11 @@ class User:
         return followed_projects
 
     def get_notifications(self) -> Union[list['User.Notification'], None]:
+        """Gets a users notifications
+
+        Returns:
+            list[User.Notification]: The users notifications
+        """
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user/{self.username}/notifications',
             headers={
@@ -69,21 +90,36 @@ class User:
 
         if not raw_response.ok:
             print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}")
+                f"Invalid Request: {json.loads(raw_response.content)['description']}"
+            )
             return None
 
         response = json.loads(raw_response.content)
         return [User.Notification(notification) for notification in response]
 
-    def get_amount_of_projects(self) -> Union[int, list['Project']]:
+    def get_amount_of_projects(self) -> Union[int, None]:
+        """Gets the amount of projects a user has
+
+        Returns:
+            list[Project]: The users projects
+        """
         projs = self.get_projects()
 
         if not projs:
-            return 0
+            return None
 
-        return projs
+        return len(projs)
 
     def create_project(self, project_model, icon: str = '') -> Union[int, None]:
+        """Creates a project
+
+        Args:
+            project_model (ProjectModel): The model of the project to create
+            icon (str, optional): The path of the icon to use for the newly created project. NOT IMPLEMENTED
+
+        Returns:
+            int: If the project creation was successful
+        """
         raw_response = r.post(
             'https://api.modrinth.com/v2/project',
             files={
@@ -103,6 +139,11 @@ class User:
         return 1
 
     def get_projects(self) -> Union[list['Project'], None]:
+        """Gets a users projects
+
+        Returns:
+            list[Project]: The users projects
+        """
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user/{self.id}/projects'
         )
@@ -117,6 +158,14 @@ class User:
         return [Project(project) for project in response]
 
     def follow_project(self, id: str) -> Union[int, None]:
+        """Follow a project
+
+        Args:
+            id (str): The ID of the project to follow
+
+        Returns:
+            int: If the project follow was successful
+        """
         raw_response = r.post(
             f'https://api.modrinth.com/v2/project/{id}/follow',
             headers={
@@ -132,6 +181,14 @@ class User:
         return 1
 
     def unfollow_project(self, id: str) -> Union[int, None]:
+        """Unfollow a project
+
+        Args:
+            id (str): The ID of the project to unfollow
+
+        Returns:
+            int: If the project unfollow was successful
+        """
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{id}/follow',
             headers={
@@ -148,6 +205,11 @@ class User:
 
     @staticmethod
     def from_auth(auth: str) -> Union['User', None]:
+        """Gets a user from authorization token
+
+        Returns:
+            User: The user that was found using the authorization token
+        """
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user',
             headers={
@@ -164,9 +226,14 @@ class User:
         return User(response['username'], auth, ignore_warning=True)
 
     @staticmethod
-    def from_id(id: str) -> Union['User', None]:
+    def from_id(id_: str) -> Union['User', None]:
+        """Gets a user from ID
+
+        Returns:
+            User: The user that was found using the ID
+        """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/user/{id}'
+            f'https://api.modrinth.com/v2/user/{id_}'
         )
 
         if not raw_response.ok:
@@ -179,6 +246,11 @@ class User:
 
     @staticmethod
     def from_ids(ids: list[str]) -> list['User']:
+        """Gets a users from IDs
+
+        Returns:
+            User: The users that were found using the IDs
+        """
         raw_response = r.get(
             'https://api.modrinth.com/v2/users',
             params={
@@ -190,6 +262,8 @@ class User:
         return [User(user['username']) for user in response]
 
     class Notification:
+        """Used for the users notifications
+        """
 
         def __init__(self, notification_json: dict) -> None:
             self.id = notification_json['id']
@@ -205,20 +279,3 @@ class User:
 
         def __repr__(self) -> str:
             return f"Notification: {self.text}"
-
-    class TeamMember:
-        def __init__(self, team_member_json: dict) -> None:
-            self.team_id = team_member_json['team_id']
-            self.user = User(
-                team_member_json['user']['username'],
-                ignore_warning=True
-            )
-
-            self.role = team_member_json['role']
-            self.permissions = team_member_json['permissions']
-            self.accepted = team_member_json['accepted']
-            self.payouts_split = team_member_json['payouts_split']
-            self.ordering = team_member_json['ordering']
-
-        def __repr__(self) -> str:
-            return f"TeamMember: {self.user.username}"

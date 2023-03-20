@@ -1,10 +1,17 @@
+"""
+Contains all models used in Pyrinth
+"""
+
 from typing import Optional
+import json
 from pyrinth.util import remove_null_values
 from pyrinth.projects import Project
-import json
 
 
 class ProjectModel:
+    """The model used for the Project class
+    """
+
     def __init__(
         self, slug: str, title: str,
         description: str, categories: list[str],
@@ -22,7 +29,7 @@ class ProjectModel:
         self.client_side = client_side
         self.server_side = server_side
         self.body = body
-        if type(license_id) == dict:
+        if isinstance(license_id, dict):
             self.license_id = license_id['id']
         else:
             self.license_id = license_id
@@ -38,22 +45,25 @@ class ProjectModel:
         self.downloads = None
 
     @staticmethod
-    def from_json(json: dict) -> 'ProjectModel':
+    def from_json(json_: dict) -> 'ProjectModel':
+        """Utility function"""
 
         result = ProjectModel(
-            json['slug'], json['title'], json['description'],
-            json['categories'], json['client_side'], json['server_side'],
-            json['body'], json['license']['id'], json['project_type'],
-            json['additional_categories'], json['issues_url'], json['source_url'],
-            json['wiki_url'], json['discord_url'],
-            json['license']['url']
+            json_['slug'], json_['title'], json_['description'],
+            json_['categories'], json_['client_side'], json_['server_side'],
+            json_['body'], json_['license']['id'], json_['project_type'],
+            json_['additional_categories'], json_[
+                'issues_url'], json_['source_url'],
+            json_['wiki_url'], json_['discord_url'],
+            json_['license']['url']
         )
-        result.id = json['id']
-        result.downloads = json['downloads']
-        result.donation_urls = json['donation_urls']
+        result.id = json_['id']
+        result.downloads = json_['downloads']
+        result.donation_urls = json_['donation_urls']
         return result
 
     def to_json(self) -> dict:
+        """Utility function"""
         result = {
             'slug': self.slug,
             'title': self.title,
@@ -79,11 +89,22 @@ class ProjectModel:
         return result
 
     def to_bytes(self) -> bytes:
+        """Utility function"""
         return json.dumps(self.to_json()).encode()
 
 
 class SearchResultModel:
-    def __init__(self, slug: str, title: str, description: str, client_side: str, server_side: str, project_type: str, downloads: int, project_id: str, author: str, versions: list[str], follows: int, date_created, date_modified, license, categories: list[str], icon_url: None, color: None, display_categories: list[str], latest_version: str, gallery: list[str], featured_gallery: None) -> None:
+    """The model used for the SearchResult class
+    """
+
+    def __init__(
+        self, slug: str, title: str, description: str,
+        client_side: str, server_side: str, project_type: str,
+        downloads: int, project_id: str, author: str, versions: list[str],
+        follows: int, date_created, date_modified, license_, categories: list[str],
+        icon_url: None, color: None, display_categories: list[str],
+        latest_version: str, gallery: list[str], featured_gallery: None
+    ) -> None:
         self.slug = slug
         self.title = title
         self.description = description
@@ -97,7 +118,7 @@ class SearchResultModel:
         self.follows = follows
         self.date_created = date_created
         self.date_modified = date_modified
-        self.license = license
+        self.license = license_
         self.categories = categories
         self.icon_url = icon_url
         self.color = color
@@ -107,15 +128,23 @@ class SearchResultModel:
         self.featured_gallery = featured_gallery
 
     @staticmethod
-    def from_json(json: dict) -> 'SearchResultModel':
+    def from_json(json_: dict) -> 'SearchResultModel':
+        """Utility function"""
         result = SearchResultModel(
-            json['slug'], json['title'], json['description'], json['client_side'], json['server_side'], json['project_type'], json['downloads'], json['project_id'], json['author'], json['versions'], json['follows'], json[
-                'date_created'], json['date_modified'], json['license'], json['categories'], json['icon_url'], json['color'], json['display_categories'], json['latest_version'], json['gallery'], json['featured_gallery']
+            json_['slug'], json_['title'], json_['description'],
+            json_['client_side'], json_['server_side'], json_['project_type'],
+            json_['downloads'], json_['project_id'], json_['author'],
+            json_['versions'], json_['follows'], json_['date_created'],
+            json_['date_modified'], json_['license'], json_['categories'],
+            json_['icon_url'], json_['color'], json_['display_categories'],
+            json_['latest_version'], json_['gallery'],
+            json_['featured_gallery']
         )
 
         return result
 
     def to_json(self):
+        """Utility function"""
         result = {
             'slug': self.slug,
             'title': self.title,
@@ -143,12 +172,19 @@ class SearchResultModel:
         return result
 
     def to_bytes(self):
+        """Utility function"""
         return json.dumps(self.to_json()).encode()
 
 
 class VersionModel:
+    """The model used for the Version class
+    """
+
     def __init__(
-        self, name: str, version_number: str, dependencies: list['Project.Dependency'], game_versions: list[str], version_type: str, loaders: list[str], featured: bool, file_parts: list[str], changelog: Optional[str] = None, status: Optional[str] = None, requested_status: Optional[str] = None
+        self, name: str, version_number: str, dependencies: list['Project.Dependency'],
+        game_versions: list[str], version_type: str, loaders: list[str], featured: bool,
+        file_parts: list[str], changelog: Optional[str] = None, status: Optional[str] = None,
+        requested_status: Optional[str] = None
     ) -> None:
         self.name = name
         self.version_number = version_number
@@ -168,10 +204,11 @@ class VersionModel:
         self.downloads = None
 
     def format_dependencies(self, dependencies: list['Project.Dependency']) -> list[dict]:
+        """Utility function"""
         result = []
 
         for dep in dependencies:
-            if type(dep) != dict:
+            if not isinstance(dep, dict):
                 result.append(dep.to_json())
             else:
                 result.append(dep)
@@ -179,21 +216,23 @@ class VersionModel:
         return result
 
     @staticmethod
-    def from_json(json: dict) -> 'VersionModel':
+    def from_json(json_: dict) -> 'VersionModel':
+        """Utility function"""
         result = VersionModel(
-            json['name'], json['version_number'], json['dependencies'],
-            json['game_versions'], json['version_type'], json['loaders'],
-            json['featured'], json['files'], json['changelog'],
-            json['status'], json['requested_status']
+            json_['name'], json_['version_number'], json_['dependencies'],
+            json_['game_versions'], json_['version_type'], json_['loaders'],
+            json_['featured'], json_['files'], json_['changelog'],
+            json_['status'], json_['requested_status']
         )
-        result.project_id = json['project_id']
-        result.id = json['id']
-        result.author_id = json['author_id']
-        result.date_published = json['date_published']
-        result.downloads = json['downloads']
+        result.project_id = json_['project_id']
+        result.id = json_['id']
+        result.author_id = json_['author_id']
+        result.date_published = json_['date_published']
+        result.downloads = json_['downloads']
         return result
 
     def to_json(self) -> dict:
+        """Utility function"""
         result = {
             'name': self.name,
             'version_number': self.version_number,
@@ -216,15 +255,23 @@ class VersionModel:
         return result
 
     def to_bytes(self) -> bytes:
+        """Utility function"""
         return json.dumps(self.to_json()).encode()
 
 
 class UserModel:
+    """The model used for the User class
+    """
+
     def __init__(
-        self, username: str, id: str, avatar_url: str, created, role: str, name: Optional[str] = None, email: Optional[str] = None, bio: Optional[str] = None, payout_data=None, github_id: Optional[str] = None, badges: Optional[int] = None
+        self, username: str, id_: str, avatar_url: str,
+        created, role: str, name: Optional[str] = None,
+        email: Optional[str] = None, bio: Optional[str] = None,
+        payout_data=None, github_id: Optional[str] = None,
+        badges: Optional[int] = None
     ) -> None:
         self.username = username
-        self.id = id
+        self.id = id_
         self.avatar_url = avatar_url
         self.created = created
         self.role = role
@@ -236,16 +283,18 @@ class UserModel:
         self.badges = badges
 
     @staticmethod
-    def from_json(json: dict) -> 'VersionModel':
+    def from_json(json_: dict) -> 'VersionModel':
+        """Utility function"""
         result = VersionModel(
-            json['username'], json['id'], json['avatar_url'],
-            json['created'], json['role'], json['name'],
-            json['email'], json['bio'], json['payout_data'],
-            json['github_id'], json['badges']
+            json_['username'], json_['id'], json_['avatar_url'],
+            json_['created'], json_['role'], json_['name'],
+            json_['email'], json_['bio'], json_['payout_data'],
+            json_['github_id'], json_['badges']
         )
         return result
 
     def to_json(self) -> dict:
+        """Utility function"""
         result = {
             'username': self.username,
             'id': self.id,
@@ -263,4 +312,5 @@ class UserModel:
         return result
 
     def to_bytes(self) -> bytes:
+        """Utility function"""
         return json.dumps(self.to_json()).encode()
