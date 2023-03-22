@@ -126,7 +126,7 @@ class User:
                 "data": project_model.to_bytes()
             },
             headers={
-                'Authorization': self.auth
+                'authorization': self.auth
             }
         )
 
@@ -175,7 +175,8 @@ class User:
 
         if not raw_response.ok:
             print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}")
+                f"Invalid Request: {json.loads(raw_response.content)['description']}"
+            )
             return None
 
         return 1
@@ -198,7 +199,8 @@ class User:
 
         if not raw_response.ok:
             print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}")
+                f"Invalid Request: {json.loads(raw_response.content)['description']}"
+            )
             return None
 
         return 1
@@ -219,7 +221,8 @@ class User:
 
         if not raw_response.ok:
             print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}")
+                f"Invalid Request: {json.loads(raw_response.content)['description']}"
+            )
             return None
 
         response = json.loads(raw_response.content)
@@ -238,7 +241,8 @@ class User:
 
         if not raw_response.ok:
             print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}")
+                f"Invalid Request: {json.loads(raw_response.content)['description']}"
+            )
             return None
 
         response = json.loads(raw_response.content)

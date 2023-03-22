@@ -27,18 +27,21 @@ class Project:
     def get_latest_version(
         self, loaders: Optional[list[str]] = None,
         game_versions: Optional[list[str]] = None,
-        featured: Optional[bool] = None
+        featured: Optional[bool] = None,
+        types: Optional[list[str]] = None,
+        auth: str = ''
     ) -> Union['Project.Version', None]:
         """Gets the latest project version
 
         Returns:
             Project.Version: The latest project version
         """
-        versions = self.get_versions(loaders, game_versions, featured)
-        if versions:
-            return versions[0]
+        versions = self.get_versions(loaders, game_versions, featured, types, auth)
 
-        return None
+        if not versions:
+            return None
+
+        return versions[0]
 
     def get_specific_version(self, schematic_version: str) -> Union['Project.Version', None]:
         """Gets a specific project version based on the schematic version
@@ -53,48 +56,13 @@ class Project:
                     return version
         return None
 
-    def get_oldest_version(
-        self, loaders=None,
-        game_versions=None, featured=None
-    ) -> Union['Project.Version', None]:
-        """Gets the oldest project version
-
-        Returns:
-            Project.Version: The oldest project version
-        """
-        versions = self.get_versions(loaders, game_versions, featured)
-        if versions:
-            return versions[-1]
-
-        return None
-
-    def get_id(self) -> str:
-        """Gets the ID of the project
-
-        Returns:
-            str: The ID of the project
-        """
-        return self.project_model.id
-
-    def get_slug(self) -> str:
-        """Gets the slug of the project
-
-        Returns:
-            str: The slug of the project
-        """
-        return self.project_model.slug
-
-    def get_name(self) -> str:
-        """Gets the name of the project
-
-        Returns:
-            str: The name of the project
-        """
-        return to_sentence_case(self.project_model.slug)
 
     def get_versions(
-        self, loaders=None, game_versions=None,
-        featured=None, auth: str = ''
+        self, loaders:Optional[list[str]]=None,
+        game_versions:Optional[list[str]]=None,
+        featured:Optional[bool]=None,
+        types:Optional[list[str]]=None,
+        auth: str = ''
     ) -> Union[list['Project.Version'], None]:
         """Gets project versions based on filters
 
@@ -124,8 +92,60 @@ class Project:
         if response == []:
             print("Project has no versions")
             return None
+        
+        versions = [self.Version(version) for version in response]
 
-        return [self.Version(version) for version in response]
+        if not types:
+            return versions
+        
+        result = []
+        for version in versions:
+            if version.version_model.version_type in types:
+                result.append(version)
+
+        return result
+
+    def get_oldest_version(
+        self, loaders: Optional[list[str]]=None,
+        game_versions: Optional[list[str]]=None,
+        featured: Optional[bool] = None,
+        types: Optional[list[str]] = None,
+        auth: str = ''
+    ) -> Union['Project.Version', None]:
+        """Gets the oldest project version
+
+        Returns:
+            Project.Version: The oldest project version
+        """
+        versions = self.get_versions(loaders, game_versions, featured, types, auth)
+        if versions:
+            return versions[-1]
+
+        return None
+
+    def get_id(self) -> str:
+        """Gets the ID of the project
+
+        Returns:
+            str: The ID of the project
+        """
+        return self.project_model.id
+
+    def get_slug(self) -> str:
+        """Gets the slug of the project
+
+        Returns:
+            str: The slug of the project
+        """
+        return self.project_model.slug
+
+    def get_name(self) -> str:
+        """Gets the name of the project
+
+        Returns:
+            str: The name of the project
+        """
+        return to_sentence_case(self.project_model.slug)
 
     @staticmethod
     def get_version(id_: str) -> Union['Project.Version', None]:
@@ -170,14 +190,15 @@ class Project:
         raw_response = r.post(
             f'https://api.modrinth.com/v2/version',
             headers={
-                "Authorization": auth
+                "authorization": auth
             },
             files=files
         )
 
         if not raw_response.ok:
             print(
-                f"Invalid Request: {raw_response.content!r} (create_version)")
+                f"Invalid Request: {raw_response.content!r} (create_version)"
+            )
             return None
 
         return 1
@@ -255,7 +276,8 @@ class Project:
 
         if not raw_response.ok:
             print(
-                f"Invalid Request: {raw_response.content!r} (add_gallery_image)")
+                f"Invalid Request: {raw_response.content!r} (add_gallery_image)"
+            )
             return None
 
         return 1
@@ -294,7 +316,8 @@ class Project:
 
         if not raw_response.ok:
             print(
-                f"Invalid Request: {raw_response.content!r} (modify_gallery_image)")
+                f"Invalid Request: {raw_response.content!r} (modify_gallery_image)"
+            )
             return None
 
         return 1
@@ -329,7 +352,8 @@ class Project:
 
         if not raw_response.ok:
             print(
-                f"Invalid Request: {raw_response.content!r} (delete_gallery_image)")
+                f"Invalid Request: {raw_response.content!r} (delete_gallery_image)"
+            )
             return None
 
         return 1
@@ -441,7 +465,7 @@ class Project:
         """Gets a projects dependencies
 
         Returns:
-            list[Project]: The projects dependencys
+            list[Project]: The projects dependencies
         """
         raw_response = r.get(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/dependencies'
@@ -449,7 +473,8 @@ class Project:
 
         if not raw_response.ok:
             print(
-                f"Invalid Request : {raw_response.content!r} (get_dependencies)")
+                f"Invalid Request : {raw_response.content!r} (get_dependencies)"
+            )
             return None
 
         response = json.loads(raw_response.content)
@@ -465,6 +490,9 @@ class Project:
                 version_model = VersionModel.from_json(version_model)
                 self.version_model = version_model
             self.version_model = version_model
+
+        def get_type(self):
+            return self.version_model.version_type
 
         def get_dependencies(self) -> list['Project.Dependency']:
             """Gets a projects dependencies
@@ -488,7 +516,7 @@ class Project:
                 result.append(Project.File.from_json(file))
             return result
 
-        def get_project(self) -> 'Project':
+        def get_project(self) -> Union['Project', None]:
             """Gets a versions project
 
             Returns:
@@ -501,7 +529,7 @@ class Project:
             """Gets a dependencies primary files
 
             Returns:
-                list[Project.File]: The dependencys primary files
+                list[Project.File]: The dependencies primary files
             """
             result = []
             for file in self.get_files():
@@ -680,17 +708,25 @@ class Project:
 
             return result
 
-        def get_project(self) -> 'Project':
+        def get_project(self) -> Union['Project', None]:
             """Used to get the project of the dependency
 
             Returns:
                 Project: The dependency project
             """
             from pyrinth.modrinth import Modrinth
-            if self.dependency_type == "version":
-                version = Modrinth.get_version(self.id)
-                return version.get_project()
             return Modrinth.get_project(self.id)
+
+        def get_version(self) -> Union['Project.Version', None]:
+            """Gets the dependencies project version
+            """
+            from pyrinth.modrinth import Modrinth
+            if self.dependency_type == "version":
+                return Modrinth.get_version(self.id)
+            project = Modrinth.get_project(self.id)
+            if not project:
+                return None
+            return project.get_latest_version()
 
         def is_required(self) -> bool:
             """Checks if the dependency is required
