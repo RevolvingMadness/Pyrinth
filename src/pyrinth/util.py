@@ -1,3 +1,5 @@
+from dateutil import parser
+
 def to_sentence_case(sentence):
     return sentence.title().replace('-', ' ').replace('_', ' ')
 
@@ -26,3 +28,19 @@ def json_to_query_params(json_: dict) -> str:
 
 def remove_file_path(file):
     return ''.join(file.split('/')[-1])
+
+def list_to_json(lst: list) -> list[dict]:
+    result = []
+
+    for item in lst:
+        if not isinstance(item, dict):
+            # Convert it to json format
+            result.append(item.to_json())
+        else:
+            # It's already in json format
+            result.append(item)
+
+    return result
+
+def format_time(time):
+    return parser.parse(time)

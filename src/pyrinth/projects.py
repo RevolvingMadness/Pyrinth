@@ -6,7 +6,7 @@ from typing import Optional, Union
 import json
 import requests as r
 from pyrinth.util import (
-    remove_null_values, json_to_query_params, to_sentence_case, remove_file_path
+    format_time, remove_null_values, json_to_query_params, remove_file_path
 )
 
 
@@ -42,7 +42,28 @@ class Project:
             return None
 
         return versions[0]
+    
+    def is_client_side(self) -> bool:
+        return (True if self.project_model.client_side == 'required' else False)
+    
+    def is_server_side(self) -> bool:
+        return (True if self.project_model.server_side == 'required' else False)
+    
+    def get_downloads(self) -> int:
+        return self.project_model.downloads
 
+    def get_categories(self) -> list[str]:
+        return self.project_model.categories
+    
+    def get_additional_categories(self) -> list[str]:
+        return self.project_model.additional_categories
+    
+    def get_all_categories(self) -> list[str]:
+        return self.get_categories() + self.get_additional_categories()
+    
+    def get_license(self) -> 'Project.License':
+        return Project.License.from_json(self.project_model.license)
+    
     def get_specific_version(self, schematic_version: str) -> Union['Project.Version', None]:
         """Gets a specific project version based on the schematic version
 
@@ -145,7 +166,7 @@ class Project:
         Returns:
             str: The name of the project
         """
-        return to_sentence_case(self.project_model.slug)
+        return self.project_model.title
 
     @staticmethod
     def get_version(id_: str) -> Union['Project.Version', None]:
@@ -536,6 +557,25 @@ class Project:
                 if file.primary:
                     result.append(file)
             return result
+        
+        def get_author(self):
+            from pyrinth.modrinth import Modrinth
+            return Modrinth.get_user(self.version_model.author_id)
+
+        def is_featured(self):
+            return self.version_model.featured
+
+        def get_date_published(self):
+            return format_time(self.version_model.date_published)
+
+        def get_downloads(self):
+            return self.version_model.downloads
+
+        def get_name(self):
+            return self.version_model.name
+
+        def get_version_number(self):
+            return self.version_model.version_number
 
         def __repr__(self) -> str:
             return f"Version: {self.version_model.name}"
@@ -636,6 +676,16 @@ class Project:
                 json_['name'],
                 json_['url']
             )
+
+            return result
+
+        def to_json(self) -> dict:
+            """Utility Function"""
+            result = {
+                'id': self.id,
+                'name': self.name,
+                'url': self.url
+            }
 
             return result
 

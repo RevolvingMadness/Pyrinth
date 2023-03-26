@@ -4,7 +4,7 @@ Contains all models used in Pyrinth
 
 from typing import Optional
 import json
-from pyrinth.util import remove_null_values
+from pyrinth.util import list_to_json, remove_null_values
 from pyrinth.projects import Project
 
 
@@ -16,11 +16,10 @@ class ProjectModel:
         self, slug: str, title: str,
         description: str, categories: list[str],
         client_side: str, server_side: str, body: str,
-        license_id: str, project_type: str,
+        license_: Project.License, project_type: str,
         additional_categories: Optional[list[str]] = None,
         issues_url: Optional[str] = None, source_url: Optional[str] = None,
-        wiki_url: Optional[str] = None, discord_url: Optional[str] = None,
-        license_url: Optional[str] = None
+        wiki_url: Optional[str] = None, discord_url: Optional[str] = None
     ) -> None:
         self.slug = slug
         self.title = title
@@ -29,17 +28,13 @@ class ProjectModel:
         self.client_side = client_side
         self.server_side = server_side
         self.body = body
-        if isinstance(license_id, dict):
-            self.license_id = license_id['id']
-        else:
-            self.license_id = license_id
+        self.license = license_.to_json()
         self.project_type = project_type
         self.additional_categories = additional_categories
         self.issues_url = issues_url
         self.source_url = source_url
         self.wiki_url = wiki_url
         self.discord_url = discord_url
-        self.license_url = license_url
         self.donation_urls = None
         self.id = None
         self.downloads = None
@@ -47,15 +42,15 @@ class ProjectModel:
     @staticmethod
     def from_json(json_: dict) -> 'ProjectModel':
         """Utility function"""
+        license_ = Project.License.from_json(json_['license'])
 
         result = ProjectModel(
             json_['slug'], json_['title'], json_['description'],
             json_['categories'], json_['client_side'], json_['server_side'],
-            json_['body'], json_['license']['id'], json_['project_type'],
+            json_['body'], license_, json_['project_type'],
             json_['additional_categories'], json_[
                 'issues_url'], json_['source_url'],
-            json_['wiki_url'], json_['discord_url'],
-            json_['license']['url']
+            json_['wiki_url'], json_['discord_url']
         )
         result.id = json_['id']
         result.downloads = json_['downloads']
@@ -189,7 +184,7 @@ class VersionModel:
         self.name = name
         self.version_number = version_number
         self.changelog = changelog
-        self.dependencies = self.format_dependencies(dependencies)
+        self.dependencies = list_to_json(dependencies)
         self.game_versions = game_versions
         self.version_type = version_type
         self.loaders = loaders
@@ -202,18 +197,6 @@ class VersionModel:
         self.author_id = None
         self.date_published = None
         self.downloads = None
-
-    def format_dependencies(self, dependencies: list['Project.Dependency']) -> list[dict]:
-        """Utility function"""
-        result = []
-
-        for dep in dependencies:
-            if not isinstance(dep, dict):
-                result.append(dep.to_json())
-            else:
-                result.append(dep)
-
-        return result
 
     @staticmethod
     def from_json(json_: dict) -> 'VersionModel':

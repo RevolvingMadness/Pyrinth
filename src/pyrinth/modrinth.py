@@ -103,7 +103,7 @@ class Modrinth:
         return [Project(project) for project in response]
 
     @staticmethod
-    def get_user_from_id(id_: str) -> Union['User', None]:
+    def get_user(id_: str) -> Union['User', None]:
         """Gets a user from id
 
         Returns:
