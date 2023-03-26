@@ -6,7 +6,6 @@ from typing import Union
 import json
 import requests as r
 from pyrinth.projects import Project
-from pyrinth.util import format_time
 
 
 class User:
@@ -51,8 +50,9 @@ class User:
 
     def __repr__(self) -> str:
         return f'User: {self.name}'
-    
+
     def get_date_created(self):
+        from pyrinth.util import format_time
         return format_time(self.created)
 
     def get_followed_projects(self) -> Union[list['Project'], None]:

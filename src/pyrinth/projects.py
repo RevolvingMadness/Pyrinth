@@ -2,12 +2,12 @@
 User projects
 """
 
+from datetime import datetime
 from typing import Optional, Union
 import json
 import requests as r
-from pyrinth.util import (
-    format_time, remove_null_values, json_to_query_params, remove_file_path
-)
+
+from pyrinth.util import remove_null_values
 
 
 class Project:
@@ -36,53 +36,53 @@ class Project:
         Returns:
             Project.Version: The latest project version
         """
-        versions = self.get_versions(loaders, game_versions, featured, types, auth)
+        versions = self.get_versions(
+            loaders, game_versions, featured, types, auth)
 
         if not versions:
             return None
 
         return versions[0]
-    
+
     def is_client_side(self) -> bool:
         return (True if self.project_model.client_side == 'required' else False)
-    
+
     def is_server_side(self) -> bool:
         return (True if self.project_model.server_side == 'required' else False)
-    
+
     def get_downloads(self) -> int:
         return self.project_model.downloads
 
     def get_categories(self) -> list[str]:
         return self.project_model.categories
-    
+
     def get_additional_categories(self) -> list[str]:
         return self.project_model.additional_categories
-    
+
     def get_all_categories(self) -> list[str]:
         return self.get_categories() + self.get_additional_categories()
-    
+
     def get_license(self) -> 'Project.License':
         return Project.License.from_json(self.project_model.license)
-    
-    def get_specific_version(self, schematic_version: str) -> Union['Project.Version', None]:
-        """Gets a specific project version based on the schematic version
+
+    def get_specific_version(self, semantic_version: str) -> Union['Project.Version', None]:
+        """Gets a specific project version based on the semantic version
 
         Returns:
-            Project.Version: The version that was found using the schematic version
+            Project.Version: The version that was found using the semantic version
         """
         versions = self.get_versions()
         if versions:
             for version in versions:
-                if version.version_model.version_number == schematic_version:
+                if version.version_model.version_number == semantic_version:
                     return version
         return None
 
-
     def get_versions(
-        self, loaders:Optional[list[str]]=None,
-        game_versions:Optional[list[str]]=None,
-        featured:Optional[bool]=None,
-        types:Optional[list[str]]=None,
+        self, loaders: Optional[list[str]] = None,
+        game_versions: Optional[list[str]] = None,
+        featured: Optional[bool] = None,
+        types: Optional[list[str]] = None,
         auth: str = ''
     ) -> Union[list['Project.Version'], None]:
         """Gets project versions based on filters
@@ -90,6 +90,7 @@ class Project:
         Returns:
             list[Project.Version]: The versions that were found using the filters
         """
+        from pyrinth.util import json_to_query_params
         filters = {
             'loaders': loaders,
             'game_versions': game_versions,
@@ -113,12 +114,12 @@ class Project:
         if response == []:
             print("Project has no versions")
             return None
-        
+
         versions = [self.Version(version) for version in response]
 
         if not types:
             return versions
-        
+
         result = []
         for version in versions:
             if version.version_model.version_type in types:
@@ -127,8 +128,8 @@ class Project:
         return result
 
     def get_oldest_version(
-        self, loaders: Optional[list[str]]=None,
-        game_versions: Optional[list[str]]=None,
+        self, loaders: Optional[list[str]] = None,
+        game_versions: Optional[list[str]] = None,
         featured: Optional[bool] = None,
         types: Optional[list[str]] = None,
         auth: str = ''
@@ -138,7 +139,8 @@ class Project:
         Returns:
             Project.Version: The oldest project version
         """
-        versions = self.get_versions(loaders, game_versions, featured, types, auth)
+        versions = self.get_versions(
+            loaders, game_versions, featured, types, auth)
         if versions:
             return versions[-1]
 
@@ -197,13 +199,12 @@ class Project:
         Returns:
             int: If creating the new project version was successful
         """
+        from pyrinth.util import remove_file_path
         version_model.project_id = self.project_model.id
 
         files = {
             "data": version_model.to_bytes()
         }
-
-        print(files)
 
         for file in version_model.files:
             files.update({remove_file_path(file): open(file, "rb").read()})
@@ -557,24 +558,58 @@ class Project:
                 if file.primary:
                     result.append(file)
             return result
-        
-        def get_author(self):
-            from pyrinth.modrinth import Modrinth
-            return Modrinth.get_user(self.version_model.author_id)
 
-        def is_featured(self):
+        def get_author(self) -> Union[object, None]:
+            """Gets the user who published the version
+
+            Returns:
+                User: The user who published the version
+            """
+            from pyrinth.modrinth import Modrinth
+            user = Modrinth.get_user(self.version_model.author_id)
+            if user:
+                return user
+            return None
+
+        def is_featured(self) -> bool:
+            """Checks if the version is featured
+
+            Returns:
+                bool: If the version is featured
+            """
             return self.version_model.featured
 
-        def get_date_published(self):
+        def get_date_published(self) -> datetime:
+            """Gets the date of when the version was published
+
+            Returns:
+                datetime: The date of when the version was published
+            """
+            from pyrinth.util import format_time
             return format_time(self.version_model.date_published)
 
-        def get_downloads(self):
+        def get_downloads(self) -> int:
+            """Gets how many downloads the version has
+
+            Returns:
+                int: The amount of downloads
+            """
             return self.version_model.downloads
 
-        def get_name(self):
+        def get_name(self) -> str:
+            """Gets the versions name
+
+            Returns:
+                str: The version name
+            """
             return self.version_model.name
 
-        def get_version_number(self):
+        def get_version_number(self) -> str:
+            """Gets the versions number
+
+            Returns:
+                str: The semantic version number
+            """
             return self.version_model.version_number
 
         def __repr__(self) -> str:

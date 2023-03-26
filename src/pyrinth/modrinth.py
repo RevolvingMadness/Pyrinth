@@ -10,6 +10,10 @@ from pyrinth.users import User
 
 
 class Modrinth:
+    """
+    The main Modrinth class used for anything modrinth related
+    """
+
     def __init__(self) -> None:
         raise Exception("This class cannot be initalized!")
 

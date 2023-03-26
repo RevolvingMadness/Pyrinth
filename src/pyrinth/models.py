@@ -4,7 +4,7 @@ Contains all models used in Pyrinth
 
 from typing import Optional
 import json
-from pyrinth.util import list_to_json, remove_null_values
+from pyrinth.util import remove_null_values
 from pyrinth.projects import Project
 
 
@@ -16,7 +16,7 @@ class ProjectModel:
         self, slug: str, title: str,
         description: str, categories: list[str],
         client_side: str, server_side: str, body: str,
-        license_: Project.License, project_type: str,
+        license_: 'Project.License', project_type: str,
         additional_categories: Optional[list[str]] = None,
         issues_url: Optional[str] = None, source_url: Optional[str] = None,
         wiki_url: Optional[str] = None, discord_url: Optional[str] = None
@@ -67,7 +67,7 @@ class ProjectModel:
             'client_side': self.client_side,
             'server_side': self.server_side,
             'body': self.body,
-            'license_id': self.license_id,
+            'license_id': self.license['id'],
             'project_type': self.project_type,
             'additional_categories': self.additional_categories,
             'issues_url': self.issues_url,
@@ -75,7 +75,7 @@ class ProjectModel:
             'wiki_url': self.wiki_url,
             'discord_url': self.discord_url,
             'donation_urls': self.donation_urls,
-            'license_url': self.license_url,
+            'license_url': self.license['url'],
             'id': self.id,
             'is_draft': True,
             'initial_versions': []
@@ -181,6 +181,7 @@ class VersionModel:
         file_parts: list[str], changelog: Optional[str] = None, status: Optional[str] = None,
         requested_status: Optional[str] = None
     ) -> None:
+        from pyrinth.util import list_to_json
         self.name = name
         self.version_number = version_number
         self.changelog = changelog
