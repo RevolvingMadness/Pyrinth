@@ -48,7 +48,7 @@ pip install python-modrinth
 If you want to get the latest beta or pre-releases, follow the steps below:
 1. Go to the releases page and download one of the `.whl` files.
 2. Open a terminal and go to the downloads directory.
-3. Type this: `pip install pyrinth`, then press tab and it should autocomplete.
+3. Type this: `pip install python-modrinth`, then press tab and it should autocomplete.
 
 ## Issues
 
