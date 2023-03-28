@@ -5,6 +5,7 @@ User projects
 from datetime import datetime
 from typing import Optional, Union
 import json
+from pyrinth.exceptions import InvalidInput, InvalidParam, InvalidRequest, NoAuthorization, NotFound
 import requests as r
 
 from pyrinth.util import remove_null_values
@@ -30,17 +31,15 @@ class Project:
         featured: Optional[bool] = None,
         types: Optional[list[str]] = None,
         auth: str = ''
-    ) -> Union['Project.Version', None]:
+    ) -> 'Project.Version':
         """Gets the latest project version
 
         Returns:
             Project.Version: The latest project version
         """
         versions = self.get_versions(
-            loaders, game_versions, featured, types, auth)
-
-        if not versions:
-            return None
+            loaders, game_versions, featured, types, auth
+        )
 
         return versions[0]
 
@@ -76,6 +75,7 @@ class Project:
             for version in versions:
                 if version.version_model.version_number == semantic_version:
                     return version
+
         return None
 
     def get_versions(
@@ -84,7 +84,7 @@ class Project:
         featured: Optional[bool] = None,
         types: Optional[list[str]] = None,
         auth: str = ''
-    ) -> Union[list['Project.Version'], None]:
+    ) -> list['Project.Version']:
         """Gets project versions based on filters
 
         Returns:
@@ -106,14 +106,15 @@ class Project:
             }
         )
 
+        if raw_response.status_code == 404:
+            raise NotFound(
+                "The requested project was not found or no authorization to see this project"
+            )
+
         if not raw_response.ok:
-            print(f"Invalid Request : {raw_response.content!r} (get_versions)")
-            return None
+            raise InvalidRequest()
 
         response = json.loads(raw_response.content)
-        if response == []:
-            print("Project has no versions")
-            return None
 
         versions = [self.Version(version) for version in response]
 
@@ -133,18 +134,17 @@ class Project:
         featured: Optional[bool] = None,
         types: Optional[list[str]] = None,
         auth: str = ''
-    ) -> Union['Project.Version', None]:
+    ) -> 'Project.Version':
         """Gets the oldest project version
 
         Returns:
             Project.Version: The oldest project version
         """
         versions = self.get_versions(
-            loaders, game_versions, featured, types, auth)
-        if versions:
-            return versions[-1]
+            loaders, game_versions, featured, types, auth
+        )
 
-        return None
+        return versions[-1]
 
     def get_id(self) -> str:
         """Gets the ID of the project
@@ -171,7 +171,7 @@ class Project:
         return self.project_model.title
 
     @staticmethod
-    def get_version(id_: str) -> Union['Project.Version', None]:
+    def get_version(id_: str) -> 'Project.Version':
         """Gets a version by ID
 
         Returns:
@@ -182,14 +182,18 @@ class Project:
             f'https://api.modrinth.com/v2/version/{id_}'
         )
 
+        if raw_response.status_code == 404:
+            raise NotFound(
+                "The requested project was not found or no authorization to see this project"
+            )
+
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content!r} (get_version)")
-            return None
+            raise InvalidRequest()
 
         response = json.loads(raw_response.content)
         return Project.Version(response)
 
-    def create_version(self, auth: str, version_model) -> Union[int, None]:
+    def create_version(self, auth: str, version_model) -> int:
         """Creates a new version on the project
 
         Args:
@@ -217,15 +221,15 @@ class Project:
             files=files
         )
 
+        if raw_response.status_code == 401:
+            raise NoAuthorization("No authorization to create this version")
+
         if not raw_response.ok:
-            print(
-                f"Invalid Request: {raw_response.content!r} (create_version)"
-            )
-            return None
+            raise InvalidRequest()
 
         return 1
 
-    def change_icon(self, file_path: str, auth: str) -> Union[int, None]:
+    def change_icon(self, file_path: str, auth: str) -> int:
         """Changes the projects icon
 
         Args:
@@ -249,13 +253,15 @@ class Project:
             data=open(file_path, "rb")
         )
 
+        if raw_response.status_code == 400:
+            raise InvalidInput("Invalid input for new icon")
+
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content!r} (change_icon)")
-            return None
+            raise InvalidRequest()
 
         return 1
 
-    def delete_icon(self, auth: str) -> Union[int, None]:
+    def delete_icon(self, auth: str) -> int:
         """Deletes the projects icon
 
         Args:
@@ -271,13 +277,18 @@ class Project:
             }
         )
 
+        if raw_response.status_code == 400:
+            raise InvalidInput("Invalid input")
+
+        if raw_response.status_code == 401:
+            raise NoAuthorization("No authorization to edit this project")
+
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content!r} (delete_icon)")
-            return None
+            raise InvalidRequest()
 
         return 1
 
-    def add_gallery_image(self, auth: str, image: 'Project.GalleryImage') -> Union[int, None]:
+    def add_gallery_image(self, auth: str, image: 'Project.GalleryImage') -> int:
         """Adds a gallery image to the project
 
         Args:
@@ -296,15 +307,20 @@ class Project:
             data=open(image.file_path, "rb")
         )
 
-        if not raw_response.ok:
-            print(
-                f"Invalid Request: {raw_response.content!r} (add_gallery_image)"
+        if raw_response.status_code == 401:
+            raise NoAuthorization("No authorization to create a gallery image")
+
+        if raw_response.status_code == 404:
+            raise NotFound(
+                "The requested project was not found or no authorization to see this project"
             )
-            return None
+
+        if not raw_response.ok:
+            raise InvalidRequest()
 
         return 1
 
-    def modify_gallery_image(self, auth: str, url: str, featured: Optional[bool] = None, title: Optional[str] = None, description: Optional[str] = None, ordering: Optional[int] = None) -> Union[int, None]:
+    def modify_gallery_image(self, auth: str, url: str, featured: Optional[bool] = None, title: Optional[str] = None, description: Optional[str] = None, ordering: Optional[int] = None) -> int:
         """Modifies a project gallery image
 
         Args:
@@ -336,15 +352,21 @@ class Project:
             }
         )
 
-        if not raw_response.ok:
-            print(
-                f"Invalid Request: {raw_response.content!r} (modify_gallery_image)"
+        if raw_response.status_code == 401:
+            raise NoAuthorization(
+                "No authorization to edit this gallery image")
+
+        if raw_response.status_code == 404:
+            raise NotFound(
+                "The requested project was not found or no authorization to see this project"
             )
-            return None
+
+        if not raw_response.ok:
+            raise InvalidRequest()
 
         return 1
 
-    def delete_gallery_image(self, url: str, auth: str) -> Union[int, None]:
+    def delete_gallery_image(self, url: str, auth: str) -> int:
         """Deletes a projects gallery image
 
         Args:
@@ -372,11 +394,16 @@ class Project:
             }
         )
 
-        if not raw_response.ok:
-            print(
-                f"Invalid Request: {raw_response.content!r} (delete_gallery_image)"
+        if raw_response.status_code == 400:
+            raise InvalidParam("Invalid URL or project specified")
+
+        if raw_response.status_code == 401:
+            raise NoAuthorization(
+                "No authorization to delete this gallery image"
             )
-            return None
+
+        if not raw_response.ok:
+            raise InvalidRequest()
 
         return 1
 
@@ -390,7 +417,7 @@ class Project:
         license_id: Optional[str] = None, license_url: Optional[str] = None,
         status: Optional[str] = None, requested_status: Optional[str] = None,
         moderation_message: Optional[str] = None, moderation_message_body: Optional[str] = None
-    ) -> Union[int, None]:
+    ) -> int:
         """Modifies a project
 
         Args:
@@ -455,20 +482,27 @@ class Project:
             }
         )
 
+        if raw_response.status_code == 401:
+            raise NoAuthorization("No authorization to edit this project")
+
+        if raw_response.status_code == 404:
+            raise NotFound(
+                "The requested project was not found or no authorization to see this project"
+            )
+
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content!r} (modify)")
-            return None
+            raise InvalidRequest()
 
         return 1
 
-    def delete(self, auth: str) -> Union[int, None]:
+    def delete(self, auth: str) -> int:
         """Deletes the project
 
         Args:
             auth (str): The authorization token to delete the project
 
         Returns:
-            Union[int, None]: If the deletion was successful
+            int: If the deletion was successful
         """
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}',
@@ -477,13 +511,18 @@ class Project:
             }
         )
 
+        if raw_response.status_code == 400:
+            raise NotFound("The requested project was not found")
+
+        if raw_response.status_code == 401:
+            raise NoAuthorization("No authorization to delete this project")
+
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content!r} (delete)")
-            return None
+            raise InvalidRequest()
 
         return 1
 
-    def get_dependencies(self) -> Union[list['Project'], None]:
+    def get_dependencies(self) -> list['Project']:
         """Gets a projects dependencies
 
         Returns:
@@ -493,11 +532,13 @@ class Project:
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/dependencies'
         )
 
-        if not raw_response.ok:
-            print(
-                f"Invalid Request : {raw_response.content!r} (get_dependencies)"
+        if raw_response.status_code == 404:
+            raise NotFound(
+                "The requested project was not found or no authorization to see this project"
             )
-            return None
+
+        if not raw_response.ok:
+            raise InvalidRequest()
 
         response = json.loads(raw_response.content)
         return [Project(dependency) for dependency in response['projects']]
@@ -538,7 +579,7 @@ class Project:
                 result.append(Project.File.from_json(file))
             return result
 
-        def get_project(self) -> Union['Project', None]:
+        def get_project(self) -> 'Project':
             """Gets a versions project
 
             Returns:
@@ -559,7 +600,7 @@ class Project:
                     result.append(file)
             return result
 
-        def get_author(self) -> Union[object, None]:
+        def get_author(self) -> object:
             """Gets the user who published the version
 
             Returns:
@@ -567,9 +608,7 @@ class Project:
             """
             from pyrinth.modrinth import Modrinth
             user = Modrinth.get_user(self.version_model.author_id)
-            if user:
-                return user
-            return None
+            return user
 
         def is_featured(self) -> bool:
             """Checks if the version is featured
@@ -793,7 +832,7 @@ class Project:
 
             return result
 
-        def get_project(self) -> Union['Project', None]:
+        def get_project(self) -> 'Project':
             """Used to get the project of the dependency
 
             Returns:
@@ -802,15 +841,13 @@ class Project:
             from pyrinth.modrinth import Modrinth
             return Modrinth.get_project(self.id)
 
-        def get_version(self) -> Union['Project.Version', None]:
+        def get_version(self) -> 'Project.Version':
             """Gets the dependencies project version
             """
             from pyrinth.modrinth import Modrinth
             if self.dependency_type == "version":
                 return Modrinth.get_version(self.id)
             project = Modrinth.get_project(self.id)
-            if not project:
-                return None
             return project.get_latest_version()
 
         def is_required(self) -> bool:

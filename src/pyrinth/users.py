@@ -4,6 +4,7 @@ Used for users
 
 from typing import Union
 import json
+from pyrinth.exceptions import InvalidParam, InvalidRequest, NoAuthorization, NotFound
 import requests as r
 from pyrinth.projects import Project
 
@@ -55,7 +56,7 @@ class User:
         from pyrinth.util import format_time
         return format_time(self.created)
 
-    def get_followed_projects(self) -> Union[list['Project'], None]:
+    def get_followed_projects(self) -> list['Project']:
         """Gets a users followed projects
 
         Returns:
@@ -69,11 +70,16 @@ class User:
             }
         )
 
-        if not raw_response.ok:
-            print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}"
+        if raw_response.status_code == 401:
+            raise NoAuthorization(
+                "No authorization to get this user's followed projects"
             )
-            return None
+
+        if raw_response.status_code == 404:
+            raise NotFound("The requested user was not found")
+
+        if not raw_response.ok:
+            raise InvalidRequest()
 
         followed_projects = []
         projects = json.loads(raw_response.content)
@@ -82,7 +88,7 @@ class User:
 
         return followed_projects
 
-    def get_notifications(self) -> Union[list['User.Notification'], None]:
+    def get_notifications(self) -> list['User.Notification']:
         """Gets a users notifications
 
         Returns:
@@ -95,16 +101,21 @@ class User:
             }
         )
 
-        if not raw_response.ok:
-            print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}"
+        if raw_response.status_code == 401:
+            raise NoAuthorization(
+                "No authorization to get this user's notifications"
             )
-            return None
+
+        if raw_response.status_code == 404:
+            raise NotFound("The requested user was not found")
+
+        if not raw_response.ok:
+            raise InvalidRequest()
 
         response = json.loads(raw_response.content)
         return [User.Notification(notification) for notification in response]
 
-    def get_amount_of_projects(self) -> Union[int, None]:
+    def get_amount_of_projects(self) -> int:
         """Gets the amount of projects a user has
 
         Returns:
@@ -112,12 +123,9 @@ class User:
         """
         projs = self.get_projects()
 
-        if not projs:
-            return None
-
         return len(projs)
 
-    def create_project(self, project_model, icon: str = '') -> Union[int, None]:
+    def create_project(self, project_model, icon: str = '') -> int:
         """Creates a project
 
         Args:
@@ -137,15 +145,15 @@ class User:
             }
         )
 
+        if raw_response.status_code == 401:
+            raise NoAuthorization("No authorization to create a project")
+
         if not raw_response.ok:
-            print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}"
-            )
-            return None
+            raise InvalidRequest()
 
         return 1
 
-    def get_projects(self) -> Union[list['Project'], None]:
+    def get_projects(self) -> list['Project']:
         """Gets a users projects
 
         Returns:
@@ -155,16 +163,16 @@ class User:
             f'https://api.modrinth.com/v2/user/{self.id}/projects'
         )
 
+        if raw_response.status_code == 404:
+            raise NotFound("The requested user was not found")
+
         if not raw_response.ok:
-            print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}"
-            )
-            return None
+            raise InvalidRequest()
 
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
 
-    def follow_project(self, id: str) -> Union[int, None]:
+    def follow_project(self, id: str) -> int:
         """Follow a project
 
         Args:
@@ -180,15 +188,20 @@ class User:
             }
         )
 
-        if not raw_response.ok:
-            print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}"
+        if raw_response.status_code == 400:
+            raise NotFound(
+                "The requested project was not found or you are already following the specified project"
             )
-            return None
+
+        if raw_response.status_code == 401:
+            raise NoAuthorization("No authorization to follow a project")
+
+        if not raw_response.ok:
+            raise InvalidRequest()
 
         return 1
 
-    def unfollow_project(self, id: str) -> Union[int, None]:
+    def unfollow_project(self, id: str) -> int:
         """Unfollow a project
 
         Args:
@@ -204,16 +217,21 @@ class User:
             }
         )
 
-        if not raw_response.ok:
-            print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}"
+        if raw_response.status_code == 400:
+            raise NotFound(
+                "The requested project was not found or you are not following the specified project"
             )
-            return None
+
+        if raw_response.status_code == 401:
+            raise NoAuthorization("No authorization to unfollow a project")
+
+        if not raw_response.ok:
+            raise InvalidRequest()
 
         return 1
 
     @staticmethod
-    def from_auth(auth: str) -> Union['User', None]:
+    def from_auth(auth: str) -> 'User':
         """Gets a user from authorization token
 
         Returns:
@@ -226,17 +244,17 @@ class User:
             }
         )
 
+        if raw_response.status_code == 401:
+            raise InvalidParam("No authorization token given")
+
         if not raw_response.ok:
-            print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}"
-            )
-            return None
+            raise InvalidRequest()
 
         response = json.loads(raw_response.content)
         return User(response['username'], auth, ignore_warning=True)
 
     @staticmethod
-    def from_id(id_: str) -> Union['User', None]:
+    def from_id(id_: str) -> 'User':
         """Gets a user from ID
 
         Returns:
@@ -246,11 +264,11 @@ class User:
             f'https://api.modrinth.com/v2/user/{id_}'
         )
 
+        if raw_response.status_code == 404:
+            raise NotFound("The requested user was not found")
+
         if not raw_response.ok:
-            print(
-                f"Invalid Request: {json.loads(raw_response.content)['description']}"
-            )
-            return None
+            raise InvalidRequest()
 
         response = json.loads(raw_response.content)
         return User(response['username'], ignore_warning=True)
@@ -268,6 +286,9 @@ class User:
                 'ids': json.dumps(ids)
             }
         )
+
+        if not raw_response.ok:
+            raise InvalidRequest()
 
         response = json.loads(raw_response.content)
         return [User(user['username']) for user in response]

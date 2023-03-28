@@ -4,6 +4,7 @@ The main Modrinth class used for anything modrinth related
 
 from typing import Union
 import json
+from pyrinth.exceptions import InvalidRequest, NotFound
 import requests as r
 from pyrinth.projects import Project
 from pyrinth.users import User
@@ -18,7 +19,7 @@ class Modrinth:
         raise Exception("This class cannot be initalized!")
 
     @staticmethod
-    def get_project(id_: str, auth: str = '') -> Union['Project', None]:
+    def get_project(id_: str, auth: str = '') -> 'Project':
         """Gets a project based on an ID
 
         Returns:
@@ -31,9 +32,12 @@ class Modrinth:
                 'authorization': auth
             }
         )
+        if raw_response.status_code == 404:
+            raise NotFound(
+                "The requested project was not found or no authorization to see this project"
+            )
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content!r}")
-            return None
+            raise InvalidRequest()
         response = json.loads(raw_response.content)
         return Project(response)
 
@@ -47,7 +51,10 @@ class Modrinth:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/project/{project_id}/check'
         )
-
+        if raw_response.status_code == 404:
+            raise NotFound("The requested project was not found")
+        if not raw_response.ok:
+            raise InvalidRequest()
         response = json.loads(raw_response.content)
         return bool(response['id'])
 
@@ -64,11 +71,13 @@ class Modrinth:
                 'ids': json.dumps(ids)
             }
         )
+        if not raw_response.ok:
+            raise InvalidRequest()
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
 
     @staticmethod
-    def get_version(id_: str) -> Union['Project.Version', None]:
+    def get_version(id_: str) -> 'Project.Version':
         """Gets a version based on an ID
 
         Returns:
@@ -78,14 +87,17 @@ class Modrinth:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/version/{id_}'
         )
+        if raw_response.status_code == 404:
+            raise NotFound(
+                "The requested version was not found or no authorization to see this version"
+            )
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content!r}")
-            return None
+            raise InvalidRequest()
         response = json.loads(raw_response.content)
         return Project.Version(response)
 
     @staticmethod
-    def get_random_projects(count: int = 1) -> Union[list['Project'], None]:
+    def get_random_projects(count: int = 1) -> list['Project']:
         """Gets an amount of random projects
 
         Args:
@@ -101,13 +113,12 @@ class Modrinth:
             }
         )
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content!r}")
-            return None
+            raise InvalidRequest()
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
 
     @staticmethod
-    def get_user(id_: str) -> Union['User', None]:
+    def get_user(id_: str) -> 'User':
         """Gets a user from id
 
         Returns:
@@ -117,7 +128,7 @@ class Modrinth:
         return User.from_id(id_)
 
     @staticmethod
-    def get_user_from_auth(auth: str) -> Union['User', None]:
+    def get_user_from_auth(auth: str) -> 'User':
         """Gets a user from authorization token
 
         Returns:
@@ -127,7 +138,7 @@ class Modrinth:
         return User.from_auth(auth)
 
     @staticmethod
-    def search_projects(query: str = '', facets: list[list[str]] = [], index: str = "relevance", offset: int = 0, limit: int = 10, filters: list[str] = []) -> Union[list['Modrinth.SearchResult'], None]:
+    def search_projects(query: str = '', facets: list[list[str]] = [], index: str = "relevance", offset: int = 0, limit: int = 10, filters: list[str] = []) -> list['SearchResult']:
         """Searches for projects using 6 arguments
 
         Returns:
@@ -151,8 +162,7 @@ class Modrinth:
             params=params
         )
         if not raw_response.ok:
-            print(f"Invalid Request: {raw_response.content!r}")
-            return None
+            raise InvalidRequest()
         response = json.loads(raw_response.content)
         return [Modrinth.SearchResult(project) for project in response['hits']]
 
