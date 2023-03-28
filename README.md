@@ -2,11 +2,11 @@
 
 <div id="user-content-toc">
   <ul>
-    <summary><h1 style="display: inline-block;">Pyrinth</h1></summary>
+    <summary><h1>Pyrinth</h1></summary>
   </ul>
 </div>
 
-  <p align="center">
+  <p>
     Interacts with the Modrinth API
     <br />
     <a href="https://github.com/RevolvingMadness/Pyrinth"><strong>Explore the docs »</strong></a>
