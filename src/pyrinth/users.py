@@ -2,10 +2,10 @@
 Used for users
 """
 
-from typing import Union
 import json
-from pyrinth.exceptions import InvalidParam, InvalidRequest, NoAuthorization, NotFound
+from typing import Optional
 import requests as r
+from pyrinth.exceptions import InvalidParam, InvalidRequest, NoAuthorization, NotFound
 from pyrinth.projects import Project
 
 
@@ -24,14 +24,16 @@ class User:
                 'https://api.modrinth.com/v2/user',
                 headers={
                     'authorization': self.auth
-                }
+                },
+                timeout=60
             )
             if not self.raw_response.ok:
-                raise Exception("Invalid auth token")
+                raise InvalidParam("Invalid auth token")
 
         if self.auth == '':
             self.raw_response = r.get(
-                f'https://api.modrinth.com/v2/user/{username}'
+                f'https://api.modrinth.com/v2/user/{username}',
+                timeout=60
             )
             if not ignore_warning:
                 print('[WARNING] Some functions won\'t work without an auth key')
@@ -53,6 +55,11 @@ class User:
         return f'User: {self.name}'
 
     def get_date_created(self):
+        """Gets the date of when the user was created
+
+        Returns:
+            datetime: The time of when the user was created
+        """
         from pyrinth.util import format_time
         return format_time(self.created)
 
@@ -67,7 +74,8 @@ class User:
             f'https://api.modrinth.com/v2/user/{self.username}/follows',
             headers={
                 'authorization': self.auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 401:
@@ -98,7 +106,8 @@ class User:
             f'https://api.modrinth.com/v2/user/{self.username}/notifications',
             headers={
                 'authorization': self.auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 401:
@@ -125,7 +134,7 @@ class User:
 
         return len(projs)
 
-    def create_project(self, project_model, icon: str = '') -> int:
+    def create_project(self, project_model, icon: Optional[str] = None) -> int:
         """Creates a project
 
         Args:
@@ -138,11 +147,13 @@ class User:
         raw_response = r.post(
             'https://api.modrinth.com/v2/project',
             files={
-                "data": project_model.to_bytes()
+                "data": project_model.to_bytes(),
+                "icon": open(icon, "rb")
             },
             headers={
                 'authorization': self.auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 401:
@@ -160,7 +171,8 @@ class User:
             list[Project]: The users projects
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/user/{self.id}/projects'
+            f'https://api.modrinth.com/v2/user/{self.id}/projects',
+            timeout=60
         )
 
         if raw_response.status_code == 404:
@@ -172,7 +184,7 @@ class User:
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
 
-    def follow_project(self, id: str) -> int:
+    def follow_project(self, id_: str) -> int:
         """Follow a project
 
         Args:
@@ -182,10 +194,11 @@ class User:
             int: If the project follow was successful
         """
         raw_response = r.post(
-            f'https://api.modrinth.com/v2/project/{id}/follow',
+            f'https://api.modrinth.com/v2/project/{id_}/follow',
             headers={
                 'authorization': self.auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 400:
@@ -201,7 +214,7 @@ class User:
 
         return 1
 
-    def unfollow_project(self, id: str) -> int:
+    def unfollow_project(self, id_: str) -> int:
         """Unfollow a project
 
         Args:
@@ -211,10 +224,11 @@ class User:
             int: If the project unfollow was successful
         """
         raw_response = r.delete(
-            f'https://api.modrinth.com/v2/project/{id}/follow',
+            f'https://api.modrinth.com/v2/project/{id_}/follow',
             headers={
                 'authorization': self.auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 400:
@@ -238,10 +252,11 @@ class User:
             User: The user that was found using the authorization token
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/user',
+            'https://api.modrinth.com/v2/user',
             headers={
                 'authorization': auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 401:
@@ -261,7 +276,8 @@ class User:
             User: The user that was found using the ID
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/user/{id_}'
+            f'https://api.modrinth.com/v2/user/{id_}',
+            timeout=60
         )
 
         if raw_response.status_code == 404:
@@ -284,7 +300,8 @@ class User:
             'https://api.modrinth.com/v2/users',
             params={
                 'ids': json.dumps(ids)
-            }
+            },
+            timeout=60
         )
 
         if not raw_response.ok:

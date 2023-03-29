@@ -2,10 +2,9 @@
 The main Modrinth class used for anything modrinth related
 """
 
-from typing import Union
 import json
-from pyrinth.exceptions import InvalidRequest, NotFound
 import requests as r
+from pyrinth.exceptions import InvalidRequest, NotFound
 from pyrinth.projects import Project
 from pyrinth.users import User
 
@@ -14,9 +13,6 @@ class Modrinth:
     """
     The main Modrinth class used for anything modrinth related
     """
-
-    def __init__(self) -> None:
-        raise Exception("This class cannot be initalized!")
 
     @staticmethod
     def get_project(id_: str, auth: str = '') -> 'Project':
@@ -30,7 +26,8 @@ class Modrinth:
             f'https://api.modrinth.com/v2/project/{id_}',
             headers={
                 'authorization': auth
-            }
+            },
+            timeout=60
         )
         if raw_response.status_code == 404:
             raise NotFound(
@@ -49,7 +46,8 @@ class Modrinth:
             bool: If the project exists
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/project/{project_id}/check'
+            f'https://api.modrinth.com/v2/project/{project_id}/check',
+            timeout=60
         )
         if raw_response.status_code == 404:
             raise NotFound("The requested project was not found")
@@ -69,7 +67,8 @@ class Modrinth:
             'https://api.modrinth.com/v2/projects',
             params={
                 'ids': json.dumps(ids)
-            }
+            },
+            timeout=60
         )
         if not raw_response.ok:
             raise InvalidRequest()
@@ -85,7 +84,8 @@ class Modrinth:
             None: If no version was found
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/version/{id_}'
+            f'https://api.modrinth.com/v2/version/{id_}',
+            timeout=60
         )
         if raw_response.status_code == 404:
             raise NotFound(
@@ -110,7 +110,8 @@ class Modrinth:
             'https://api.modrinth.com/v2/projects_random',
             params={
                 'count': count
-            }
+            },
+            timeout=60
         )
         if not raw_response.ok:
             raise InvalidRequest()
@@ -138,7 +139,11 @@ class Modrinth:
         return User.from_auth(auth)
 
     @staticmethod
-    def search_projects(query: str = '', facets: list[list[str]] = [], index: str = "relevance", offset: int = 0, limit: int = 10, filters: list[str] = []) -> list['SearchResult']:
+    def search_projects(
+        query: str = '', facets: list[list[str]] = None,
+        index: str = "relevance", offset: int = 0,
+        limit: int = 10, filters: list[str] = None
+    ) -> list['SearchResult']:
         """Searches for projects using 6 arguments
 
         Returns:
@@ -147,7 +152,7 @@ class Modrinth:
         params = {}
         if query != '':
             params.update({'query': query})
-        if facets != []:
+        if facets:
             params.update({'facets': json.dumps(facets)})
         if index != 'relevance':
             params.update({'index': index})
@@ -155,11 +160,12 @@ class Modrinth:
             params.update({'offset': str(offset)})
         if limit != 10:
             params.update({'limit': str(limit)})
-        if filters != []:
+        if filters:
             params.update({'filters': json.dumps(filters)})
         raw_response = r.get(
             'https://api.modrinth.com/v2/search',
-            params=params
+            params=params,
+            timeout=60
         )
         if not raw_response.ok:
             raise InvalidRequest()
@@ -187,7 +193,8 @@ class Modrinth:
 
         def __init__(self) -> None:
             raw_response = r.get(
-                'https://api.modrinth.com/v2/statistics'
+                'https://api.modrinth.com/v2/statistics',
+                timeout=60
             )
             response = json.loads(raw_response.content)
             self.authors = response['authors']

@@ -103,7 +103,8 @@ class Project:
             params=json_to_query_params(filters),
             headers={
                 'authorization': auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 404:
@@ -179,7 +180,8 @@ class Project:
             None: The version was not found
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/version/{id_}'
+            f'https://api.modrinth.com/v2/version/{id_}',
+            timeout=60
         )
 
         if raw_response.status_code == 404:
@@ -214,11 +216,12 @@ class Project:
             files.update({remove_file_path(file): open(file, "rb").read()})
 
         raw_response = r.post(
-            f'https://api.modrinth.com/v2/version',
+            'https://api.modrinth.com/v2/version',
             headers={
                 "authorization": auth
             },
-            files=files
+            files=files,
+            timeout=60
         )
 
         if raw_response.status_code == 401:
@@ -241,16 +244,14 @@ class Project:
         """
         raw_response = r.patch(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/icon',
-
             params={
                 "ext": file_path.split(".")[-1]
             },
-
             headers={
                 "authorization": auth
             },
-
-            data=open(file_path, "rb")
+            data=open(file_path, "rb"),
+            timeout=60
         )
 
         if raw_response.status_code == 400:
@@ -274,7 +275,8 @@ class Project:
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/icon',
             headers={
                 "authorization": auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 400:
@@ -304,7 +306,8 @@ class Project:
                 "authorization": auth
             },
             params=image.to_json(),
-            data=open(image.file_path, "rb")
+            data=open(image.file_path, "rb"),
+            timeout=60
         )
 
         if raw_response.status_code == 401:
@@ -349,7 +352,8 @@ class Project:
             params=modified_json,
             headers={
                 'authorization': auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 401:
@@ -380,7 +384,7 @@ class Project:
             int: If the gallery image deletion was successful
         """
         if '-raw' in url:
-            raise Exception(
+            raise InvalidParam(
                 "Please use cdn.modrinth.com instead of cdn-raw.modrinth.com"
             )
 
@@ -391,7 +395,8 @@ class Project:
             },
             params={
                 "url": url
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 400:
@@ -471,7 +476,7 @@ class Project:
         modified_json = remove_null_values(modified_json)
 
         if not modified_json:
-            raise Exception("Please specify at least 1 optional argument.")
+            raise InvalidParam("Please specify at least 1 optional argument.")
 
         raw_response = r.patch(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}',
@@ -479,7 +484,8 @@ class Project:
             headers={
                 'Content-Type': 'application/json',
                 'authorization': auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 401:
@@ -508,7 +514,8 @@ class Project:
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}',
             headers={
                 'authorization': auth
-            }
+            },
+            timeout=60
         )
 
         if raw_response.status_code == 400:
@@ -529,7 +536,8 @@ class Project:
             list[Project]: The projects dependencies
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/project/{self.project_model.slug}/dependencies'
+            f'https://api.modrinth.com/v2/project/{self.project_model.slug}/dependencies',
+            timeout=60
         )
 
         if raw_response.status_code == 404:
