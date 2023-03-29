@@ -24,8 +24,13 @@ class Project:
     def __repr__(self) -> str:
         return f"Project: {self.project_model.title}"
 
+    def get_auth(self, auth: Optional[str]) -> str:
+        if auth:
+            return auth
+        return self.project_model.auth
+
     @staticmethod
-    def get(id_: str, auth: str = '') -> 'Project':
+    def get(id_: str, auth=None) -> 'Project':
         """Alternative method for Modrinth.get_project(id_, auth)"""
         from pyrinth.modrinth import Modrinth
         return Modrinth.get_project(id_, auth)
@@ -35,7 +40,7 @@ class Project:
         game_versions: Optional[list[str]] = None,
         featured: Optional[bool] = None,
         types: Optional[list[str]] = None,
-        auth: str = ''
+        auth=None
     ) -> 'Project.Version':
         """Gets the latest project version
 
@@ -95,7 +100,7 @@ class Project:
         game_versions: Optional[list[str]] = None,
         featured: Optional[bool] = None,
         types: Optional[list[str]] = None,
-        auth: str = ''
+        auth=None
     ) -> list['Project.Version']:
         """Gets project versions based on filters
 
@@ -114,7 +119,7 @@ class Project:
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/version',
             params=json_to_query_params(filters),
             headers={
-                'authorization': auth
+                'authorization': self.get_auth(auth)
             },
             timeout=60
         )
@@ -146,7 +151,7 @@ class Project:
         game_versions: Optional[list[str]] = None,
         featured: Optional[bool] = None,
         types: Optional[list[str]] = None,
-        auth: str = ''
+        auth=None
     ) -> 'Project.Version':
         """Gets the oldest project version
 
@@ -207,7 +212,7 @@ class Project:
         response = json.loads(raw_response.content)
         return Project.Version(response)
 
-    def create_version(self, auth: str, version_model) -> int:
+    def create_version(self, version_model, auth=None) -> int:
         """Creates a new version on the project
 
         Args:
@@ -230,7 +235,7 @@ class Project:
         raw_response = r.post(
             'https://api.modrinth.com/v2/version',
             headers={
-                "authorization": auth
+                "authorization": self.get_auth(auth)
             },
             files=files,
             timeout=60
@@ -244,7 +249,7 @@ class Project:
 
         return True
 
-    def change_icon(self, file_path: str, auth: str) -> int:
+    def change_icon(self, file_path: str, auth=None) -> int:
         """Changes the projects icon
 
         Args:
@@ -260,7 +265,7 @@ class Project:
                 "ext": file_path.split(".")[-1]
             },
             headers={
-                "authorization": auth
+                "authorization": self.get_auth(auth)
             },
             data=open(file_path, "rb"),
             timeout=60
@@ -274,7 +279,7 @@ class Project:
 
         return True
 
-    def delete_icon(self, auth: str) -> int:
+    def delete_icon(self, auth=None) -> int:
         """Deletes the projects icon
 
         Args:
@@ -286,7 +291,7 @@ class Project:
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/icon',
             headers={
-                "authorization": auth
+                "authorization": self.get_auth(auth)
             },
             timeout=60
         )
@@ -302,7 +307,7 @@ class Project:
 
         return True
 
-    def add_gallery_image(self, auth: str, image: 'Project.GalleryImage') -> int:
+    def add_gallery_image(self, image: 'Project.GalleryImage', auth=None) -> int:
         """Adds a gallery image to the project
 
         Args:
@@ -315,7 +320,7 @@ class Project:
         raw_response = r.post(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/gallery',
             headers={
-                "authorization": auth
+                "authorization": self.get_auth(auth)
             },
             params=image.to_json(),
             data=open(image.file_path, "rb"),
@@ -336,9 +341,9 @@ class Project:
         return True
 
     def modify_gallery_image(
-        self, auth: str, url: str, featured: Optional[bool] = None,
+        self, url: str, featured: Optional[bool] = None,
         title: Optional[str] = None, description: Optional[str] = None,
-        ordering: Optional[int] = None
+        ordering: Optional[int] = None, auth=None
     ) -> int:
         """Modifies a project gallery image
 
@@ -367,7 +372,7 @@ class Project:
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/gallery',
             params=modified_json,
             headers={
-                'authorization': auth
+                'authorization': self.get_auth(auth)
             },
             timeout=60
         )
@@ -386,7 +391,7 @@ class Project:
 
         return True
 
-    def delete_gallery_image(self, url: str, auth: str) -> int:
+    def delete_gallery_image(self, url: str, auth=None) -> int:
         """Deletes a projects gallery image
 
         Args:
@@ -407,7 +412,7 @@ class Project:
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}/gallery',
             headers={
-                "authorization": auth
+                "authorization": self.get_auth(auth)
             },
             params={
                 "url": url
@@ -429,7 +434,7 @@ class Project:
         return True
 
     def modify(
-        self, auth: str, slug: Optional[str] = None, title: Optional[str] = None,
+        self, slug: Optional[str] = None, title: Optional[str] = None,
         description: Optional[str] = None, categories: Optional[list[str]] = None,
         client_side: Optional[str] = None, server_side: Optional[str] = None,
         body: Optional[str] = None, additional_categories: Optional[list[str]] = None,
@@ -437,7 +442,8 @@ class Project:
         wiki_url: Optional[str] = None, discord_url: Optional[str] = None,
         license_id: Optional[str] = None, license_url: Optional[str] = None,
         status: Optional[str] = None, requested_status: Optional[str] = None,
-        moderation_message: Optional[str] = None, moderation_message_body: Optional[str] = None
+        moderation_message: Optional[str] = None, moderation_message_body: Optional[str] = None,
+        auth=None
     ) -> int:
         """Modifies a project
 
@@ -500,7 +506,7 @@ class Project:
             data=json.dumps(modified_json),
             headers={
                 'Content-Type': 'application/json',
-                'authorization': auth
+                'authorization': self.get_auth(auth)
             },
             timeout=60
         )
@@ -518,7 +524,7 @@ class Project:
 
         return True
 
-    def delete(self, auth: str) -> int:
+    def delete(self, auth=None) -> int:
         """Deletes the project
 
         Args:
@@ -530,7 +536,7 @@ class Project:
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}',
             headers={
-                'authorization': auth
+                'authorization': self.get_auth(auth)
             },
             timeout=60
         )

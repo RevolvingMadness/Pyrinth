@@ -16,7 +16,7 @@ class Modrinth:
     """
 
     @staticmethod
-    def get_project(id_: str, auth: str = '') -> 'Project':
+    def get_project(id_: str, auth=None) -> 'Project':
         """Gets a project based on an ID
 
         Returns:
@@ -37,6 +37,7 @@ class Modrinth:
         if not raw_response.ok:
             raise InvalidRequestError()
         response = json.loads(raw_response.content)
+        response.update({"authorization": auth})
         return Project(response)
 
     @staticmethod
@@ -120,7 +121,7 @@ class Modrinth:
         return [Project(project) for project in response]
 
     @staticmethod
-    def get_user(id_: str, auth: str = '') -> 'User':
+    def get_user(id_: str, auth=None) -> 'User':
         """Gets a user
 
         Returns:

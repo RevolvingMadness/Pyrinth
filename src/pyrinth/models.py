@@ -19,7 +19,8 @@ class ProjectModel:
         license_: 'Project.License', project_type: str,
         additional_categories: Optional[list[str]] = None,
         issues_url: Optional[str] = None, source_url: Optional[str] = None,
-        wiki_url: Optional[str] = None, discord_url: Optional[str] = None
+        wiki_url: Optional[str] = None, discord_url: Optional[str] = None,
+        auth=None
     ) -> None:
         self.slug = slug
         self.title = title
@@ -36,6 +37,7 @@ class ProjectModel:
         self.wiki_url = wiki_url
         self.discord_url = discord_url
         self.donation_urls = None
+        self.auth = auth
         self.id = None
         self.downloads = None
 
@@ -50,7 +52,7 @@ class ProjectModel:
             json_['body'], license_, json_['project_type'],
             json_['additional_categories'], json_[
                 'issues_url'], json_['source_url'],
-            json_['wiki_url'], json_['discord_url']
+            json_['wiki_url'], json_['discord_url'], json_['authorization']
         )
         result.id = json_['id']
         result.downloads = json_['downloads']
@@ -77,6 +79,7 @@ class ProjectModel:
             'donation_urls': self.donation_urls,
             'license_url': self.license['url'],
             'id': self.id,
+            'authorization': self.auth,
             'is_draft': True,
             'initial_versions': []
         }
@@ -252,7 +255,7 @@ class UserModel:
         created, role: str, name: Optional[str] = None,
         email: Optional[str] = None, bio: Optional[str] = None,
         payout_data=None, github_id: Optional[str] = None,
-        badges: Optional[int] = None, auth: str = ''
+        badges: Optional[int] = None, auth=None
     ) -> None:
         self.username = username
         self.id = id_

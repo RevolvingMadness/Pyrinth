@@ -23,6 +23,9 @@ class User:
     def __repr__(self) -> str:
         return f'User: {self.user_model.username}'
 
+    def get_auth(self) -> Optional[str]:
+        return self.user_model.auth
+
     @staticmethod
     def from_json(json_: dict) -> 'User':
         """Utility Function"""
@@ -49,7 +52,7 @@ class User:
         return result
 
     @staticmethod
-    def get(id_: str, auth: str = '') -> 'User':
+    def get(id_: str, auth=None) -> 'User':
         """Alternative method for Modrinth.get_user(id_, auth)"""
         from pyrinth.modrinth import Modrinth
         return Modrinth.get_user(id_, auth)
