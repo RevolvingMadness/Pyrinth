@@ -1,19 +1,19 @@
-"""
-Used for users
-"""
+"""Used for users."""
 
+from datetime import datetime
 import json
 from typing import Optional
 import requests as r
-from pyrinth.exceptions import InvalidParamError, InvalidRequestError, NoAuthorization, NotFoundError
+from pyrinth.exceptions import (
+    InvalidParamError, InvalidRequestError,
+    NoAuthorization, NotFoundError
+)
 from pyrinth.projects import Project
 from pyrinth.models import UserModel
 
 
 class User:
-    """
-    Contains information about users
-    """
+    """Contains information about users."""
 
     def __init__(self, user_model: 'UserModel') -> None:
         if isinstance(user_model, dict):
@@ -24,17 +24,18 @@ class User:
         return f'User: {self.user_model.username}'
 
     def get_auth(self) -> Optional[str]:
+        """Gets the users authorization token."""
         return self.user_model.auth
 
     @staticmethod
     def from_json(json_: dict) -> 'User':
-        """Utility Function"""
+        """Utility Function."""
         result = User(UserModel.from_json(json_))
 
         return result
 
     def to_json(self) -> dict:
-        """Utility Function"""
+        """Utility Function."""
         result = {
             'id': self.user_model.id,
             'github_id': self.user_model.github_id,
@@ -53,26 +54,27 @@ class User:
 
     @staticmethod
     def get(id_: str, auth=None) -> 'User':
-        """Alternative method for Modrinth.get_user(id_, auth)"""
+        """Alternative method for Modrinth.get_user(id_, auth)."""
         from pyrinth.modrinth import Modrinth
         return Modrinth.get_user(id_, auth)
 
-    def get_date_created(self):
-        """Gets the date of when the user was created
+    def get_date_created(self) -> datetime:
+        """
+        Gets the date of when the user was created.
 
         Returns:
             datetime: The time of when the user was created
         """
         from pyrinth.util import format_time
-        return format_time(self.created)
+        return format_time(self.user_model.created)
 
     def get_followed_projects(self) -> list['Project']:
-        """Gets a users followed projects
+        """
+        Gets a users followed projects.
 
         Returns:
             list[Project]: The users followed projects
         """
-
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user/{self.user_model.username}/follows',
             headers={
@@ -100,7 +102,8 @@ class User:
         return followed_projects
 
     def get_notifications(self) -> list['User.Notification']:
-        """Gets a users notifications
+        """
+        Gets a users notifications.
 
         Returns:
             list[User.Notification]: The users notifications
@@ -128,7 +131,8 @@ class User:
         return [User.Notification(notification) for notification in response]
 
     def get_amount_of_projects(self) -> int:
-        """Gets the amount of projects a user has
+        """
+        Gets the amount of projects a user has.
 
         Returns:
             list[Project]: The users projects
@@ -138,7 +142,8 @@ class User:
         return len(projs)
 
     def create_project(self, project_model, icon: Optional[str] = None) -> int:
-        """Creates a project
+        """
+        Creates a project.
 
         Args:
             project_model (ProjectModel): The model of the project to create
@@ -169,7 +174,8 @@ class User:
         return True
 
     def get_projects(self) -> list['Project']:
-        """Gets a users projects
+        """
+        Gets a users projects.
 
         Returns:
             list[Project]: The users projects
@@ -189,7 +195,8 @@ class User:
         return [Project(project) for project in response]
 
     def follow_project(self, id_: str) -> int:
-        """Follow a project
+        """
+        Follow a project.
 
         Args:
             id (str): The ID of the project to follow
@@ -219,7 +226,8 @@ class User:
         return True
 
     def unfollow_project(self, id_: str) -> int:
-        """Unfollow a project
+        """
+        Unfollow a project.
 
         Args:
             id (str): The ID of the project to unfollow
@@ -250,7 +258,8 @@ class User:
 
     @staticmethod
     def from_auth(auth: str) -> 'User':
-        """Gets a user from authorization token
+        """
+        Gets a user from authorization token.
 
         Returns:
             User: The user that was found using the authorization token
@@ -275,7 +284,8 @@ class User:
 
     @staticmethod
     def from_id(id_: str) -> 'User':
-        """Gets a user from ID
+        """
+        Gets a user from ID.
 
         Returns:
             User: The user that was found using the ID
@@ -295,7 +305,8 @@ class User:
 
     @staticmethod
     def from_ids(ids: list[str]) -> list['User']:
-        """Gets a users from IDs
+        """
+        Gets a users from IDs.
 
         Returns:
             User: The users that were found using the IDs
@@ -315,8 +326,7 @@ class User:
         return [User.get(user['username']) for user in response]
 
     class Notification:
-        """Used for the users notifications
-        """
+        """Used for the users notifications."""
 
         def __init__(self, notification_json: dict) -> None:
             self.id = notification_json['id']
