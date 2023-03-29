@@ -163,7 +163,7 @@ class User:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     def get_projects(self) -> list['Project']:
         """Gets a users projects
@@ -213,7 +213,7 @@ class User:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     def unfollow_project(self, id_: str) -> int:
         """Unfollow a project
@@ -243,7 +243,7 @@ class User:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     @staticmethod
     def from_auth(auth: str) -> 'User':

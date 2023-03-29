@@ -242,7 +242,7 @@ class Project:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     def change_icon(self, file_path: str, auth: str) -> int:
         """Changes the projects icon
@@ -272,7 +272,7 @@ class Project:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     def delete_icon(self, auth: str) -> int:
         """Deletes the projects icon
@@ -300,7 +300,7 @@ class Project:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     def add_gallery_image(self, auth: str, image: 'Project.GalleryImage') -> int:
         """Adds a gallery image to the project
@@ -333,7 +333,7 @@ class Project:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     def modify_gallery_image(
         self, auth: str, url: str, featured: Optional[bool] = None,
@@ -384,7 +384,7 @@ class Project:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     def delete_gallery_image(self, url: str, auth: str) -> int:
         """Deletes a projects gallery image
@@ -426,7 +426,7 @@ class Project:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     def modify(
         self, auth: str, slug: Optional[str] = None, title: Optional[str] = None,
@@ -516,7 +516,7 @@ class Project:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     def delete(self, auth: str) -> int:
         """Deletes the project
@@ -544,7 +544,7 @@ class Project:
         if not raw_response.ok:
             raise InvalidRequestError()
 
-        return 1
+        return True
 
     def get_dependencies(self) -> list['Project']:
         """Gets a projects dependencies
