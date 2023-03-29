@@ -4,7 +4,7 @@ The main Modrinth class used for anything modrinth related
 
 import json
 import requests as r
-from pyrinth.exceptions import InvalidRequest, NotFound
+from pyrinth.exceptions import InvalidRequestError, NotFoundError
 from pyrinth.projects import Project
 from pyrinth.users import User
 
@@ -30,11 +30,11 @@ class Modrinth:
             timeout=60
         )
         if raw_response.status_code == 404:
-            raise NotFound(
+            raise NotFoundError(
                 "The requested project was not found or no authorization to see this project"
             )
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
         response = json.loads(raw_response.content)
         return Project(response)
 
@@ -50,9 +50,9 @@ class Modrinth:
             timeout=60
         )
         if raw_response.status_code == 404:
-            raise NotFound("The requested project was not found")
+            raise NotFoundError("The requested project was not found")
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
         response = json.loads(raw_response.content)
         return bool(response['id'])
 
@@ -71,7 +71,7 @@ class Modrinth:
             timeout=60
         )
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
 
@@ -88,11 +88,11 @@ class Modrinth:
             timeout=60
         )
         if raw_response.status_code == 404:
-            raise NotFound(
+            raise NotFoundError(
                 "The requested version was not found or no authorization to see this version"
             )
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
         response = json.loads(raw_response.content)
         return Project.Version(response)
 
@@ -114,19 +114,31 @@ class Modrinth:
             timeout=60
         )
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
 
     @staticmethod
-    def get_user(id_: str) -> 'User':
-        """Gets a user from id
+    def get_user(id_: str, auth: str = '') -> 'User':
+        """Gets a user
 
         Returns:
-            User: The user that was found using the id
-            None: No user was found
+            User: The user that was found using the ID
         """
-        return User.from_id(id_)
+        raw_response = r.get(
+            f'https://api.modrinth.com/v2/user/{id_}',
+            timeout=60
+        )
+
+        if raw_response.status_code == 404:
+            raise NotFoundError("The requested user was not found")
+
+        if not raw_response.ok:
+            raise InvalidRequestError()
+
+        response = raw_response.json()
+        response.update({"authorization": auth})
+        return User.from_json(response)
 
     @staticmethod
     def get_user_from_auth(auth: str) -> 'User':
@@ -168,7 +180,7 @@ class Modrinth:
             timeout=60
         )
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
         response = json.loads(raw_response.content)
         return [Modrinth.SearchResult(project) for project in response['hits']]
 

@@ -5,9 +5,8 @@ User projects
 from datetime import datetime
 from typing import Optional, Union
 import json
-from pyrinth.exceptions import InvalidInput, InvalidParam, InvalidRequest, NoAuthorization, NotFound
 import requests as r
-
+from pyrinth.exceptions import InvalidParamError, InvalidRequestError, NoAuthorization, NotFoundError
 from pyrinth.util import remove_null_values
 
 
@@ -24,6 +23,12 @@ class Project:
 
     def __repr__(self) -> str:
         return f"Project: {self.project_model.title}"
+
+    @staticmethod
+    def get(id_: str, auth: str = '') -> 'Project':
+        """Alternative method for Modrinth.get_project(id_, auth)"""
+        from pyrinth.modrinth import Modrinth
+        return Modrinth.get_project(id_, auth)
 
     def get_latest_version(
         self, loaders: Optional[list[str]] = None,
@@ -44,24 +49,31 @@ class Project:
         return versions[0]
 
     def is_client_side(self) -> bool:
+        """Checks if this project is client side"""
         return (True if self.project_model.client_side == 'required' else False)
 
     def is_server_side(self) -> bool:
+        """Checks if this project is server side"""
         return (True if self.project_model.server_side == 'required' else False)
 
     def get_downloads(self) -> int:
+        """Gets the amount of downloads this project has"""
         return self.project_model.downloads
 
     def get_categories(self) -> list[str]:
+        """Gets this projects categories"""
         return self.project_model.categories
 
     def get_additional_categories(self) -> list[str]:
+        """Gets this projects additional categories"""
         return self.project_model.additional_categories
 
     def get_all_categories(self) -> list[str]:
+        """Gets this projects categories and additional categories"""
         return self.get_categories() + self.get_additional_categories()
 
     def get_license(self) -> 'Project.License':
+        """Gets this projects license"""
         return Project.License.from_json(self.project_model.license)
 
     def get_specific_version(self, semantic_version: str) -> Union['Project.Version', None]:
@@ -108,12 +120,12 @@ class Project:
         )
 
         if raw_response.status_code == 404:
-            raise NotFound(
+            raise NotFoundError(
                 "The requested project was not found or no authorization to see this project"
             )
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         response = json.loads(raw_response.content)
 
@@ -185,12 +197,12 @@ class Project:
         )
 
         if raw_response.status_code == 404:
-            raise NotFound(
+            raise NotFoundError(
                 "The requested project was not found or no authorization to see this project"
             )
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         response = json.loads(raw_response.content)
         return Project.Version(response)
@@ -228,7 +240,7 @@ class Project:
             raise NoAuthorization("No authorization to create this version")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
@@ -255,10 +267,10 @@ class Project:
         )
 
         if raw_response.status_code == 400:
-            raise InvalidInput("Invalid input for new icon")
+            raise InvalidParamError("Invalid input for new icon")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
@@ -280,13 +292,13 @@ class Project:
         )
 
         if raw_response.status_code == 400:
-            raise InvalidInput("Invalid input")
+            raise InvalidParamError("Invalid input")
 
         if raw_response.status_code == 401:
             raise NoAuthorization("No authorization to edit this project")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
@@ -314,16 +326,20 @@ class Project:
             raise NoAuthorization("No authorization to create a gallery image")
 
         if raw_response.status_code == 404:
-            raise NotFound(
+            raise NotFoundError(
                 "The requested project was not found or no authorization to see this project"
             )
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
-    def modify_gallery_image(self, auth: str, url: str, featured: Optional[bool] = None, title: Optional[str] = None, description: Optional[str] = None, ordering: Optional[int] = None) -> int:
+    def modify_gallery_image(
+        self, auth: str, url: str, featured: Optional[bool] = None,
+        title: Optional[str] = None, description: Optional[str] = None,
+        ordering: Optional[int] = None
+    ) -> int:
         """Modifies a project gallery image
 
         Args:
@@ -361,12 +377,12 @@ class Project:
                 "No authorization to edit this gallery image")
 
         if raw_response.status_code == 404:
-            raise NotFound(
+            raise NotFoundError(
                 "The requested project was not found or no authorization to see this project"
             )
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
@@ -384,7 +400,7 @@ class Project:
             int: If the gallery image deletion was successful
         """
         if '-raw' in url:
-            raise InvalidParam(
+            raise InvalidParamError(
                 "Please use cdn.modrinth.com instead of cdn-raw.modrinth.com"
             )
 
@@ -400,7 +416,7 @@ class Project:
         )
 
         if raw_response.status_code == 400:
-            raise InvalidParam("Invalid URL or project specified")
+            raise InvalidParamError("Invalid URL or project specified")
 
         if raw_response.status_code == 401:
             raise NoAuthorization(
@@ -408,7 +424,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
@@ -476,7 +492,8 @@ class Project:
         modified_json = remove_null_values(modified_json)
 
         if not modified_json:
-            raise InvalidParam("Please specify at least 1 optional argument.")
+            raise InvalidParamError(
+                "Please specify at least 1 optional argument.")
 
         raw_response = r.patch(
             f'https://api.modrinth.com/v2/project/{self.project_model.slug}',
@@ -492,12 +509,12 @@ class Project:
             raise NoAuthorization("No authorization to edit this project")
 
         if raw_response.status_code == 404:
-            raise NotFound(
+            raise NotFoundError(
                 "The requested project was not found or no authorization to see this project"
             )
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
@@ -519,13 +536,13 @@ class Project:
         )
 
         if raw_response.status_code == 400:
-            raise NotFound("The requested project was not found")
+            raise NotFoundError("The requested project was not found")
 
         if raw_response.status_code == 401:
             raise NoAuthorization("No authorization to delete this project")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
@@ -541,12 +558,12 @@ class Project:
         )
 
         if raw_response.status_code == 404:
-            raise NotFound(
+            raise NotFoundError(
                 "The requested project was not found or no authorization to see this project"
             )
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         response = json.loads(raw_response.content)
         return [Project(dependency) for dependency in response['projects']]
@@ -563,6 +580,7 @@ class Project:
             self.version_model = version_model
 
         def get_type(self):
+            """Gets the versions type (release / beta / alpha)"""
             return self.version_model.version_type
 
         def get_dependencies(self) -> list['Project.Dependency']:

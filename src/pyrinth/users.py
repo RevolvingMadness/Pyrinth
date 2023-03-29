@@ -3,9 +3,8 @@ Used for users
 """
 
 import json
-from typing import Optional
 import requests as r
-from pyrinth.exceptions import InvalidParam, InvalidRequest, NoAuthorization, NotFound
+from pyrinth.exceptions import InvalidParamError, InvalidRequestError, NoAuthorization, NotFoundError
 from pyrinth.projects import Project
 
 
@@ -14,45 +13,47 @@ class User:
     Contains information about users
     """
 
-    def __init__(
-        self, username: str, authorization: str = '',
-        ignore_warning: bool = False
-    ) -> None:
-        self.auth = authorization
-        if self.auth != '':
-            self.raw_response = r.get(
-                'https://api.modrinth.com/v2/user',
-                headers={
-                    'authorization': self.auth
-                },
-                timeout=60
-            )
-            if not self.raw_response.ok:
-                raise InvalidParam("Invalid auth token")
-
-        if self.auth == '':
-            self.raw_response = r.get(
-                f'https://api.modrinth.com/v2/user/{username}',
-                timeout=60
-            )
-            if not ignore_warning:
-                print('[WARNING] Some functions won\'t work without an auth key')
-
-        self.response = json.loads(self.raw_response.content)
-        self.username = self.response['username']
-        self.id = self.response['id']
-        self.github_id = self.response['github_id']
-        self.name = self.response['name']
-        self.email = self.response['email']
-        self.avatar_url = self.response['avatar_url']
-        self.bio = self.response['bio']
-        self.created = self.response['created']
-        self.role = self.response['role']
-        self.badges = self.response['badges']
-        self.payout_data = self.response['payout_data']
+    def __init__(self) -> None:
+        self.username: str = None
+        self.id: str = None
+        self.github_id: int = None
+        self.name: str = None
+        self.email: str = None
+        self.avatar_url: str = None
+        self.bio: str = None
+        self.created: str = None
+        self.role: str = None
+        self.badges: int = None
+        self.payout_data: dict = None
+        self.auth: str = None
 
     def __repr__(self) -> str:
-        return f'User: {self.name}'
+        return f'User: {self.username}'
+
+    @staticmethod
+    def from_json(json_: dict) -> 'User':
+        """Utility Function"""
+        result = User()
+        result.id = json_['id']
+        result.github_id = json_['github_id']
+        result.username = json_['username']
+        result.name = json_['name']
+        result.email = json_['email']
+        result.avatar_url = json_['avatar_url']
+        result.bio = json_['bio']
+        result.created = json_['created']
+        result.role = json_['role']
+        result.badges = json_['badges']
+        result.payout_data = json_['payout_data']
+        result.auth = json_['authorization']
+
+        return result
+
+    @staticmethod
+    def get(id_: str) -> 'User':
+        """Alternative method for Modrinth.get_user(id_)"""
+        from pyrinth.modrinth import Modrinth
+        return Modrinth.get_user(id_)
 
     def get_date_created(self):
         """Gets the date of when the user was created
@@ -84,10 +85,10 @@ class User:
             )
 
         if raw_response.status_code == 404:
-            raise NotFound("The requested user was not found")
+            raise NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         followed_projects = []
         projects = json.loads(raw_response.content)
@@ -116,10 +117,10 @@ class User:
             )
 
         if raw_response.status_code == 404:
-            raise NotFound("The requested user was not found")
+            raise NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         response = json.loads(raw_response.content)
         return [User.Notification(notification) for notification in response]
@@ -160,7 +161,7 @@ class User:
             raise NoAuthorization("No authorization to create a project")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
@@ -176,10 +177,10 @@ class User:
         )
 
         if raw_response.status_code == 404:
-            raise NotFound("The requested user was not found")
+            raise NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
@@ -202,7 +203,7 @@ class User:
         )
 
         if raw_response.status_code == 400:
-            raise NotFound(
+            raise NotFoundError(
                 "The requested project was not found or you are already following the specified project"
             )
 
@@ -210,7 +211,7 @@ class User:
             raise NoAuthorization("No authorization to follow a project")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
@@ -232,7 +233,7 @@ class User:
         )
 
         if raw_response.status_code == 400:
-            raise NotFound(
+            raise NotFoundError(
                 "The requested project was not found or you are not following the specified project"
             )
 
@@ -240,7 +241,7 @@ class User:
             raise NoAuthorization("No authorization to unfollow a project")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         return 1
 
@@ -260,13 +261,14 @@ class User:
         )
 
         if raw_response.status_code == 401:
-            raise InvalidParam("No authorization token given")
+            raise InvalidParamError("No authorization token given")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
-        response = json.loads(raw_response.content)
-        return User(response['username'], auth, ignore_warning=True)
+        response = raw_response.json()
+        response.update({"authorization": auth})
+        return User.from_json(response)
 
     @staticmethod
     def from_id(id_: str) -> 'User':
@@ -281,13 +283,12 @@ class User:
         )
 
         if raw_response.status_code == 404:
-            raise NotFound("The requested user was not found")
+            raise NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
-        response = json.loads(raw_response.content)
-        return User(response['username'], ignore_warning=True)
+        return User.from_json(raw_response.json())
 
     @staticmethod
     def from_ids(ids: list[str]) -> list['User']:
@@ -305,10 +306,10 @@ class User:
         )
 
         if not raw_response.ok:
-            raise InvalidRequest()
+            raise InvalidRequestError()
 
         response = json.loads(raw_response.content)
-        return [User(user['username']) for user in response]
+        return [User.get(user['username']) for user in response]
 
     class Notification:
         """Used for the users notifications
