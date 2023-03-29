@@ -3,7 +3,7 @@ User projects
 """
 
 from datetime import datetime
-from typing import Optional, Union
+from typing import Optional
 import json
 import requests as r
 from pyrinth.exceptions import InvalidParamError, InvalidRequestError, NoAuthorization, NotFoundError
@@ -76,7 +76,7 @@ class Project:
         """Gets this projects license"""
         return Project.License.from_json(self.project_model.license)
 
-    def get_specific_version(self, semantic_version: str) -> Union['Project.Version', None]:
+    def get_specific_version(self, semantic_version: str) -> Optional['Project.Version']:
         """Gets a specific project version based on the semantic version
 
         Returns:

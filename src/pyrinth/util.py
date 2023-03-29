@@ -1,4 +1,4 @@
-from dateutil import parser
+from dateutil.parser import parser
 
 
 def to_sentence_case(sentence):

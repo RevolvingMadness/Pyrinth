@@ -252,7 +252,7 @@ class UserModel:
         created, role: str, name: Optional[str] = None,
         email: Optional[str] = None, bio: Optional[str] = None,
         payout_data=None, github_id: Optional[str] = None,
-        badges: Optional[int] = None
+        badges: Optional[int] = None, auth: str = ''
     ) -> None:
         self.username = username
         self.id = id_
@@ -265,15 +265,16 @@ class UserModel:
         self.payout_data = payout_data
         self.github_id = github_id
         self.badges = badges
+        self.auth = auth
 
     @staticmethod
-    def from_json(json_: dict) -> 'VersionModel':
+    def from_json(json_: dict) -> 'UserModel':
         """Utility function"""
-        result = VersionModel(
+        result = UserModel(
             json_['username'], json_['id'], json_['avatar_url'],
             json_['created'], json_['role'], json_['name'],
             json_['email'], json_['bio'], json_['payout_data'],
-            json_['github_id'], json_['badges']
+            json_['github_id'], json_['badges'], json_['authorization']
         )
         return result
 
@@ -290,7 +291,8 @@ class UserModel:
             'bio': self.bio,
             'payout_data': self.payout_data,
             'github_id': self.github_id,
-            'badges': self.badges
+            'badges': self.badges,
+            'authorization': self.auth
         }
         result = remove_null_values(result)
         return result

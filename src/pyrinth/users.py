@@ -3,9 +3,11 @@ Used for users
 """
 
 import json
+from typing import Optional
 import requests as r
 from pyrinth.exceptions import InvalidParamError, InvalidRequestError, NoAuthorization, NotFoundError
 from pyrinth.projects import Project
+from pyrinth.models import UserModel
 
 
 class User:
@@ -13,47 +15,44 @@ class User:
     Contains information about users
     """
 
-    def __init__(self) -> None:
-        self.username: str = None
-        self.id: str = None
-        self.github_id: int = None
-        self.name: str = None
-        self.email: str = None
-        self.avatar_url: str = None
-        self.bio: str = None
-        self.created: str = None
-        self.role: str = None
-        self.badges: int = None
-        self.payout_data: dict = None
-        self.auth: str = None
+    def __init__(self, user_model: 'UserModel') -> None:
+        if isinstance(user_model, dict):
+            user_model = UserModel.from_json(user_model)
+        self.user_model = user_model
 
     def __repr__(self) -> str:
-        return f'User: {self.username}'
+        return f'User: {self.user_model.username}'
 
     @staticmethod
     def from_json(json_: dict) -> 'User':
         """Utility Function"""
-        result = User()
-        result.id = json_['id']
-        result.github_id = json_['github_id']
-        result.username = json_['username']
-        result.name = json_['name']
-        result.email = json_['email']
-        result.avatar_url = json_['avatar_url']
-        result.bio = json_['bio']
-        result.created = json_['created']
-        result.role = json_['role']
-        result.badges = json_['badges']
-        result.payout_data = json_['payout_data']
-        result.auth = json_['authorization']
+        result = User(UserModel.from_json(json_))
+
+        return result
+
+    def to_json(self) -> dict:
+        """Utility Function"""
+        result = {
+            'id': self.user_model.id,
+            'github_id': self.user_model.github_id,
+            'username': self.user_model.username,
+            'name': self.user_model.name,
+            'email': self.user_model.email,
+            'avatar_url': self.user_model.avatar_url,
+            'bio': self.user_model.bio,
+            'created': self.user_model.created,
+            'role': self.user_model.role,
+            'badges': self.user_model.badges,
+            'payout_data': self.user_model.payout_data
+        }
 
         return result
 
     @staticmethod
-    def get(id_: str) -> 'User':
-        """Alternative method for Modrinth.get_user(id_)"""
+    def get(id_: str, auth: str = '') -> 'User':
+        """Alternative method for Modrinth.get_user(id_, auth)"""
         from pyrinth.modrinth import Modrinth
-        return Modrinth.get_user(id_)
+        return Modrinth.get_user(id_, auth)
 
     def get_date_created(self):
         """Gets the date of when the user was created
@@ -72,9 +71,9 @@ class User:
         """
 
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/user/{self.username}/follows',
+            f'https://api.modrinth.com/v2/user/{self.user_model.username}/follows',
             headers={
-                'authorization': self.auth
+                'authorization': self.user_model.auth
             },
             timeout=60
         )
@@ -104,9 +103,9 @@ class User:
             list[User.Notification]: The users notifications
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/user/{self.username}/notifications',
+            f'https://api.modrinth.com/v2/user/{self.user_model.username}/notifications',
             headers={
-                'authorization': self.auth
+                'authorization': self.user_model.auth
             },
             timeout=60
         )
@@ -145,14 +144,15 @@ class User:
         Returns:
             int: If the project creation was successful
         """
+        files = {"data": project_model.to_bytes()}
+        if icon:
+            files.update({"icon": open(icon, "rb")})
+
         raw_response = r.post(
             'https://api.modrinth.com/v2/project',
-            files={
-                "data": project_model.to_bytes(),
-                "icon": open(icon, "rb")
-            },
+            files=files,
             headers={
-                'authorization': self.auth
+                'authorization': self.user_model.auth
             },
             timeout=60
         )
@@ -172,7 +172,7 @@ class User:
             list[Project]: The users projects
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/user/{self.id}/projects',
+            f'https://api.modrinth.com/v2/user/{self.user_model.id}/projects',
             timeout=60
         )
 
@@ -197,7 +197,7 @@ class User:
         raw_response = r.post(
             f'https://api.modrinth.com/v2/project/{id_}/follow',
             headers={
-                'authorization': self.auth
+                'authorization': self.user_model.auth
             },
             timeout=60
         )
@@ -227,7 +227,7 @@ class User:
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{id_}/follow',
             headers={
-                'authorization': self.auth
+                'authorization': self.user_model.auth
             },
             timeout=60
         )

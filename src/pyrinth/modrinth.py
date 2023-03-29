@@ -7,6 +7,7 @@ import requests as r
 from pyrinth.exceptions import InvalidRequestError, NotFoundError
 from pyrinth.projects import Project
 from pyrinth.users import User
+from typing import Optional
 
 
 class Modrinth:
@@ -138,7 +139,7 @@ class Modrinth:
 
         response = raw_response.json()
         response.update({"authorization": auth})
-        return User.from_json(response)
+        return User(response)
 
     @staticmethod
     def get_user_from_auth(auth: str) -> 'User':
@@ -152,9 +153,9 @@ class Modrinth:
 
     @staticmethod
     def search_projects(
-        query: str = '', facets: list[list[str]] = None,
+        query: str = '', facets: Optional[list[list[str]]] = None,
         index: str = "relevance", offset: int = 0,
-        limit: int = 10, filters: list[str] = None
+        limit: int = 10, filters: Optional[list[str]] = None
     ) -> list['SearchResult']:
         """Searches for projects using 6 arguments
 
