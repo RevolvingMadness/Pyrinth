@@ -98,6 +98,9 @@ class Tag:
             self.project_type = project_type
             self.header = header
 
+        def __repr__(self) -> str:
+            return f"Category: {self.name}"
+
     class Loader:
         """Loader tag."""
 
@@ -105,6 +108,9 @@ class Tag:
             self.icon = icon
             self.name = name
             self.supported_project_types = supported_project_types
+
+        def __repr__(self) -> str:
+            return f"Loader: {self.name}"
 
     class GameVersion:
         """Game version tag."""
@@ -115,6 +121,9 @@ class Tag:
             self.date = date
             self.major = major
 
+        def __repr__(self) -> str:
+            return f"Game Version: {self.version}"
+
     class License:
         """License tag."""
 
@@ -122,9 +131,15 @@ class Tag:
             self.short = short
             self.name = name
 
+        def __repr__(self) -> str:
+            return f"License: {self.name}"
+
     class DonationPlatform:
         """Donation platform tag."""
 
         def __init__(self, short, name) -> None:
             self.short = short
             self.name = name
+
+        def __repr__(self) -> str:
+            return f"Donation Platform: {self.name}"

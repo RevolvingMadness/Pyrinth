@@ -1,0 +1,514 @@
+BSD Zero Clause License
+Attribution Assurance License
+Amazon Digital Services License
+Academic Free License v1.1
+Academic Free License v1.2
+Academic Free License v2.0
+Academic Free License v2.1
+Academic Free License v3.0
+Affero General Public License v1.0
+Affero General Public License v1.0 only
+Affero General Public License v1.0 or later
+GNU Affero General Public License v3.0
+GNU Affero General Public License v3.0 only
+GNU Affero General Public License v3.0 or later
+AMD's plpa_map.c License
+Apple MIT License
+Academy of Motion Picture Arts and Sciences BSD
+ANTLR Software Rights Notice
+ANTLR Software Rights Notice with license fallback
+Adobe Postscript AFM License
+Adaptive Public License 1.0
+Apple Public Source License 1.0
+Apple Public Source License 1.1
+Apple Public Source License 1.2
+Apple Public Source License 2.0
+Abstyles License
+Adobe Systems Incorporated Source Code License Agreement
+Adobe Glyph List License
+Afmparse License
+Aladdin Free Public License
+Apache License 1.0
+Apache License 1.1
+Apache License 2.0
+App::s2p License
+Arphic Public License
+Artistic License 1.0
+Artistic License 1.0 (Perl)
+Artistic License 1.0 w/clause 8
+Artistic License 2.0
+BSD 1-Clause License
+BSD 2-Clause "Simplified" License
+BSD 2-Clause FreeBSD License
+BSD 2-Clause NetBSD License
+BSD-2-Clause Plus Patent License
+BSD 2-Clause with views sentence
+BSD 3-Clause "New" or "Revised" License
+BSD with attribution
+BSD 3-Clause Clear License
+Lawrence Berkeley National Labs BSD variant license
+BSD 3-Clause Modification
+BSD 3-Clause No Military License
+BSD 3-Clause No Nuclear License
+BSD 3-Clause No Nuclear License 2014
+BSD 3-Clause No Nuclear Warranty
+BSD 3-Clause Open MPI variant
+BSD 4-Clause "Original" or "Old" License
+BSD 4 Clause Shortened
+BSD-4-Clause (University of California-Specific)
+BSD Protection License
+BSD Source Code Attribution
+Boost Software License 1.0
+Business Source License 1.1
+Baekmuk License
+Bahyph License
+Barr License
+Beerware License
+BitTorrent Open Source License v1.0
+BitTorrent Open Source License v1.1
+Bitstream Vera Font License
+Blue Oak Model License 1.0.0
+Borceux license
+Computational Use of Data Agreement v1.0
+Cryptographic Autonomy License 1.0
+Cryptographic Autonomy License 1.0 (Combined Work Exception)
+Computer Associates Trusted Open Source License 1.1
+Creative Commons Attribution 1.0 Generic
+Creative Commons Attribution 2.0 Generic
+Creative Commons Attribution 2.5 Generic
+Creative Commons Attribution 2.5 Australia
+Creative Commons Attribution 3.0 Unported
+Creative Commons Attribution 3.0 Austria
+Creative Commons Attribution 3.0 Germany
+Creative Commons Attribution 3.0 IGO
+Creative Commons Attribution 3.0 Netherlands
+Creative Commons Attribution 3.0 United States
+Creative Commons Attribution 4.0 International
+Creative Commons Attribution Non Commercial 1.0 Generic
+Creative Commons Attribution Non Commercial 2.0 Generic
+Creative Commons Attribution Non Commercial 2.5 Generic
+Creative Commons Attribution Non Commercial 3.0 Unported
+Creative Commons Attribution Non Commercial 3.0 Germany
+Creative Commons Attribution Non Commercial 4.0 International
+Creative Commons Attribution Non Commercial No Derivatives 1.0 Generic
+Creative Commons Attribution Non Commercial No Derivatives 2.0 Generic
+Creative Commons Attribution Non Commercial No Derivatives 2.5 Generic
+Creative Commons Attribution Non Commercial No Derivatives 3.0 Unported
+Creative Commons Attribution Non Commercial No Derivatives 3.0 Germany
+Creative Commons Attribution Non Commercial No Derivatives 3.0 IGO
+Creative Commons Attribution Non Commercial No Derivatives 4.0 International
+Creative Commons Attribution Non Commercial Share Alike 1.0 Generic
+Creative Commons Attribution Non Commercial Share Alike 2.0 Generic
+Creative Commons Attribution-NonCommercial-ShareAlike 2.0 France
+Creative Commons Attribution Non Commercial Share Alike 2.0 England and Wales
+Creative Commons Attribution Non Commercial Share Alike 2.5 Generic
+Creative Commons Attribution Non Commercial Share Alike 3.0 Unported
+Creative Commons Attribution Non Commercial Share Alike 3.0 Germany
+Creative Commons Attribution Non Commercial Share Alike 3.0 IGO
+Creative Commons Attribution Non Commercial Share Alike 4.0 International
+Creative Commons Attribution No Derivatives 1.0 Generic
+Creative Commons Attribution No Derivatives 2.0 Generic
+Creative Commons Attribution No Derivatives 2.5 Generic
+Creative Commons Attribution No Derivatives 3.0 Unported
+Creative Commons Attribution No Derivatives 3.0 Germany
+Creative Commons Attribution No Derivatives 4.0 International
+Creative Commons Attribution Share Alike 1.0 Generic
+Creative Commons Attribution Share Alike 2.0 Generic
+Creative Commons Attribution Share Alike 2.0 England and Wales
+Creative Commons Attribution Share Alike 2.1 Japan
+Creative Commons Attribution Share Alike 2.5 Generic
+Creative Commons Attribution Share Alike 3.0 Unported
+Creative Commons Attribution Share Alike 3.0 Austria
+Creative Commons Attribution Share Alike 3.0 Germany
+Creative Commons Attribution Share Alike 4.0 International
+Creative Commons Public Domain Dedication and Certification
+Creative Commons Zero v1.0 Universal
+Common Development and Distribution License 1.0
+Common Development and Distribution License 1.1
+Common Documentation License 1.0
+Community Data License Agreement Permissive 1.0
+Community Data License Agreement Permissive 2.0
+Community Data License Agreement Sharing 1.0
+CeCILL Free Software License Agreement v1.0
+CeCILL Free Software License Agreement v1.1
+CeCILL Free Software License Agreement v2.0
+CeCILL Free Software License Agreement v2.1
+CeCILL-B Free Software License Agreement
+CeCILL-C Free Software License Agreement
+CERN Open Hardware Licence v1.1
+CERN Open Hardware Licence v1.2
+CERN Open Hardware Licence Version 2 - Permissive
+CERN Open Hardware Licence Version 2 - Strongly Reciprocal
+CERN Open Hardware Licence Version 2 - Weakly Reciprocal
+CNRI Jython License
+CNRI Python License
+CNRI Python Open Source GPL Compatible License Agreement
+Copyfree Open Innovation License
+Common Public Attribution License 1.0
+Common Public License 1.0
+Code Project Open License 1.02
+CUA Office Public License v1.0
+Caldera License
+Clarified Artistic License
+Community Specification License 1.0
+Condor Public License v1.1
+Crossword License
+CrystalStacker License
+Cube License
+Deutsche Freie Software Lizenz
+Data licence Germany � attribution � version 2.0
+DOC License
+Detection Rule License 1.0
+DSDP License
+Dotseqn License
+Educational Community License v1.0
+Educational Community License v2.0
+Eiffel Forum License v1.0
+Eiffel Forum License v2.0
+EPICS Open License
+Eclipse Public License 1.0
+Eclipse Public License 2.0
+EU DataGrid Software License
+European Union Public License 1.0
+European Union Public License 1.1
+European Union Public License 1.2
+Elastic License 2.0
+Entessa Public License v1.0
+Erlang Public License v1.1
+Eurosym License
+Fraunhofer FDK AAC Codec Library
+FSF All Permissive License
+FSF Unlimited License
+FSF Unlimited License (with License Retention)
+FSF Unlimited License (With License Retention    and Warranty Disclaimer)
+Freetype Project License
+Fair License
+Frameworx Open License 1.0
+FreeBSD Documentation License
+FreeImage Public License v1.0
+GD License
+GNU Free Documentation License v1.1
+GNU Free Documentation License v1.1 only - invariants
+GNU Free Documentation License v1.1 only - invariants
+GNU Free Documentation License v1.1 or later - invariants
+GNU Free Documentation License v1.1 only - no invariants
+GNU Free Documentation License v1.1 only - no invariants
+GNU Free Documentation License v1.1 or later - no invariants
+GNU Free Documentation License v1.1 only
+GNU Free Documentation License v1.1 or later
+GNU Free Documentation License v1.2
+GNU Free Documentation License v1.2 only - invariants
+GNU Free Documentation License v1.2 only - invariants
+GNU Free Documentation License v1.2 or later - invariants
+GNU Free Documentation License v1.2 only - no invariants
+GNU Free Documentation License v1.2 only - no invariants
+GNU Free Documentation License v1.2 or later - no invariants
+GNU Free Documentation License v1.2 only
+GNU Free Documentation License v1.2 or later
+GNU Free Documentation License v1.3
+GNU Free Documentation License v1.3 only - invariants
+GNU Free Documentation License v1.3 only - invariants
+GNU Free Documentation License v1.3 or later - invariants
+GNU Free Documentation License v1.3 only - no invariants
+GNU Free Documentation License v1.3 only - no invariants
+GNU Free Documentation License v1.3 or later - no invariants
+GNU Free Documentation License v1.3 only
+GNU Free Documentation License v1.3 or later
+GL2PS License
+Good Luck With That Public License
+GNU General Public License v1.0 only
+GNU General Public License v1.0 or later
+GNU General Public License v1.0 only
+GNU General Public License v1.0 or later
+GNU General Public License v2.0 only
+GNU General Public License v2.0 or later
+GNU General Public License v2.0 only
+GNU General Public License v2.0 or later
+GNU General Public License v2.0 w/GCC Runtime Library exception
+GNU General Public License v2.0 w/Autoconf exception
+GNU General Public License v2.0 w/Bison exception
+GNU General Public License v2.0 w/Classpath exception
+GNU General Public License v2.0 w/Font exception
+GNU General Public License v3.0 only
+GNU General Public License v3.0 or later
+GNU General Public License v3.0 only
+GNU General Public License v3.0 or later
+GNU General Public License v3.0 w/GCC Runtime Library exception
+GNU General Public License v3.0 w/Autoconf exception
+Giftware License
+3dfx Glide License
+Glulxe License
+Historical Permission Notice and Disclaimer
+Historical Permission Notice and Disclaimer - sell variant
+HTML Tidy License
+Haskell Language Report License
+Hippocratic License 2.1
+IBM PowerPC Initialization and Boot Software
+ICU License
+Independent JPEG Group License
+IPA Font License
+IBM Public License v1.0
+ISC License
+ImageMagick License
+Imlib2 License
+Info-ZIP License
+Intel Open Source License
+Intel ACPI Software License Agreement
+Interbase Public License v1.0
+Japan Network Information Center License
+JSON License
+Jam License
+JasPer License
+Knuth CTAN License
+Licence Art Libre 1.2
+Licence Art Libre 1.3
+GNU Library General Public License v2 only
+GNU Library General Public License v2 or later
+GNU Library General Public License v2 only
+GNU Library General Public License v2 or later
+GNU Lesser General Public License v2.1 only
+GNU Library General Public License v2.1 or later
+GNU Lesser General Public License v2.1 only
+GNU Lesser General Public License v2.1 or later
+GNU Lesser General Public License v3.0 only
+GNU Lesser General Public License v3.0 or later
+GNU Lesser General Public License v3.0 only
+GNU Lesser General Public License v3.0 or later
+Lesser General Public License For Linguistic Resources
+Lucent Public License Version 1.0
+Lucent Public License v1.02
+LaTeX Project Public License v1.0
+LaTeX Project Public License v1.1
+LaTeX Project Public License v1.2
+LaTeX Project Public License v1.3a
+LaTeX Project Public License v1.3c
+LZMA SDK License (versions 9.11 to 9.20)
+LZMA SDK License (versions 9.22 and beyond)
+Latex2e License
+Leptonica License
+Licence Libre du Qu�bec � Permissive version 1.1
+Licence Libre du Qu�bec � R�ciprocit� version 1.1
+Licence Libre du Qu�bec � R�ciprocit� forte version 1.1
+libpng License
+Linux Kernel Variant of OpenIB.org license
+Linux man-pages Copyleft
+MIT License
+MIT No Attribution
+CMU License
+MIT License Modern Variant
+Enlightenment License (e16)
+enna License
+feh License
+MIT Open Group variant
+MIT +no-false-attribs license
+Mozilla Public License 1.0
+Mozilla Public License 1.1
+Mozilla Public License 2.0
+Mozilla Public License 2.0 (no copyleft exception)
+Microsoft Limited Public License
+Microsoft Public License
+Microsoft Reciprocal License
+Matrix Template Library License
+MakeIndex License
+Minpack License
+The MirOS Licence
+Motosoto License
+Mulan Permissive Software License
+Version 1
+Mulan Permissive Software License
+Version 2
+Multics License
+Mup License
+Nara Institute of Science and Technology License (2003)
+NASA Open Source Agreement 1.3
+Net Boolean Public License v1
+Non-Commercial Government Licence
+University of Illinois/NCSA Open Source License
+Nethack General Public License
+NICTA Public Software License
+Version 1.0
+NIST Public Domain Notice
+NIST Public Domain Notice with license fallback
+Norwegian Licence for Open Government Data (NLOD) 1.0
+Norwegian Licence for Open Government Data (NLOD) 2.0
+No Limit Public License
+NOASSERTION
+Netizen Open Source License
+Netscape Public License v1.0
+Netscape Public License v1.1
+Non-Profit Open Software License 3.0
+NRL License
+NTP License
+NTP No Attribution
+Naumen Public License
+Net-SNMP License
+NetCDF license
+Newsletr License
+Nokia Open Source License
+Noweb License
+Nunit License
+Open Use of Data Agreement v1.0
+Open CASCADE Technology Public License
+OCLC Research Public License 2.0
+Open Data Commons Attribution License v1.0
+Open Data Commons Open Database License v1.0
+SIL Open Font License 1.0
+SIL Open Font License 1.0 with Reserved Font Name
+SIL Open Font License 1.0 with no Reserved Font Name
+SIL Open Font License 1.1
+SIL Open Font License 1.1 with Reserved Font Name
+SIL Open Font License 1.1 with no Reserved Font Name
+OGC Software License
+Version 1.0
+Taiwan Open Government Data License
+version 1.0
+Open Government Licence - Canada
+Open Government Licence v1.0
+Open Government Licence v2.0
+Open Government Licence v3.0
+Open Group Test Suite License
+Open LDAP Public License v1.1
+Open LDAP Public License v1.2
+Open LDAP Public License v1.3
+Open LDAP Public License v1.4
+Open LDAP Public License v2.0 (or possibly 2.0A and 2.0B)
+Open LDAP Public License v2.0.1
+Open LDAP Public License v2.1
+Open LDAP Public License v2.2
+Open LDAP Public License v2.2.1
+Open LDAP Public License 2.2.2
+Open LDAP Public License v2.3
+Open LDAP Public License v2.4
+Open LDAP Public License v2.5
+Open LDAP Public License v2.6
+Open LDAP Public License v2.7
+Open LDAP Public License v2.8
+Open Market License
+Open Public License v1.0
+Open Publication License v1.0
+OSET Public License version 2.1
+Open Software License 1.0
+Open Software License 1.1
+Open Software License 2.0
+Open Software License 2.1
+Open Software License 3.0
+OpenSSL License
+Open Data Commons Public Domain Dedication & License 1.0
+PHP License v3.0
+PHP License v3.01
+Python Software Foundation License 2.0
+The Parity Public License 6.0.0
+The Parity Public License 7.0.0
+Plexus Classworlds License
+PolyForm Noncommercial License 1.0.0
+PolyForm Small Business License 1.0.0
+PostgreSQL License
+Python License 2.0
+Python License 2.0.1
+Q Public License 1.0
+Qhull License
+Red Hat eCos Public License v1.1
+Reciprocal Public License 1.1
+Reciprocal Public License 1.5
+RealNetworks Public Source License v1.0
+RSA Message-Digest License
+Ricoh Source Code Public License
+Rdisc License
+Ruby License
+Sax Public Domain Notice
+SCEA Shared Source License
+SGI Free Software License B v1.0
+SGI Free Software License B v1.1
+SGI Free Software License B v2.0
+Solderpad Hardware License v0.5
+Solderpad Hardware License
+Version 0.51
+Sun Industry Standards Source License v1.1
+Sun Industry Standards Source License v1.2
+Standard ML of New Jersey License
+Secure Messaging Protocol Public License
+SNIA Public License 1.1
+Sun Public License v1.0
+SSH OpenSSH license
+SSH short notice
+Server Side Public License
+v 1
+Scheme Widget Library (SWL) Software License Agreement
+Saxpath License
+Scheme Language Report License
+Sendmail License
+Sendmail License 8.23
+Simple Public License 2.0
+Sleepycat License
+Spencer License 86
+Spencer License 94
+Spencer License 99
+Standard ML of New Jersey License
+SugarCRM Public License v1.1.3
+TAPR Open Hardware License v1.0
+TCL/TK License
+TCP Wrappers License
+TMate Open Source License
+TORQUE v2.5+ Software License v1.1
+Trusster Open Source License
+Technische Universitaet Berlin License 1.0
+Technische Universitaet Berlin License 2.0
+Upstream Compatibility License v1.0
+Universal Permissive License v1.0
+Unicode License Agreement - Data Files and Software (2015)
+Unicode License Agreement - Data Files and Software (2016)
+Unicode Terms of Use
+The Unlicense
+VOSTROM Public License for Open Source
+Vovida Software License v1.0
+Vim License
+W3C Software Notice and License (2002-12-31)
+W3C Software Notice and License (1998-07-20)
+W3C Software Notice and Document License (2015-05-13)
+Do What The F*ck You Want To Public License
+Sybase Open Watcom Public License 1.0
+Wsuipa License
+X11 License
+X11 License Distribution Modification Variant
+XFree86 License 1.1
+XSkat License
+Xerox License
+X.Net License
+Yahoo! Public License v1.0
+Yahoo! Public License v1.1
+Zope Public License 1.1
+Zope Public License 2.0
+Zope Public License 2.1
+Zed License
+Zend License v2.0
+Zimbra Public License v1.3
+Zimbra Public License v1.4
+zlib License
+SQLite Blessing
+bzip2 and libbzip2 License v1.0.5
+bzip2 and libbzip2 License v1.0.6
+Checkmk License
+copyleft-next 0.3.0
+copyleft-next 0.3.1
+curl License
+diffmark license
+dvipdfm License
+eCos license version 2.0
+eGenix.com Public License 1.1.0
+Etalab Open License 2.0
+gSOAP Public License v1.3b
+gnuplot License
+iMatix Standard Function Library Agreement
+PNG Reference Library version 2
+libselinux public domain notice
+libtiff License
+libutil David Nugent License
+mpi Permissive License
+mpich2 License
+mplus Font License
+psfrag License
+psutils License
+wxWindows Library License
+xinetd License
+XPP License
+zlib/libpng License with Acknowledgement
