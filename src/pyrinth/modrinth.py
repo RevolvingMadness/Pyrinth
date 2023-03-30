@@ -12,7 +12,7 @@ class Modrinth:
     """The main Modrinth class used for anything modrinth related."""
 
     @staticmethod
-    def get_project(id_: str, auth: str = None) -> 'Project':
+    def get_project(id_: str, auth: Optional[str] = None) -> 'Project':
         """
         Gets a project based on an ID.
 
@@ -23,7 +23,7 @@ class Modrinth:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/project/{id_}',
             headers={
-                'authorization': auth
+                'authorization': auth  # type: ignore
             },
             timeout=60
         )
@@ -122,7 +122,7 @@ class Modrinth:
         return [Project(project) for project in response]
 
     @staticmethod
-    def get_user(id_: str, auth: str = None) -> 'User':
+    def get_user(id_: str, auth: Optional[str] = None) -> 'User':
         """
         Gets a user.
 

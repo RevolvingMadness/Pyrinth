@@ -143,12 +143,12 @@ Discord Server: Coming Soon!
   - [ ] Remove a team member from a team
   - [ ] Transfer team's ownership to another user
 - Tags
-  - [ ] Get a list of categories
-  - [ ] Get a list of loaders
-  - [ ] Get a list of game versions
-  - [ ] Get a list of licenses
-  - [ ] Get a list of donation platforms
-  - [ ] Get a list of report types
+  - [x] Get a list of categories
+  - [x] Get a list of loaders
+  - [x] Get a list of game versions
+  - [x] Get a list of licenses
+  - [x] Get a list of donation platforms
+  - [x] Get a list of report types
 - Miscellaneous
   - [ ] Report a project, user, or version
   - [x] Various statistics about this Modrinth instance
