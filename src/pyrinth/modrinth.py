@@ -1,8 +1,7 @@
-"""
-The main Modrinth class used for anything modrinth related
-"""
+"""The main Modrinth class used for anything modrinth related."""
 
 import json
+from typing import Optional
 import requests as r
 from pyrinth.exceptions import InvalidRequestError, NotFoundError
 from pyrinth.projects import Project
@@ -10,13 +9,12 @@ from pyrinth.users import User
 
 
 class Modrinth:
-    """
-    The main Modrinth class used for anything modrinth related
-    """
+    """The main Modrinth class used for anything modrinth related."""
 
     @staticmethod
-    def get_project(id_: str, auth: str = '') -> 'Project':
-        """Gets a project based on an ID
+    def get_project(id_: str, auth=None) -> 'Project':
+        """
+        Gets a project based on an ID.
 
         Returns:
             Project: The project that was found using the ID
@@ -29,6 +27,7 @@ class Modrinth:
             },
             timeout=60
         )
+        print(raw_response.headers["X-Ratelimit-Remaining"])
         if raw_response.status_code == 404:
             raise NotFoundError(
                 "The requested project was not found or no authorization to see this project"
@@ -36,11 +35,13 @@ class Modrinth:
         if not raw_response.ok:
             raise InvalidRequestError()
         response = json.loads(raw_response.content)
+        response.update({"authorization": auth})
         return Project(response)
 
     @staticmethod
     def exists(project_id: str) -> bool:
-        """Checks if a project exists
+        """
+        Checks if a project exists.
 
         Returns:
             bool: If the project exists
@@ -58,7 +59,8 @@ class Modrinth:
 
     @staticmethod
     def get_projects(ids: list[str]) -> list['Project']:
-        """Gets a list of projects based on IDs
+        """
+        Gets a list of projects based on IDs.
 
         Returns:
             list[Project]: The projects that were found using the IDs
@@ -77,7 +79,8 @@ class Modrinth:
 
     @staticmethod
     def get_version(id_: str) -> 'Project.Version':
-        """Gets a version based on an ID
+        """
+        Gets a version based on an ID.
 
         Returns:
             Project.Version: The version that was found using the ID
@@ -98,7 +101,8 @@ class Modrinth:
 
     @staticmethod
     def get_random_projects(count: int = 1) -> list['Project']:
-        """Gets an amount of random projects
+        """
+        Gets an amount of random projects.
 
         Args:
             count (int, optional): The amount of random projects to return. Defaults to 1.
@@ -119,10 +123,11 @@ class Modrinth:
         return [Project(project) for project in response]
 
     @staticmethod
-    def get_user(id_: str, auth: str = '') -> 'User':
-        """Gets a user
+    def get_user(id_: str, auth=None) -> 'User':
+        """
+        Gets a user.
 
-        Returns:
+        Returns
             User: The user that was found using the ID
         """
         raw_response = r.get(
@@ -138,11 +143,12 @@ class Modrinth:
 
         response = raw_response.json()
         response.update({"authorization": auth})
-        return User.from_json(response)
+        return User(response)
 
     @staticmethod
     def get_user_from_auth(auth: str) -> 'User':
-        """Gets a user from authorization token
+        """
+        Gets a user from authorization token.
 
         Returns:
             User: The user that was found using the authorization token
@@ -152,11 +158,12 @@ class Modrinth:
 
     @staticmethod
     def search_projects(
-        query: str = '', facets: list[list[str]] = None,
+        query: str = '', facets: Optional[list[list[str]]] = None,
         index: str = "relevance", offset: int = 0,
-        limit: int = 10, filters: list[str] = None
+        limit: int = 10, filters: Optional[list[str]] = None
     ) -> list['SearchResult']:
-        """Searches for projects using 6 arguments
+        """
+        Searches for projects using 6 arguments.
 
         Returns:
             list[Modrinth.SearchResult]: The projects that were found using the 6 arguments
@@ -185,8 +192,7 @@ class Modrinth:
         return [Modrinth.SearchResult(project) for project in response['hits']]
 
     class SearchResult:
-        """A search result from using Modrinth.search_projects
-        """
+        """A search result from using Modrinth.search_projects()."""
 
         def __init__(self, search_result_model) -> None:
             from pyrinth.models import SearchResultModel
@@ -200,8 +206,7 @@ class Modrinth:
             return f"Search Result: {self.search_result_model.title}"
 
     class Statistics:
-        """Modrinth statistics
-        """
+        """Modrinth statistics."""
 
         def __init__(self) -> None:
             raw_response = r.get(

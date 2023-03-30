@@ -3,16 +3,17 @@ main*.py
 test.py
 *.zip
 test*.*
-.dmypy.json
 
 # Folders
-.vscode/
 references/
 imgs/
 dist/
 
 # Any file/folder that starts with 'private'
 private*
+
+# Any file/folder that starts with a period
+.*
 
 # Every '__pycache__' folder
 **/__pycache__

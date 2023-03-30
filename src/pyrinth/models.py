@@ -1,6 +1,4 @@
-"""
-Contains all models used in Pyrinth
-"""
+"""Contains all models used in Pyrinth."""
 
 from typing import Optional
 import json
@@ -9,8 +7,7 @@ from pyrinth.projects import Project
 
 
 class ProjectModel:
-    """The model used for the Project class
-    """
+    """The model used for the Project class."""
 
     def __init__(
         self, slug: str, title: str,
@@ -19,7 +16,8 @@ class ProjectModel:
         license_: 'Project.License', project_type: str,
         additional_categories: Optional[list[str]] = None,
         issues_url: Optional[str] = None, source_url: Optional[str] = None,
-        wiki_url: Optional[str] = None, discord_url: Optional[str] = None
+        wiki_url: Optional[str] = None, discord_url: Optional[str] = None,
+        auth=None
     ) -> None:
         self.slug = slug
         self.title = title
@@ -36,12 +34,13 @@ class ProjectModel:
         self.wiki_url = wiki_url
         self.discord_url = discord_url
         self.donation_urls = None
+        self.auth = auth
         self.id = None
         self.downloads = None
 
     @staticmethod
     def from_json(json_: dict) -> 'ProjectModel':
-        """Utility function"""
+        """Utility function."""
         license_ = Project.License.from_json(json_['license'])
 
         result = ProjectModel(
@@ -50,7 +49,7 @@ class ProjectModel:
             json_['body'], license_, json_['project_type'],
             json_['additional_categories'], json_[
                 'issues_url'], json_['source_url'],
-            json_['wiki_url'], json_['discord_url']
+            json_['wiki_url'], json_['discord_url'], json_['authorization']
         )
         result.id = json_['id']
         result.downloads = json_['downloads']
@@ -58,7 +57,7 @@ class ProjectModel:
         return result
 
     def to_json(self) -> dict:
-        """Utility function"""
+        """Utility function."""
         result = {
             'slug': self.slug,
             'title': self.title,
@@ -77,6 +76,7 @@ class ProjectModel:
             'donation_urls': self.donation_urls,
             'license_url': self.license['url'],
             'id': self.id,
+            'authorization': self.auth,
             'is_draft': True,
             'initial_versions': []
         }
@@ -84,13 +84,12 @@ class ProjectModel:
         return result
 
     def to_bytes(self) -> bytes:
-        """Utility function"""
+        """Utility function."""
         return json.dumps(self.to_json()).encode()
 
 
 class SearchResultModel:
-    """The model used for the SearchResult class
-    """
+    """The model used for the SearchResult class."""
 
     def __init__(
         self, slug: str, title: str, description: str,
@@ -124,7 +123,7 @@ class SearchResultModel:
 
     @staticmethod
     def from_json(json_: dict) -> 'SearchResultModel':
-        """Utility function"""
+        """Utility function."""
         result = SearchResultModel(
             json_['slug'], json_['title'], json_['description'],
             json_['client_side'], json_['server_side'], json_['project_type'],
@@ -138,8 +137,8 @@ class SearchResultModel:
 
         return result
 
-    def to_json(self):
-        """Utility function"""
+    def to_json(self) -> dict:
+        """Utility function."""
         result = {
             'slug': self.slug,
             'title': self.title,
@@ -166,14 +165,13 @@ class SearchResultModel:
         result = remove_null_values(result)
         return result
 
-    def to_bytes(self):
-        """Utility function"""
+    def to_bytes(self) -> bytes:
+        """Utility function."""
         return json.dumps(self.to_json()).encode()
 
 
 class VersionModel:
-    """The model used for the Version class
-    """
+    """The model used for the Version class."""
 
     def __init__(
         self, name: str, version_number: str, dependencies: list['Project.Dependency'],
@@ -201,7 +199,7 @@ class VersionModel:
 
     @staticmethod
     def from_json(json_: dict) -> 'VersionModel':
-        """Utility function"""
+        """Utility function."""
         result = VersionModel(
             json_['name'], json_['version_number'], json_['dependencies'],
             json_['game_versions'], json_['version_type'], json_['loaders'],
@@ -216,7 +214,7 @@ class VersionModel:
         return result
 
     def to_json(self) -> dict:
-        """Utility function"""
+        """Utility function."""
         result = {
             'name': self.name,
             'version_number': self.version_number,
@@ -239,20 +237,19 @@ class VersionModel:
         return result
 
     def to_bytes(self) -> bytes:
-        """Utility function"""
+        """Utility function."""
         return json.dumps(self.to_json()).encode()
 
 
 class UserModel:
-    """The model used for the User class
-    """
+    """The model used for the User class."""
 
     def __init__(
         self, username: str, id_: str, avatar_url: str,
         created, role: str, name: Optional[str] = None,
         email: Optional[str] = None, bio: Optional[str] = None,
         payout_data=None, github_id: Optional[str] = None,
-        badges: Optional[int] = None
+        badges: Optional[int] = None, auth=None
     ) -> None:
         self.username = username
         self.id = id_
@@ -265,20 +262,21 @@ class UserModel:
         self.payout_data = payout_data
         self.github_id = github_id
         self.badges = badges
+        self.auth = auth
 
     @staticmethod
-    def from_json(json_: dict) -> 'VersionModel':
-        """Utility function"""
-        result = VersionModel(
+    def from_json(json_: dict) -> 'UserModel':
+        """Utility function."""
+        result = UserModel(
             json_['username'], json_['id'], json_['avatar_url'],
             json_['created'], json_['role'], json_['name'],
             json_['email'], json_['bio'], json_['payout_data'],
-            json_['github_id'], json_['badges']
+            json_['github_id'], json_['badges'], json_['authorization']
         )
         return result
 
     def to_json(self) -> dict:
-        """Utility function"""
+        """Utility function."""
         result = {
             'username': self.username,
             'id': self.id,
@@ -290,11 +288,12 @@ class UserModel:
             'bio': self.bio,
             'payout_data': self.payout_data,
             'github_id': self.github_id,
-            'badges': self.badges
+            'badges': self.badges,
+            'authorization': self.auth
         }
         result = remove_null_values(result)
         return result
 
     def to_bytes(self) -> bytes:
-        """Utility function"""
+        """Utility function."""
         return json.dumps(self.to_json()).encode()
