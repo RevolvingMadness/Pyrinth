@@ -18,16 +18,16 @@ class Project:
         from pyrinth.models import ProjectModel
         if isinstance(project_model, dict):
             project_model = ProjectModel.from_json(project_model)
-        self.project_model = project_model
+        self.model = project_model
 
     def __repr__(self) -> str:
-        return f"Project: {self.project_model.title}"
+        return f"Project: {self.model.title}"
 
     def get_auth(self, auth: Optional[str]) -> str:
         """Utility Function."""
         if auth:
             return auth
-        return self.project_model.auth
+        return self.model.auth
 
     @staticmethod
     def get(id_: str, auth=None) -> 'Project':
@@ -56,23 +56,23 @@ class Project:
 
     def is_client_side(self) -> bool:
         """Checks if this project is client side."""
-        return (True if self.project_model.client_side == 'required' else False)
+        return (True if self.model.client_side == 'required' else False)
 
     def is_server_side(self) -> bool:
         """Checks if this project is server side."""
-        return (True if self.project_model.server_side == 'required' else False)
+        return (True if self.model.server_side == 'required' else False)
 
     def get_downloads(self) -> int:
         """Gets the amount of downloads this project has."""
-        return self.project_model.downloads
+        return self.model.downloads
 
     def get_categories(self) -> list[str]:
         """Gets this projects categories."""
-        return self.project_model.categories
+        return self.model.categories
 
     def get_additional_categories(self) -> list[str]:
         """Gets this projects additional categories."""
-        return self.project_model.additional_categories
+        return self.model.additional_categories
 
     def get_all_categories(self) -> list[str]:
         """Gets this projects categories and additional categories."""
@@ -80,7 +80,7 @@ class Project:
 
     def get_license(self) -> 'Project.License':
         """Gets this projects license."""
-        return Project.License.from_json(self.project_model.license)
+        return Project.License.from_json(self.model.license)
 
     def get_specific_version(self, semantic_version: str) -> Optional['Project.Version']:
         """
@@ -92,7 +92,7 @@ class Project:
         versions = self.get_versions()
         if versions:
             for version in versions:
-                if version.version_model.version_number == semantic_version:
+                if version.model.version_number == semantic_version:
                     return version
 
         return None
@@ -119,7 +119,7 @@ class Project:
 
         filters = remove_null_values(filters)
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/project/{self.project_model.slug}/version',
+            f'https://api.modrinth.com/v2/project/{self.model.slug}/version',
             params=json_to_query_params(filters),
             headers={
                 'authorization': self.get_auth(auth)
@@ -144,7 +144,7 @@ class Project:
 
         result = []
         for version in versions:
-            if version.version_model.version_type in types:
+            if version.model.version_type in types:
                 result.append(version)
 
         return result
@@ -175,7 +175,7 @@ class Project:
         Returns:
             str: The ID of the project
         """
-        return self.project_model.id
+        return self.model.id
 
     def get_slug(self) -> str:
         """
@@ -184,7 +184,7 @@ class Project:
         Returns:
             str: The slug of the project
         """
-        return self.project_model.slug
+        return self.model.slug
 
     def get_name(self) -> str:
         """
@@ -193,7 +193,7 @@ class Project:
         Returns:
             str: The name of the project
         """
-        return self.project_model.title
+        return self.model.title
 
     @staticmethod
     def get_version(id_: str) -> 'Project.Version':
@@ -232,7 +232,7 @@ class Project:
             int: If creating the new project version was successful
         """
         from pyrinth.util import remove_file_path
-        version_model.project_id = self.project_model.id
+        version_model.project_id = self.model.id
 
         files = {
             "data": version_model.to_bytes()
@@ -270,7 +270,7 @@ class Project:
             int: If the project icon change was successful
         """
         raw_response = r.patch(
-            f'https://api.modrinth.com/v2/project/{self.project_model.slug}/icon',
+            f'https://api.modrinth.com/v2/project/{self.model.slug}/icon',
             params={
                 "ext": file_path.split(".")[-1]
             },
@@ -300,7 +300,7 @@ class Project:
             int: If the project icon deletion was successful
         """
         raw_response = r.delete(
-            f'https://api.modrinth.com/v2/project/{self.project_model.slug}/icon',
+            f'https://api.modrinth.com/v2/project/{self.model.slug}/icon',
             headers={
                 "authorization": self.get_auth(auth)
             },
@@ -330,7 +330,7 @@ class Project:
             int: If the gallery image addition was successful
         """
         raw_response = r.post(
-            f'https://api.modrinth.com/v2/project/{self.project_model.slug}/gallery',
+            f'https://api.modrinth.com/v2/project/{self.model.slug}/gallery',
             headers={
                 "authorization": self.get_auth(auth)
             },
@@ -382,7 +382,7 @@ class Project:
         modified_json = remove_null_values(modified_json)
 
         raw_response = r.patch(
-            f'https://api.modrinth.com/v2/project/{self.project_model.slug}/gallery',
+            f'https://api.modrinth.com/v2/project/{self.model.slug}/gallery',
             params=modified_json,
             headers={
                 'authorization': self.get_auth(auth)
@@ -424,7 +424,7 @@ class Project:
             )
 
         raw_response = r.delete(
-            f'https://api.modrinth.com/v2/project/{self.project_model.slug}/gallery',
+            f'https://api.modrinth.com/v2/project/{self.model.slug}/gallery',
             headers={
                 "authorization": self.get_auth(auth)
             },
@@ -517,7 +517,7 @@ class Project:
                 "Please specify at least 1 optional argument.")
 
         raw_response = r.patch(
-            f'https://api.modrinth.com/v2/project/{self.project_model.slug}',
+            f'https://api.modrinth.com/v2/project/{self.model.slug}',
             data=json.dumps(modified_json),
             headers={
                 'Content-Type': 'application/json',
@@ -550,7 +550,7 @@ class Project:
             int: If the deletion was successful
         """
         raw_response = r.delete(
-            f'https://api.modrinth.com/v2/project/{self.project_model.slug}',
+            f'https://api.modrinth.com/v2/project/{self.model.slug}',
             headers={
                 'authorization': self.get_auth(auth)
             },
@@ -576,7 +576,7 @@ class Project:
             list[Project]: The projects dependencies
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/project/{self.project_model.slug}/dependencies',
+            f'https://api.modrinth.com/v2/project/{self.model.slug}/dependencies',
             timeout=60
         )
 
@@ -598,12 +598,12 @@ class Project:
             from pyrinth.models import VersionModel
             if isinstance(version_model, dict):
                 version_model = VersionModel.from_json(version_model)
-                self.version_model = version_model
-            self.version_model = version_model
+                self.model = version_model
+            self.model = version_model
 
         def get_type(self) -> str:
             """Gets the versions type (release / beta / alpha)."""
-            return self.version_model.version_type
+            return self.model.version_type
 
         def get_dependencies(self) -> list['Project.Dependency']:
             """
@@ -613,7 +613,7 @@ class Project:
                 list[Project.Dependency]: The projects dependencies
             """
             result = []
-            for dependency in self.version_model.dependencies:
+            for dependency in self.model.dependencies:
                 result.append(Project.Dependency.from_json(dependency))
             return result
 
@@ -625,7 +625,7 @@ class Project:
                 list[Project.File]: The versions files
             """
             result = []
-            for file in self.version_model.files:
+            for file in self.model.files:
                 result.append(Project.File.from_json(file))
             return result
 
@@ -637,7 +637,7 @@ class Project:
                 Project: The versions project
             """
             from pyrinth.modrinth import Modrinth
-            return Modrinth.get_project(self.version_model.project_id)
+            return Modrinth.get_project(self.model.project_id)
 
         def get_primary_files(self) -> list['Project.File']:
             """
@@ -660,7 +660,7 @@ class Project:
                 User: The user who published the version
             """
             from pyrinth.modrinth import Modrinth
-            user = Modrinth.get_user(self.version_model.author_id)
+            user = Modrinth.get_user(self.model.author_id)
             return user
 
         def is_featured(self) -> bool:
@@ -670,7 +670,7 @@ class Project:
             Returns:
                 bool: If the version is featured
             """
-            return self.version_model.featured
+            return self.model.featured
 
         def get_date_published(self) -> datetime:
             """
@@ -680,7 +680,7 @@ class Project:
                 datetime: The date of when the version was published
             """
             from pyrinth.util import format_time
-            return format_time(self.version_model.date_published)
+            return format_time(self.model.date_published)
 
         def get_downloads(self) -> int:
             """
@@ -689,7 +689,7 @@ class Project:
             Returns:
                 int: The amount of downloads
             """
-            return self.version_model.downloads
+            return self.model.downloads
 
         def get_name(self) -> str:
             """
@@ -698,7 +698,7 @@ class Project:
             Returns:
                 str: The version name
             """
-            return self.version_model.name
+            return self.model.name
 
         def get_version_number(self) -> str:
             """
@@ -707,10 +707,10 @@ class Project:
             Returns:
                 str: The semantic version number
             """
-            return self.version_model.version_number
+            return self.model.version_number
 
         def __repr__(self) -> str:
-            return f"Version: {self.version_model.name}"
+            return f"Version: {self.model.name}"
 
     class GalleryImage:
         """Used for a projects gallery images."""

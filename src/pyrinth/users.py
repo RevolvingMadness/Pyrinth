@@ -16,16 +16,16 @@ class User:
     """Contains information about users."""
 
     def __init__(self, user_model: 'UserModel') -> None:
-        self.user_model = user_model
+        self.model = user_model
         if isinstance(user_model, dict):
-            self.user_model = UserModel.from_json(user_model)
+            self.model = UserModel.from_json(user_model)
 
     def __repr__(self) -> str:
-        return f'User: {self.user_model.username}'
+        return f'User: {self.model.username}'
 
     def get_auth(self) -> Optional[str]:
         """Gets the users authorization token."""
-        return self.user_model.auth
+        return self.model.auth
 
     @staticmethod
     def from_json(json_: dict) -> 'User':
@@ -37,17 +37,17 @@ class User:
     def to_json(self) -> dict:
         """Utility Function."""
         result = {
-            'id': self.user_model.id,
-            'github_id': self.user_model.github_id,
-            'username': self.user_model.username,
-            'name': self.user_model.name,
-            'email': self.user_model.email,
-            'avatar_url': self.user_model.avatar_url,
-            'bio': self.user_model.bio,
-            'created': self.user_model.created,
-            'role': self.user_model.role,
-            'badges': self.user_model.badges,
-            'payout_data': self.user_model.payout_data
+            'id': self.model.id,
+            'github_id': self.model.github_id,
+            'username': self.model.username,
+            'name': self.model.name,
+            'email': self.model.email,
+            'avatar_url': self.model.avatar_url,
+            'bio': self.model.bio,
+            'created': self.model.created,
+            'role': self.model.role,
+            'badges': self.model.badges,
+            'payout_data': self.model.payout_data
         }
 
         return result
@@ -66,7 +66,7 @@ class User:
             datetime: The time of when the user was created
         """
         from pyrinth.util import format_time
-        return format_time(self.user_model.created)
+        return format_time(self.model.created)
 
     def get_followed_projects(self) -> list['Project']:
         """
@@ -76,9 +76,9 @@ class User:
             list[Project]: The users followed projects
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/user/{self.user_model.username}/follows',
+            f'https://api.modrinth.com/v2/user/{self.model.username}/follows',
             headers={
-                'authorization': self.user_model.auth
+                'authorization': self.model.auth
             },
             timeout=60
         )
@@ -109,9 +109,9 @@ class User:
             list[User.Notification]: The users notifications
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/user/{self.user_model.username}/notifications',
+            f'https://api.modrinth.com/v2/user/{self.model.username}/notifications',
             headers={
-                'authorization': self.user_model.auth
+                'authorization': self.model.auth
             },
             timeout=60
         )
@@ -160,7 +160,7 @@ class User:
             'https://api.modrinth.com/v2/project',
             files=files,
             headers={
-                'authorization': self.user_model.auth
+                'authorization': self.model.auth
             },
             timeout=60
         )
@@ -181,7 +181,7 @@ class User:
             list[Project]: The users projects
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/user/{self.user_model.id}/projects',
+            f'https://api.modrinth.com/v2/user/{self.model.id}/projects',
             timeout=60
         )
 
@@ -207,7 +207,7 @@ class User:
         raw_response = r.post(
             f'https://api.modrinth.com/v2/project/{id_}/follow',
             headers={
-                'authorization': self.user_model.auth
+                'authorization': self.model.auth
             },
             timeout=60
         )
@@ -238,7 +238,7 @@ class User:
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{id_}/follow',
             headers={
-                'authorization': self.user_model.auth
+                'authorization': self.model.auth
             },
             timeout=60
         )
