@@ -2,6 +2,7 @@
 Used for users
 """
 
+from typing import Optional
 import json
 import requests as r
 from pyrinth.exceptions import InvalidParamError, InvalidRequestError, NoAuthorization, NotFoundError
