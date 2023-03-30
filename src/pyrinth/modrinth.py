@@ -27,6 +27,7 @@ class Modrinth:
             },
             timeout=60
         )
+        print(raw_response.headers["X-Ratelimit-Remaining"])
         if raw_response.status_code == 404:
             raise NotFoundError(
                 "The requested project was not found or no authorization to see this project"

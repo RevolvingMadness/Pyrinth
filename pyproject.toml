@@ -3,4 +3,14 @@ requires = ["setuptools", "wheel", "requests", "python-dateutil"]
 build-backend = "setuptools.build_meta"
 
 [tool.pydocstyle]
-ignore = ["D401", "D105", "D107", "D203", "D406", "D413", "D407", "D212"]
+ignore = [
+    "D401",
+    "D105",
+    "D107",
+    "D203",
+    "D406",
+    "D413",
+    "D407",
+    "D212",
+    "D100",
+]
