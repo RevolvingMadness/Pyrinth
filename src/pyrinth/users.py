@@ -16,9 +16,9 @@ class User:
     """Contains information about users."""
 
     def __init__(self, user_model: 'UserModel') -> None:
-        if isinstance(user_model, dict):
-            user_model = UserModel.from_json(user_model)
         self.user_model = user_model
+        if isinstance(user_model, dict):
+            self.user_model = UserModel.from_json(user_model)
 
     def __repr__(self) -> str:
         return f'User: {self.user_model.username}'

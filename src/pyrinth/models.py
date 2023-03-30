@@ -49,7 +49,7 @@ class ProjectModel:
             json_['body'], license_, json_['project_type'],
             json_['additional_categories'], json_[
                 'issues_url'], json_['source_url'],
-            json_['wiki_url'], json_['discord_url'], json_['authorization']
+            json_['wiki_url'], json_['discord_url'], json_.get('authorization')
         )
         result.id = json_['id']
         result.downloads = json_['downloads']

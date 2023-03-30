@@ -123,7 +123,7 @@ class Modrinth:
         return [Project(project) for project in response]
 
     @staticmethod
-    def get_user(id_: str, auth=None) -> 'User':
+    def get_user(id_: str, auth: str = None) -> 'User':
         """
         Gets a user.
 
