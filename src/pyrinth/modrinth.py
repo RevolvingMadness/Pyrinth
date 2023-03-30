@@ -12,7 +12,7 @@ class Modrinth:
     """The main Modrinth class used for anything modrinth related."""
 
     @staticmethod
-    def get_project(id_: str, auth=None) -> 'Project':
+    def get_project(id_: str, auth: str = None) -> 'Project':
         """
         Gets a project based on an ID.
 
@@ -27,7 +27,6 @@ class Modrinth:
             },
             timeout=60
         )
-        print(raw_response.headers["X-Ratelimit-Remaining"])
         if raw_response.status_code == 404:
             raise NotFoundError(
                 "The requested project was not found or no authorization to see this project"

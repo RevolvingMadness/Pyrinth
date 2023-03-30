@@ -37,6 +37,19 @@ class ProjectModel:
         self.auth = auth
         self.id = None
         self.downloads = None
+        self.icon_url = None
+        self.color = None
+        self.team = None
+        self.moderator_message = None
+        self.published = None
+        self.updated = None
+        self.approved = None
+        self.followers = None
+        self.status = None
+        self.versions = None
+        self.game_versions = None
+        self.loaders = None
+        self.gallery = None
 
     @staticmethod
     def from_json(json_: dict) -> 'ProjectModel':
@@ -54,6 +67,19 @@ class ProjectModel:
         result.id = json_['id']
         result.downloads = json_['downloads']
         result.donation_urls = json_['donation_urls']
+        result.icon_url = json_['icon_url']
+        result.color = json_['color']
+        result.team = json_['team']
+        result.moderator_message = json_['moderator_message']
+        result.published = json_['published']
+        result.updated = json_['updated']
+        result.approved = json_['approved']
+        result.followers = json_['followers']
+        result.status = json_['status']
+        result.versions = json_['versions']
+        result.game_versions = json_['game_versions']
+        result.loaders = json_['loaders']
+        result.gallery = json_['gallery']
         return result
 
     def to_json(self) -> dict:
