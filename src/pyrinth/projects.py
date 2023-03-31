@@ -844,7 +844,7 @@ class Project:
     class License:
         """Used for a projects license."""
 
-        def __init__(self, id_: str, name: str, url: str) -> None:
+        def __init__(self, id_: str, name: str, url: Optional[str] = None) -> None:
             self.id = id_
             self.name = name
             self.url = url

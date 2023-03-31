@@ -275,7 +275,7 @@ class User:
         )
 
         if raw_response.status_code == 401:
-            raise InvalidParamError("No authorization token given")
+            raise InvalidParamError("Invalid authorization token")
 
         if not raw_response.ok:
             raise InvalidRequestError()

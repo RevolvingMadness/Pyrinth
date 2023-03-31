@@ -118,48 +118,55 @@ class SearchResultModel:
     """The model used for the SearchResult class."""
 
     def __init__(
-        self, slug: str, title: str, description: str,
-        client_side: str, server_side: str, project_type: str,
-        downloads: int, project_id: str, author: str, versions: list[str],
-        follows: int, date_created, date_modified, license_, categories: list[str],
-        icon_url: None, color: None, display_categories: list[str],
-        latest_version: str, gallery: list[str], featured_gallery: None
+        self
     ) -> None:
-        self.slug = slug
-        self.title = title
-        self.description = description
-        self.client_side = client_side
-        self.server_side = server_side
-        self.project_type = project_type
-        self.downloads = downloads
-        self.project_id = project_id
-        self.author = author
-        self.versions = versions
-        self.follows = follows
-        self.date_created = date_created
-        self.date_modified = date_modified
-        self.license = license_
-        self.categories = categories
-        self.icon_url = icon_url
-        self.color = color
-        self.display_categories = display_categories
-        self.latest_version = latest_version
-        self.gallery = gallery
-        self.featured_gallery = featured_gallery
+        self.slug: Optional[str] = None
+        self.title: Optional[str] = None
+        self.description: Optional[str] = None
+        self.client_side: Optional[str] = None
+        self.server_side: Optional[str] = None
+        self.project_type: Optional[str] = None
+        self.downloads: Optional[int] = None
+        self.project_id: Optional[str] = None
+        self.author = None
+        self.versions: Optional[list[str]] = None
+        self.follows: Optional[int] = None
+        self.date_created = None
+        self.date_modified = None
+        self.license: Optional['Project.License'] = None
+        self.categories: Optional[list[str]] = None
+        self.icon_url: Optional[str] = None
+        self.color: Optional[str] = None
+        self.display_categories: Optional[list] = None
+        self.latest_version = None
+        self.gallery = None
+        self.featured_gallery = None
 
     @staticmethod
     def from_json(json_: dict) -> 'SearchResultModel':
         """Utility function."""
-        result = SearchResultModel(
-            json_['slug'], json_['title'], json_['description'],
-            json_['client_side'], json_['server_side'], json_['project_type'],
-            json_['downloads'], json_['project_id'], json_['author'],
-            json_['versions'], json_['follows'], json_['date_created'],
-            json_['date_modified'], json_['license'], json_['categories'],
-            json_['icon_url'], json_['color'], json_['display_categories'],
-            json_['latest_version'], json_['gallery'],
-            json_['featured_gallery']
-        )
+        result = SearchResultModel()
+        result.slug = json_['slug']
+        result.title = json_['title']
+        result.description = json_['description']
+        result.client_side = json_['client_side']
+        result.server_side = json_['server_side']
+        result.project_type = json_['project_type']
+        result.downloads = json_['downloads']
+        result.project_id = json_['project_id']
+        result.author = json_['author']
+        result.versions = json_['versions']
+        result.follows = json_['follows']
+        result.date_created = json_['date_created']
+        result.date_modified = json_['date_modified']
+        result.license = json_['license']
+        result.categories = json_['categories']
+        result.icon_url = json_['icon_url']
+        result.color = json_['color']
+        result.display_categories = json_['display_categories']
+        result.latest_version = json_['latest_version']
+        result.gallery = json_['gallery']
+        result.featured_gallery = json_['featured_gallery']
 
         return result
 
@@ -270,35 +277,37 @@ class VersionModel:
 class UserModel:
     """The model used for the User class."""
 
-    def __init__(
-        self, username: str, id_: str, avatar_url: str,
-        created, role: str, name: Optional[str] = None,
-        email: Optional[str] = None, bio: Optional[str] = None,
-        payout_data=None, github_id: Optional[str] = None,
-        badges: Optional[int] = None, auth=None
-    ) -> None:
-        self.username = username
-        self.id = id_
-        self.avatar_url = avatar_url
-        self.created = created
-        self.role = role
-        self.name = name
-        self.email = email
-        self.bio = bio
-        self.payout_data = payout_data
-        self.github_id = github_id
-        self.badges = badges
-        self.auth = auth
+    def __init__(self) -> None:
+        self.username: Optional[str] = None
+        self.id: Optional[str] = None
+        self.avatar_url: Optional[str] = None
+        self.created = None
+        self.role: Optional[str] = None
+        self.name: Optional[str] = None
+        self.email: Optional[str] = None
+        self.bio: Optional[str] = None
+        self.payout_data = None
+        self.github_id: Optional[int] = None
+        self.badges: Optional[list[str]] = None
+        self.auth: Optional[str] = None
 
     @staticmethod
     def from_json(json_: dict) -> 'UserModel':
         """Utility function."""
-        result = UserModel(
-            json_['username'], json_['id'], json_['avatar_url'],
-            json_['created'], json_['role'], json_['name'],
-            json_['email'], json_['bio'], json_['payout_data'],
-            json_['github_id'], json_['badges'], json_['authorization']
-        )
+        result = UserModel()
+        result.username = json_['username']
+        result.id = json_['id']
+        result.avatar_url = json_['avatar_url']
+        result.created = json_['created']
+        result.role = json_['role']
+        result.name = json_['name']
+        result.email = json_['email']
+        result.bio = json_['bio']
+        result.payout_data = json_['payout_data']
+        result.github_id = json_['github_id']
+        result.badges = json_['badges']
+        result.auth = json_['authorization']
+
         return result
 
     def to_json(self) -> dict:
