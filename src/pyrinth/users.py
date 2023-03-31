@@ -10,6 +10,7 @@ from pyrinth.exceptions import (
 )
 from pyrinth.projects import Project
 from pyrinth.models import UserModel
+from pyrinth.util import args_to_dict
 
 
 class User:
@@ -21,7 +22,7 @@ class User:
             self.model = UserModel.from_json(user_model)
 
     def __repr__(self) -> str:
-        return f'User: {self.model.username}'
+        return f'User: {args_to_dict(username=self.model.username, name=self.model.name, id=self.model.id)}'
 
     def get_auth(self) -> Optional[str]:
         """Gets the users authorization token."""

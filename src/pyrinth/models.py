@@ -46,7 +46,7 @@ class ProjectModel:
         self.approved = None
         self.followers = None
         self.status = None
-        self.versions = None
+        self.version_ids = None
         self.game_versions = None
         self.loaders = None
         self.gallery = None
@@ -76,7 +76,7 @@ class ProjectModel:
         result.approved = json_['approved']
         result.followers = json_['followers']
         result.status = json_['status']
-        result.versions = json_['versions']
+        result.version_ids = json_['versions']
         result.game_versions = json_['game_versions']
         result.loaders = json_['loaders']
         result.gallery = json_['gallery']

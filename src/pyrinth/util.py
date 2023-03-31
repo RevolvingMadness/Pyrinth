@@ -55,6 +55,23 @@ def list_to_json(lst: list) -> list[dict]:
     return result
 
 
+def list_to_object(type_, lst) -> list:
+    """Utility Function."""
+    result = []
+
+    for item in lst:
+        if isinstance(item, dict):
+            result.append(type_.from_json(item))
+        else:
+            result.append(item)
+
+    return result
+
+
 def format_time(time) -> datetime:
     """Utility Function."""
     return parser().parse(time)
+
+
+def args_to_dict(**kwargs) -> str:
+    return json.dumps(kwargs)

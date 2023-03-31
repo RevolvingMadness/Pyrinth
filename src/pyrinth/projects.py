@@ -8,7 +8,7 @@ from pyrinth.exceptions import (
     InvalidParamError, InvalidRequestError,
     NoAuthorization, NotFoundError
 )
-from pyrinth.util import remove_null_values
+from pyrinth.util import list_to_object, remove_null_values
 
 
 class Project:
@@ -22,6 +22,9 @@ class Project:
 
     def __repr__(self) -> str:
         return f"Project: {self.model.title}"
+
+    def get_donations(self) -> list['Project.Donation']:
+        return list_to_object(Project.Donation, self.model.donation_urls)
 
     def get_auth(self, auth: Optional[str]) -> str:
         """Utility Function."""
@@ -53,6 +56,12 @@ class Project:
         )
 
         return versions[0]
+
+    def get_gallery(self) -> list['Project.GalleryImage']:
+        """Gets the projects gallery"""
+        result = list_to_object(Project.GalleryImage, self.model.gallery)
+
+        return result
 
     def is_client_side(self) -> bool:
         """Checks if this project is client side."""
