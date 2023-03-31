@@ -6,7 +6,7 @@ from typing import Optional
 import requests as r
 from pyrinth.exceptions import (
     InvalidParamError, InvalidRequestError,
-    NoAuthorization, NotFoundError
+    NoAuthorizationError, NotFoundError
 )
 from pyrinth.projects import Project
 from pyrinth.models import UserModel
@@ -84,7 +84,7 @@ class User:
         )
 
         if raw_response.status_code == 401:
-            raise NoAuthorization(
+            raise NoAuthorizationError(
                 "No authorization to get this user's followed projects"
             )
 
@@ -117,7 +117,7 @@ class User:
         )
 
         if raw_response.status_code == 401:
-            raise NoAuthorization(
+            raise NoAuthorizationError(
                 "No authorization to get this user's notifications"
             )
 
@@ -166,7 +166,7 @@ class User:
         )
 
         if raw_response.status_code == 401:
-            raise NoAuthorization("No authorization to create a project")
+            raise NoAuthorizationError("No authorization to create a project")
 
         if not raw_response.ok:
             raise InvalidRequestError()
@@ -218,7 +218,7 @@ class User:
             )
 
         if raw_response.status_code == 401:
-            raise NoAuthorization("No authorization to follow a project")
+            raise NoAuthorizationError("No authorization to follow a project")
 
         if not raw_response.ok:
             raise InvalidRequestError()
@@ -249,7 +249,8 @@ class User:
             )
 
         if raw_response.status_code == 401:
-            raise NoAuthorization("No authorization to unfollow a project")
+            raise NoAuthorizationError(
+                "No authorization to unfollow a project")
 
         if not raw_response.ok:
             raise InvalidRequestError()

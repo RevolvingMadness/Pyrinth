@@ -6,7 +6,7 @@ import json
 import requests as r
 from pyrinth.exceptions import (
     InvalidParamError, InvalidRequestError,
-    NoAuthorization, NotFoundError
+    NoAuthorizationError, NotFoundError
 )
 from pyrinth.util import remove_null_values
 
@@ -271,7 +271,8 @@ class Project:
         )
 
         if raw_response.status_code == 401:
-            raise NoAuthorization("No authorization to create this version")
+            raise NoAuthorizationError(
+                "No authorization to create this version")
 
         if not raw_response.ok:
             raise InvalidRequestError()
@@ -331,7 +332,7 @@ class Project:
             raise InvalidParamError("Invalid input")
 
         if raw_response.status_code == 401:
-            raise NoAuthorization("No authorization to edit this project")
+            raise NoAuthorizationError("No authorization to edit this project")
 
         if not raw_response.ok:
             raise InvalidRequestError()
@@ -360,7 +361,8 @@ class Project:
         )
 
         if raw_response.status_code == 401:
-            raise NoAuthorization("No authorization to create a gallery image")
+            raise NoAuthorizationError(
+                "No authorization to create a gallery image")
 
         if raw_response.status_code == 404:
             raise NotFoundError(
@@ -411,7 +413,7 @@ class Project:
         )
 
         if raw_response.status_code == 401:
-            raise NoAuthorization(
+            raise NoAuthorizationError(
                 "No authorization to edit this gallery image")
 
         if raw_response.status_code == 404:
@@ -458,7 +460,7 @@ class Project:
             raise InvalidParamError("Invalid URL or project specified")
 
         if raw_response.status_code == 401:
-            raise NoAuthorization(
+            raise NoAuthorizationError(
                 "No authorization to delete this gallery image"
             )
 
@@ -547,7 +549,7 @@ class Project:
         )
 
         if raw_response.status_code == 401:
-            raise NoAuthorization("No authorization to edit this project")
+            raise NoAuthorizationError("No authorization to edit this project")
 
         if raw_response.status_code == 404:
             raise NotFoundError(
@@ -581,7 +583,8 @@ class Project:
             raise NotFoundError("The requested project was not found")
 
         if raw_response.status_code == 401:
-            raise NoAuthorization("No authorization to delete this project")
+            raise NoAuthorizationError(
+                "No authorization to delete this project")
 
         if not raw_response.ok:
             raise InvalidRequestError()

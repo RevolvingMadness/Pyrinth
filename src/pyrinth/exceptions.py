@@ -15,7 +15,7 @@ class InvalidRequestError(Exception):
         super().__init__("Invalid Request")
 
 
-class NoAuthorization(Exception):
+class NoAuthorizationError(Exception):
     """Used when a 401 occurs."""
 
     def __init__(self, *args: object) -> None:
