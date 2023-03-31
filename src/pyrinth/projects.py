@@ -106,6 +106,26 @@ class Project:
 
         return None
 
+    def download(self, recursive: bool = False) -> None:
+        """Downloads this project
+
+        Args:
+            recursive (bool): Download dependencies
+        """
+        latest = self.get_latest_version()
+        files = latest.get_files()
+        for file in files:
+            file_content = r.get(file.url).content
+            open(file.filename, "wb").write(file_content)
+
+        if recursive:
+            deps = latest.get_dependencies()
+            for dep in deps:
+                files = dep.get_version().get_files()
+                for file in files:
+                    file_content = r.get(file.url).content
+                    open(file.filename, "wb").write(file_content)
+
     def get_versions(
         self, loaders: Optional[list[str]] = None,
         game_versions: Optional[list[str]] = None,
@@ -637,6 +657,25 @@ class Project:
             for file in self.model.files:
                 result.append(Project.File.from_json(file))
             return result
+
+        def download(self, recursive: bool = False) -> None:
+            """Downloads this version
+
+            Args:
+                recursive (bool): Download dependencies
+            """
+            files = self.get_files()
+            for file in files:
+                file_content = r.get(file.url).content
+                open(file.filename, "wb").write(file_content)
+
+            if recursive:
+                deps = self.get_dependencies()
+                for dep in deps:
+                    files = dep.get_version().get_files()
+                    for file in files:
+                        file_content = r.get(file.url).content
+                        open(file.filename, "wb").write(file_content)
 
         def get_project(self) -> 'Project':
             """
