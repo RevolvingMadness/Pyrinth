@@ -117,9 +117,7 @@ class ProjectModel:
 class SearchResultModel:
     """The model used for the SearchResult class."""
 
-    def __init__(
-        self
-    ) -> None:
+    def __init__(self) -> None:
         self.slug: Optional[str] = None
         self.title: Optional[str] = None
         self.description: Optional[str] = None

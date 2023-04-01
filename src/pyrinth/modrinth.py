@@ -13,12 +13,18 @@ class Modrinth:
 
     @staticmethod
     def get_project(id_: str, auth: Optional[str] = None) -> 'Project':
-        """
-        Gets a project based on an ID.
+        """Gets a project based on an ID.
+
+        Args:
+            id_ (str): The project's ID to get.
+            auth (str, optional): An optional authorization token when getting the project. Defaults to None.
+
+        Raises:
+            NotFoundError: The project wasn't found.
+            InvalidRequestError: An invalid API call was sent.
 
         Returns:
-            Project: The project that was found using the ID
-            None: If no project was found
+            Project: The project that was found.
         """
         raw_response = r.get(
             f'https://api.modrinth.com/v2/project/{id_}',
@@ -38,19 +44,22 @@ class Modrinth:
         return Project(response)
 
     @staticmethod
-    def exists(project_id: str) -> bool:
-        """
-        Checks if a project exists.
+    def project_exists(id: str) -> bool:
+        """Checks if a project exists.
+
+        Args:
+            id (str): The project ID to check if it exists.
+
+        Raises:
+            InvalidRequestError: An invalid API call was sent.
 
         Returns:
-            bool: If the project exists
+            bool: If the project exists.
         """
         raw_response = r.get(
-            f'https://api.modrinth.com/v2/project/{project_id}/check',
+            f'https://api.modrinth.com/v2/project/{id}/check',
             timeout=60
         )
-        if raw_response.status_code == 404:
-            raise NotFoundError("The requested project was not found")
         if not raw_response.ok:
             raise InvalidRequestError()
         response = json.loads(raw_response.content)
@@ -58,11 +67,13 @@ class Modrinth:
 
     @staticmethod
     def get_projects(ids: list[str]) -> list['Project']:
-        """
-        Gets a list of projects based on IDs.
+        """Gets multiple projects.
+
+        Raises:
+            InvalidRequestError: An invalid API call was sent.
 
         Returns:
-            list[Project]: The projects that were found using the IDs
+            list[Project]: The projects that were found.
         """
         raw_response = r.get(
             'https://api.modrinth.com/v2/projects',
@@ -78,12 +89,17 @@ class Modrinth:
 
     @staticmethod
     def get_version(id_: str) -> 'Project.Version':
-        """
-        Gets a version based on an ID.
+        """Gets a version.
+
+        Args:
+            id (str): The version ID to find.
+
+        Raises:
+            NotFoundError: The version was not found.
+            InvalidRequestError: An invalid API call was sent.
 
         Returns:
-            Project.Version: The version that was found using the ID
-            None: If no version was found
+            Project.Version: The version that was found.
         """
         raw_response = r.get(
             f'https://api.modrinth.com/v2/version/{id_}',
@@ -100,14 +116,16 @@ class Modrinth:
 
     @staticmethod
     def get_random_projects(count: int = 1) -> list['Project']:
-        """
-        Gets an amount of random projects.
+        """Gets a certain amount of random projects.
 
         Args:
-            count (int, optional): The amount of random projects to return. Defaults to 1.
+            count (int, optional): The amount of projects to find. Defaults to 1.
+
+        Raises:
+            InvalidRequestError: An invalid API call was sent.
 
         Returns:
-            list[Project]: The amount of random projects that were found
+            list[Project]: The projects that were randomly found.
         """
         raw_response = r.get(
             'https://api.modrinth.com/v2/projects_random',
@@ -123,11 +141,18 @@ class Modrinth:
 
     @staticmethod
     def get_user(id_: str, auth: Optional[str] = None) -> 'User':
-        """
-        Gets a user.
+        """Gets a user.
 
-        Returns
-            User: The user that was found using the ID
+        Args:
+            id_ (str): The user's ID to find.
+            auth (str, optional): The authorization token to use when creating the user. Defaults to None.
+
+        Raises:
+            NotFoundError: The user was not found.
+            InvalidRequestError: An invalid API call was sent.
+
+        Returns:
+            User: The user that was found.
         """
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user/{id_}',
@@ -146,12 +171,13 @@ class Modrinth:
 
     @staticmethod
     def get_user_from_auth(auth: str) -> 'User':
-        """
-        Gets a user from authorization token.
+        """Gets a user from an authorization token.
+
+        Args:
+            auth (str): The authorization token to use when finding the user.
 
         Returns:
-            User: The user that was found using the authorization token
-            None: No user was found
+            User: The user that was found.
         """
         return User.from_auth(auth)
 
@@ -161,11 +187,13 @@ class Modrinth:
         index: str = "relevance", offset: int = 0,
         limit: int = 10, filters: Optional[list[str]] = None
     ) -> list['SearchResult']:
-        """
-        Searches for projects using 6 arguments.
+        """Searches projects on modrinth
+
+        Raises:
+            InvalidRequestError: An invalid API call was sent.
 
         Returns:
-            list[Modrinth.SearchResult]: The projects that were found using the 6 arguments
+            list[SearchResult]: The results that were found.
         """
         params = {}
         if query != '':
