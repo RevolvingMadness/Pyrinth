@@ -16,7 +16,7 @@ class Modrinth:
         """Gets a project based on an ID.
 
         Args:
-            id_ (str): The project's ID to get.
+            id (str): The project's ID to get.
             auth (str, optional): An optional authorization token when getting the project. Defaults to None.
 
         Raises:

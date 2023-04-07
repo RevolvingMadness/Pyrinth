@@ -24,6 +24,11 @@ class Project:
         return f"Project: {self.model.title}"
 
     def get_donations(self) -> list['Project.Donation']:
+        """Gets this project's donations.
+
+        Returns:
+            list[Donation]: The donations that this project has.
+        """
         return list_to_object(Project.Donation, self.model.donation_urls)
 
     def get_auth(self, auth: Optional[str]) -> str:
@@ -34,7 +39,19 @@ class Project:
 
     @staticmethod
     def get(id_: str, auth=None) -> 'Project':
-        """Alternative method for Modrinth.get_project(id_, auth)."""
+        """Gets a project based on an ID.
+
+        Args:
+            id (str): The project's ID to get.
+            auth (str, optional): An optional authorization token when getting the project. Defaults to None.
+
+        Raises:
+            NotFoundError: The project wasn't found.
+            InvalidRequestError: An invalid API call was sent.
+
+        Returns:
+            Project: The project that was found.
+        """
         from pyrinth.modrinth import Modrinth
         return Modrinth.get_project(id_, auth)
 
@@ -43,13 +60,19 @@ class Project:
         game_versions: Optional[list[str]] = None,
         featured: Optional[bool] = None,
         types: Optional[list[str]] = None,
-        auth=None
+        auth: Optional[str] = None
     ) -> 'Project.Version':
-        """
-        Gets the latest project version.
+        """Gets this project's latest version.
+
+        Args:
+            loaders (list[str], optional): The loaders filter. Defaults to None.
+            game_versions (list[str], optional): The game versions filter. Defaults to None.
+            featured (bool, optional): The is featured filter. Defaults to None.
+            types (list[str], optional): The types filter. Defaults to None.
+            auth (str, optional): The authorization token. Defaults to None.
 
         Returns:
-            Project.Version: The latest project version
+            Version: The project's latest version.
         """
         versions = self.get_versions(
             loaders, game_versions, featured, types, auth
@@ -58,7 +81,11 @@ class Project:
         return versions[0]
 
     def get_gallery(self) -> list['Project.GalleryImage']:
-        """Gets the projects gallery"""
+        """Gets the project's gallery
+
+        Returns:
+            list[GalleryImage]: The project's gallery images
+        """
         result = list_to_object(Project.GalleryImage, self.model.gallery)
 
         return result
