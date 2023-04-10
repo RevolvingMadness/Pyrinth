@@ -4,6 +4,7 @@ from typing import Optional
 import json
 from pyrinth.util import remove_null_values
 from pyrinth.projects import Project
+from pyrinth.literals import version_status_literal, requested_version_status_literal, version_type_literal
 
 
 class ProjectModel:
@@ -206,9 +207,9 @@ class VersionModel:
 
     def __init__(
         self, name: str, version_number: str, dependencies: list['Project.Dependency'],
-        game_versions: list[str], version_type: str, loaders: list[str], featured: bool,
-        file_parts: list[str], changelog: Optional[str] = None, status: Optional[str] = None,
-        requested_status: Optional[str] = None
+        game_versions: list[str], version_type: version_type_literal, loaders: list[str], featured: bool,
+        file_parts: list[str], changelog: Optional[str] = None, status: Optional[version_status_literal] = None,
+        requested_status: Optional[requested_version_status_literal] = None
     ) -> None:
         from pyrinth.util import list_to_json
         self.name = name

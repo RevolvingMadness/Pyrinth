@@ -79,7 +79,7 @@ class User:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user/{self.model.username}/follows',
             headers={
-                'authorization': self.model.auth
+                'authorization': self.model.auth  # type: ignore
             },
             timeout=60
         )
@@ -112,7 +112,7 @@ class User:
         raw_response = r.get(
             f'https://api.modrinth.com/v2/user/{self.model.username}/notifications',
             headers={
-                'authorization': self.model.auth
+                'authorization': self.model.auth  # type: ignore
             },
             timeout=60
         )
@@ -161,7 +161,7 @@ class User:
             'https://api.modrinth.com/v2/project',
             files=files,
             headers={
-                'authorization': self.model.auth
+                'authorization': self.model.auth  # type: ignore
             },
             timeout=60
         )
@@ -208,7 +208,7 @@ class User:
         raw_response = r.post(
             f'https://api.modrinth.com/v2/project/{id_}/follow',
             headers={
-                'authorization': self.model.auth
+                'authorization': self.model.auth  # type: ignore
             },
             timeout=60
         )
@@ -239,7 +239,7 @@ class User:
         raw_response = r.delete(
             f'https://api.modrinth.com/v2/project/{id_}/follow',
             headers={
-                'authorization': self.model.auth
+                'authorization': self.model.auth  # type: ignore
             },
             timeout=60
         )

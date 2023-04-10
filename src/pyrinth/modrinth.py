@@ -6,6 +6,7 @@ import requests as r
 from pyrinth.exceptions import InvalidRequestError, NotFoundError
 from pyrinth.projects import Project
 from pyrinth.users import User
+from pyrinth.literals import index_literal
 
 
 class Modrinth:
@@ -184,7 +185,7 @@ class Modrinth:
     @staticmethod
     def search_projects(
         query: str = '', facets: Optional[list[list[str]]] = None,
-        index: str = "relevance", offset: int = 0,
+        index: index_literal = "relevance", offset: int = 0,
         limit: int = 10, filters: Optional[list[str]] = None
     ) -> list['SearchResult']:
         """Searches projects on modrinth
@@ -217,6 +218,26 @@ class Modrinth:
             raise InvalidRequestError()
         response = json.loads(raw_response.content)
         return [Modrinth.SearchResult(project) for project in response['hits']]
+
+    @staticmethod
+    def search_mods(
+        query: str = '', facets: Optional[list[list[str]]] = None,
+        index: index_literal = "relevance", offset: int = 0,
+        limit: int = 10, filters: Optional[list[str]] = None
+    ) -> list['SearchResult']:
+        """Searches projects on modrinth
+
+        Raises:
+            InvalidRequestError: An invalid API call was sent.
+
+        Returns:
+            list[SearchResult]: The results that were found.
+        """
+        if facets != None:
+            facets.append(["categories:mods"])  # type: ignore
+        else:
+            facets = [["categories:mods"]]
+        return Modrinth.search_projects(query, facets, index, offset, limit, filters)
 
     class SearchResult:
         """A search result from using Modrinth.search_projects()."""

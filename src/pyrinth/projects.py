@@ -9,6 +9,7 @@ from pyrinth.exceptions import (
     NoAuthorizationError, NotFoundError
 )
 from pyrinth.util import list_to_object, remove_null_values
+from pyrinth.literals import project_status_literal, requested_project_status_literal, version_type_literal
 
 
 class Project:
@@ -59,7 +60,7 @@ class Project:
         self, loaders: Optional[list[str]] = None,
         game_versions: Optional[list[str]] = None,
         featured: Optional[bool] = None,
-        types: Optional[list[str]] = None,
+        types: Optional[version_type_literal] = None,
         auth: Optional[str] = None
     ) -> 'Project.Version':
         """Gets this project's latest version.
@@ -157,7 +158,7 @@ class Project:
         self, loaders: Optional[list[str]] = None,
         game_versions: Optional[list[str]] = None,
         featured: Optional[bool] = None,
-        types: Optional[list[str]] = None,
+        types: Optional[version_type_literal] = None,
         auth=None
     ) -> list['Project.Version']:
         """
@@ -209,7 +210,7 @@ class Project:
         self, loaders: Optional[list[str]] = None,
         game_versions: Optional[list[str]] = None,
         featured: Optional[bool] = None,
-        types: Optional[list[str]] = None,
+        types: Optional[version_type_literal] = None,
         auth=None
     ) -> 'Project.Version':
         """
@@ -513,7 +514,7 @@ class Project:
         issues_url: Optional[str] = None, source_url: Optional[str] = None,
         wiki_url: Optional[str] = None, discord_url: Optional[str] = None,
         license_id: Optional[str] = None, license_url: Optional[str] = None,
-        status: Optional[str] = None, requested_status: Optional[str] = None,
+        status: Optional[project_status_literal] = None, requested_status: Optional[requested_project_status_literal] = None,
         moderation_message: Optional[str] = None, moderation_message_body: Optional[str] = None,
         auth=None
     ) -> int:
