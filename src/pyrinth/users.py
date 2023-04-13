@@ -148,7 +148,7 @@ class User:
 
         Args:
             project_model (ProjectModel): The model of the project to create
-            icon (str, optional): The path of the icon to use for the newly created project. NOT IMPLEMENTED
+            icon (str): The path of the icon to use for the newly created project. NOT IMPLEMENTED
 
         Returns:
             int: If the project creation was successful

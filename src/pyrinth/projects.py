@@ -44,7 +44,7 @@ class Project:
 
         Args:
             id (str): The project's ID to get.
-            auth (str, optional): An optional authorization token when getting the project. Defaults to None.
+            auth (str): An optional authorization token when getting the project. Defaults to None.
 
         Raises:
             NotFoundError: The project wasn't found.
@@ -66,11 +66,11 @@ class Project:
         """Gets this project's latest version.
 
         Args:
-            loaders (list[str], optional): The loaders filter. Defaults to None.
-            game_versions (list[str], optional): The game versions filter. Defaults to None.
-            featured (bool, optional): The is featured filter. Defaults to None.
-            types (list[str], optional): The types filter. Defaults to None.
-            auth (str, optional): The authorization token. Defaults to None.
+            loaders (list[str]): The loaders filter. Defaults to None.
+            game_versions (list[str]): The game versions filter. Defaults to None.
+            featured (bool): The is featured filter. Defaults to None.
+            types (list[str]): The types filter. Defaults to None.
+            auth (str): The authorization token. Defaults to None.
 
         Returns:
             Version: The project's latest version.
@@ -422,10 +422,10 @@ class Project:
         Args:
             auth (str): The authorization token to use when modifying the gallery image
             url (str): The url of the gallery image
-            featured (Optional[bool], optional): If the new gallery image is featured. Defaults to None.
-            title (Optional[str], optional): The new gallery image title. Defaults to None.
-            description (Optional[str], optional): The new gallery image description. Defaults to None.
-            ordering (Optional[int], optional): The new gallery image ordering. Defaults to None.
+            featured (Optional[bool]): If the new gallery image is featured. Defaults to None.
+            title (Optional[str]): The new gallery image title. Defaults to None.
+            description (Optional[str]): The new gallery image description. Defaults to None.
+            ordering (Optional[int]): The new gallery image ordering. Defaults to None.
 
         Returns:
             int: If the gallery image modification was successful
@@ -523,24 +523,24 @@ class Project:
 
         Args:
             auth (str): The authorization token to use to modify the project
-            slug (Optional[str], optional): The new project slug. Defaults to None.
-            title (Optional[str], optional): The new project title. Defaults to None.
-            description (Optional[str], optional): The new project description. Defaults to None.
-            categories (Optional[list[str]], optional): The new project categories. Defaults to None.
-            client_side (Optional[str], optional): If the project is supported on client_side. Defaults to None.
-            server_side (Optional[str], optional): If the project is supported on the server side. Defaults to None.
-            body (Optional[str], optional): The new project body. Defaults to None.
-            additional_categories (Optional[list[str]], optional): The new project additional categories. Defaults to None.
-            issues_url (Optional[str], optional): The new project issues url. Defaults to None.
-            source_url (Optional[str], optional): The new project source url. Defaults to None.
-            wiki_url (Optional[str], optional): The new project wiki url. Defaults to None.
-            discord_url (Optional[str], optional): The new project discord url. Defaults to None.
-            license_id (Optional[str], optional): The new project license id. Defaults to None.
-            license_url (Optional[str], optional): The new project license url. Defaults to None.
-            status (Optional[str], optional): The new project status. Defaults to None.
-            requested_status (Optional[str], optional): The new project requested status. Defaults to None.
-            moderation_message (Optional[str], optional): The new project moderation message. Defaults to None.
-            moderation_message_body (Optional[str], optional): The new project moderation message body. Defaults to None.
+            slug (Optional[str]): The new project slug. Defaults to None.
+            title (Optional[str]): The new project title. Defaults to None.
+            description (Optional[str]): The new project description. Defaults to None.
+            categories (Optional[list[str]]): The new project categories. Defaults to None.
+            client_side (Optional[str]): If the project is supported on client_side. Defaults to None.
+            server_side (Optional[str]): If the project is supported on the server side. Defaults to None.
+            body (Optional[str]): The new project body. Defaults to None.
+            additional_categories (Optional[list[str]]): The new project additional categories. Defaults to None.
+            issues_url (Optional[str]): The new project issues url. Defaults to None.
+            source_url (Optional[str]): The new project source url. Defaults to None.
+            wiki_url (Optional[str]): The new project wiki url. Defaults to None.
+            discord_url (Optional[str]): The new project discord url. Defaults to None.
+            license_id (Optional[str]): The new project license id. Defaults to None.
+            license_url (Optional[str]): The new project license url. Defaults to None.
+            status (Optional[str]): The new project status. Defaults to None.
+            requested_status (Optional[str]): The new project requested status. Defaults to None.
+            moderation_message (Optional[str]): The new project moderation message. Defaults to None.
+            moderation_message_body (Optional[str]): The new project moderation message body. Defaults to None.
 
         Raises:
             Exception: If no new project arguments are specified
@@ -682,7 +682,7 @@ class Project:
             Gets a versions files.
 
             Returns:
-                list[Project.File]: The versions files
+                list[File]: The versions files
             """
             result = []
             for file in self.model.files:
