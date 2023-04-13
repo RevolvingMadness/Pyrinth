@@ -1,14 +1,15 @@
 """Utility functions for Pyrinth."""
 
 import json
-from typing import Any
-from datetime import datetime
-from dateutil.parser import parser
+import typing
+import datetime
+import dateutil.parser
+import pyrinth.projects as projects
 
 
-def to_sentence_case(sentence) -> Any:
+def to_sentence_case(sentence) -> typing.Any:
     """Utility Function."""
-    return sentence.title().replace('-', ' ').replace('_', ' ')
+    return sentence.title().replace("-", " ").replace("_", " ")
 
 
 def remove_null_values(json_: dict) -> dict:
@@ -23,21 +24,20 @@ def remove_null_values(json_: dict) -> dict:
 
 def to_image_from_json(json_: dict) -> list:
     """Utility Function."""
-    from pyrinth.projects import Project
-    return [Project.GalleryImage.from_json(image) for image in json_]
+    return [projects.Project.GalleryImage.from_json(image) for image in json_]
 
 
 def json_to_query_params(json_: dict) -> str:
     """Utility Function."""
-    result = ''
+    result = ""
     for key, value in json_.items():
-        result += f'{key}={json.dumps(value)}&'
+        result += f"{key}={json.dumps(value)}&"
     return result
 
 
 def remove_file_path(file) -> str:
     """Utility Function."""
-    return ''.join(file.split('/')[-1])
+    return "".join(file.split("/")[-1])
 
 
 def list_to_json(lst: list) -> list[dict]:
@@ -68,9 +68,9 @@ def list_to_object(type_, lst) -> list:
     return result
 
 
-def format_time(time) -> datetime:
+def format_time(time) -> datetime.datetime:
     """Utility Function."""
-    return parser().parse(time)
+    return dateutil.parser.parser().parse(time)
 
 
 def args_to_dict(**kwargs) -> str:
