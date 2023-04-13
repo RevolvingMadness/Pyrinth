@@ -2,6 +2,7 @@
 
 <div id="user-content-toc">
   <ul>
+    <img src="pyrinth.png" width="64" height="64"/>
     <summary><h1>Pyrinth</h1></summary>
   </ul>
 </div>
