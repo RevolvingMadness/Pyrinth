@@ -1,76 +1,76 @@
 import requests as r
-from pyrinth.exceptions import *
+import pyrinth.exceptions as exceptions
 
 
 class Tag:
     """Used for getting Modrinth tags."""
 
     @staticmethod
-    def get_categories() -> list['Tag.Category']:
+    def get_categories() -> list["Tag.Category"]:
         """Get a list of categories."""
-        raw_response = r.get(
-            'https://api.modrinth.com/v2/tag/category',
-            timeout=60
-        )
+        raw_response = r.get("https://api.modrinth.com/v2/tag/category", timeout=60)
 
         if not raw_response.ok:
-            raise InvalidRequestError()
+            raise exceptions.InvalidRequestError()
 
         response = raw_response.json()
-        return [Tag.Category(json["icon"], json["name"], json["project_type"], json["header"]) for json in response]
+        return [
+            Tag.Category(
+                json["icon"], json["name"], json["project_type"], json["header"]
+            )
+            for json in response
+        ]
 
     @staticmethod
-    def get_loaders() -> list['Tag.Loader']:
+    def get_loaders() -> list["Tag.Loader"]:
         """Get a list of loaders."""
-        raw_response = r.get(
-            'https://api.modrinth.com/v2/tag/loader',
-            timeout=60
-        )
+        raw_response = r.get("https://api.modrinth.com/v2/tag/loader", timeout=60)
 
         if not raw_response.ok:
-            raise InvalidRequestError()
+            raise exceptions.InvalidRequestError()
 
         response = raw_response.json()
-        return [Tag.Loader(json["icon"], json["name"], json["supported_project_types"]) for json in response]
+        return [
+            Tag.Loader(json["icon"], json["name"], json["supported_project_types"])
+            for json in response
+        ]
 
     @staticmethod
-    def get_game_versions() -> list['Tag.GameVersion']:
+    def get_game_versions() -> list["Tag.GameVersion"]:
         """Get a list of game versions."""
-        raw_response = r.get(
-            'https://api.modrinth.com/v2/tag/game_version',
-            timeout=60
-        )
+        raw_response = r.get("https://api.modrinth.com/v2/tag/game_version", timeout=60)
 
         if not raw_response.ok:
-            raise InvalidRequestError()
+            raise exceptions.InvalidRequestError()
 
         response = raw_response.json()
-        return [Tag.GameVersion(json["version"], json["version_type"], json["date"], json["major"]) for json in response]
+        return [
+            Tag.GameVersion(
+                json["version"], json["version_type"], json["date"], json["major"]
+            )
+            for json in response
+        ]
 
     @staticmethod
-    def get_licenses() -> list['Tag.License']:
+    def get_licenses() -> list["Tag.License"]:
         """Get a list of licenses."""
-        raw_response = r.get(
-            'https://api.modrinth.com/v2/tag/license',
-            timeout=60
-        )
+        raw_response = r.get("https://api.modrinth.com/v2/tag/license", timeout=60)
 
         if not raw_response.ok:
-            raise InvalidRequestError()
+            raise exceptions.InvalidRequestError()
 
         response = raw_response.json()
         return [Tag.License(json["short"], json["name"]) for json in response]
 
     @staticmethod
-    def get_donation_platforms() -> list['Tag.DonationPlatform']:
+    def get_donation_platforms() -> list["Tag.DonationPlatform"]:
         """Get a list of donation platforms."""
         raw_response = r.get(
-            'https://api.modrinth.com/v2/tag/donation_platform',
-            timeout=60
+            "https://api.modrinth.com/v2/tag/donation_platform", timeout=60
         )
 
         if not raw_response.ok:
-            raise InvalidRequestError()
+            raise exceptions.InvalidRequestError()
 
         response = raw_response.json()
         return [Tag.DonationPlatform(json["short"], json["name"]) for json in response]
@@ -78,13 +78,10 @@ class Tag:
     @staticmethod
     def get_report_types() -> list[str]:
         """Get a list of report types."""
-        raw_response = r.get(
-            'https://api.modrinth.com/v2/tag/report_type',
-            timeout=60
-        )
+        raw_response = r.get("https://api.modrinth.com/v2/tag/report_type", timeout=60)
 
         if not raw_response.ok:
-            raise InvalidRequestError()
+            raise exceptions.InvalidRequestError()
 
         response = raw_response.json()
         return response
