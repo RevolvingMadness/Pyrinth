@@ -132,33 +132,6 @@ class Modrinth:
         return [projects.Project(project) for project in response]
 
     @staticmethod
-    def get_user(id_: str, auth: typing.Optional[str] = None) -> "users.User":
-        """Gets a user.
-
-        Args:
-            id_ (str): The user's ID to find.
-            auth (str, optional): The authorization token to use when creating the user. Defaults to None.
-
-        Raises:
-            NotFoundError: The user was not found.
-            InvalidRequestError: An invalid API call was sent.
-
-        Returns:
-            User: The user that was found.
-        """
-        raw_response = r.get(f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
-
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested user was not found")
-
-        if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
-
-        response = raw_response.json()
-        response.update({"authorization": auth})
-        return users.User(response)
-
-    @staticmethod
     def get_user_from_auth(auth: str) -> "users.User":
         """Gets a user from an authorization token.
 
@@ -207,29 +180,6 @@ class Modrinth:
             raise exceptions.InvalidRequestError()
         response = json.loads(raw_response.content)
         return [Modrinth.SearchResult(project) for project in response["hits"]]
-
-    @staticmethod
-    def search_mods(
-        query: str = "",
-        facets: typing.Optional[list[list[str]]] = None,
-        index: literals.index_literal = "relevance",
-        offset: int = 0,
-        limit: int = 10,
-        filters: typing.Optional[list[str]] = None,
-    ) -> list["SearchResult"]:
-        """Searches projects on modrinth
-
-        Raises:
-            InvalidRequestError: An invalid API call was sent.
-
-        Returns:
-            list[SearchResult]: The results that were found.
-        """
-        if facets != None:
-            facets.append(["categories:mods"])  # type: ignore
-        else:
-            facets = [["categories:mods"]]
-        return Modrinth.search_projects(query, facets, index, offset, limit, filters)
 
     class SearchResult:
         """A search result from using Modrinth.search_projects()."""
