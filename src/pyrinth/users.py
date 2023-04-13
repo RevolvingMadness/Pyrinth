@@ -271,7 +271,7 @@ class User:
         return True
 
     @staticmethod
-    def from_auth(auth: str) -> "User":
+    def get_from_auth(auth: str) -> "User":
         """
         Gets a user from authorization token.
 
