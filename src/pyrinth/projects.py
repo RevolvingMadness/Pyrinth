@@ -35,7 +35,7 @@ class Project:
         """Utility Function."""
         if auth:
             return auth
-        return self.model.auth
+        return self.model.auth  # type: ignore
 
     @staticmethod
     def get(id_: str, auth=None) -> "Project":
@@ -66,7 +66,7 @@ class Project:
         response = json.loads(raw_response.content)
         response.update({"authorization": auth})
         return Project(response)
-    
+
     @staticmethod
     def get_multiple(ids: list[str]) -> list["Project"]:
         """Gets multiple projects.
@@ -679,8 +679,8 @@ class Project:
             raise exceptions.InvalidRequestError()
 
         response = json.loads(raw_response.content)
-        return [Project(dependency) for dependency in response["projects"]]
-    
+        return [Project(dependency) for dependency in response.get("projects")]
+
     @staticmethod
     def search(
         query: str = "",
@@ -717,7 +717,7 @@ class Project:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError()
         response = json.loads(raw_response.content)
-        return [Project.SearchResult(project) for project in response["hits"]]
+        return [Project.SearchResult(project) for project in response.get("hits")]
 
     def get_team_members(self) -> "list[Project.TeamMember]":
         raw_response = r.get(
@@ -757,13 +757,13 @@ class Project:
         @staticmethod
         def from_json(json):
             result = Project.TeamMember(
-                json["user"],
-                json["user"],
-                json["role"],
-                json["permissions"],
-                json["accepted"],
-                json["payouts_split"],
-                json["ordering"],
+                json.get("user"),
+                json.get("user"),
+                json.get("role"),
+                json.get("permissions"),
+                json.get("accepted"),
+                json.get("payouts_split"),
+                json.get("ordering"),
             )
             return result
 
@@ -791,7 +791,7 @@ class Project:
             for dependency in self.model.dependencies:
                 result.append(Project.Dependency.from_json(dependency))
             return result
-            
+
         @staticmethod
         def get(id_: str) -> "Project.Version":
             """Gets a version.
@@ -806,7 +806,9 @@ class Project:
             Returns:
                 Project.Version: The version that was found.
             """
-            raw_response = r.get(f"https://api.modrinth.com/v2/version/{id_}", timeout=60)
+            raw_response = r.get(
+                f"https://api.modrinth.com/v2/version/{id_}", timeout=60
+            )
             if raw_response.status_code == 404:
                 raise exceptions.NotFoundError(
                     "The requested version was not found or no authorization to see this version"
@@ -949,11 +951,11 @@ class Project:
         def from_json(json_: dict) -> "Project.GalleryImage":
             """Utility Function."""
             result = Project.GalleryImage(
-                json_["url"],
-                json_["featured"],
-                json_["title"],
-                json_["description"],
-                json_["ordering"],
+                json_.get("url"),  # type: ignore
+                json_.get("featured"),  # type: ignore
+                json_.get("title"),  # type: ignore
+                json_.get("description"),  # type: ignore
+                json_.get("ordering"),  # type: ignore
             )
 
             return result
@@ -1005,12 +1007,12 @@ class Project:
         def from_json(json_: dict) -> "Project.File":
             """Utility Function."""
             result = Project.File(
-                json_["hashes"],
-                json_["url"],
-                json_["filename"],
-                json_["primary"],
-                json_["size"],
-                json_["file_type"],
+                json_.get("hashes"),  # type: ignore
+                json_.get("url"),  # type: ignore
+                json_.get("filename"),  # type: ignore
+                json_.get("primary"),  # type: ignore
+                json_.get("size"),  # type: ignore
+                json_.get("file_type"),  # type: ignore
             )
             return result
 
@@ -1030,7 +1032,9 @@ class Project:
         @staticmethod
         def from_json(json_: dict) -> "Project.License":
             """Utility Function."""
-            result = Project.License(json_["id"], json_["name"], json_["url"])
+            result = Project.License(
+                json_.get("id"), json_.get("name"), json_.get("url")  # type: ignore
+            )
 
             return result
 
@@ -1054,7 +1058,7 @@ class Project:
         @staticmethod
         def from_json(json_: dict) -> "Project.Donation":
             """Utility Function."""
-            result = Project.Donation(json_["id"], json_["platform"], json_["url"])
+            result = Project.Donation(json_.get("id"), json_.get("platform"), json_.get("url"))  # type: ignore
 
             return result
 
@@ -1089,12 +1093,14 @@ class Project:
         def from_json(json_: dict) -> "Project.Dependency":
             """Utility Function."""
             dependency_type = "project"
-            id_ = json_["project_id"]
-            if json_["version_id"]:
+            id_ = json_.get("project_id")
+            if json_.get("version_id"):
                 dependency_type = "version"
-                id_ = json_["version_id"]
+                id_ = json_.get("version_id")
 
-            result = Project.Dependency(dependency_type, id_, json_["dependency_type"])
+            result = Project.Dependency(
+                dependency_type, id_, json_.get("dependency_type")
+            )
 
             return result
 

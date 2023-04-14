@@ -330,22 +330,22 @@ class User:
             raise exceptions.InvalidRequestError()
 
         response = json.loads(raw_response.content)
-        return [User.get(user["username"]) for user in response]
+        return [User.get(user.get("username")) for user in response]
 
     class Notification:
         """Used for the users notifications."""
 
         def __init__(self, notification_json: dict) -> None:
-            self.id = notification_json["id"]
-            self.user_id = notification_json["user_id"]
-            self.type = notification_json["type"]
-            self.title = notification_json["title"]
-            self.text = notification_json["text"]
-            self.link = notification_json["link"]
-            self.read = notification_json["read"]
-            self.created = notification_json["created"]
-            self.actions = notification_json["actions"]
-            self.project_title = self.title.split("**")[1]
+            self.id = notification_json.get("id")
+            self.user_id = notification_json.get("user_id")
+            self.type = notification_json.get("type")
+            self.title = notification_json.get("title")
+            self.text = notification_json.get("text")
+            self.link = notification_json.get("link")
+            self.read = notification_json.get("read")
+            self.created = notification_json.get("created")
+            self.actions = notification_json.get("actions")
+            self.project_title = self.title.split("**")[1]  # type: ignore
 
         def __repr__(self) -> str:
             return f"Notification: {self.text}"

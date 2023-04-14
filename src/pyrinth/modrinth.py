@@ -32,7 +32,7 @@ class Modrinth:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError()
         response = json.loads(raw_response.content)
-        return bool(response["id"])
+        return bool(response.get("id"))
 
     @staticmethod
     def get_random_projects(count: int = 1) -> list["projects.Project"]:
@@ -63,7 +63,7 @@ class Modrinth:
         def __init__(self) -> None:
             raw_response = r.get("https://api.modrinth.com/v2/statistics", timeout=60)
             response = json.loads(raw_response.content)
-            self.authors = response["authors"]
-            self.files = response["files"]
-            self.projects = response["projects"]
-            self.versions = response["versions"]
+            self.authors = response.get("authors")
+            self.files = response.get("files")
+            self.projects = response.get("projects")
+            self.versions = response.get("versions")
