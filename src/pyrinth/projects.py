@@ -35,7 +35,7 @@ class Project:
         """Utility Function."""
         if auth:
             return auth
-        return self.model.auth  # type: ignore
+        return self.model.auth
 
     @staticmethod
     def get(id_: str, auth=None) -> "Project":
@@ -52,7 +52,40 @@ class Project:
         Returns:
             Project: The project that was found.
         """
-        return modrinth.Modrinth.get_project(id_, auth)
+        raw_response = r.get(
+            f"https://api.modrinth.com/v2/project/{id_}",
+            headers={"authorization": auth},  # type: ignore
+            timeout=60,
+        )
+        if raw_response.status_code == 404:
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
+        if not raw_response.ok:
+            raise exceptions.InvalidRequestError()
+        response = json.loads(raw_response.content)
+        response.update({"authorization": auth})
+        return Project(response)
+    
+    @staticmethod
+    def get_multiple(ids: list[str]) -> list["Project"]:
+        """Gets multiple projects.
+
+        Raises:
+            InvalidRequestError: An invalid API call was sent.
+
+        Returns:
+            list[Project]: The projects that were found.
+        """
+        raw_response = r.get(
+            "https://api.modrinth.com/v2/projects",
+            params={"ids": json.dumps(ids)},
+            timeout=60,
+        )
+        if not raw_response.ok:
+            raise exceptions.InvalidRequestError()
+        response = json.loads(raw_response.content)
+        return [Project(project) for project in response]
 
     def get_latest_version(
         self,
@@ -65,11 +98,11 @@ class Project:
         """Gets this project's latest version.
 
         Args:
-            loaders (list[str], optional): The loaders filter. Defaults to None.
-            game_versions (list[str], optional): The game versions filter. Defaults to None.
-            featured (bool, optional): The is featured filter. Defaults to None.
-            types (list[str], optional): The types filter. Defaults to None.
-            auth (str, optional): The authorization token. Defaults to None.
+            loaders (list[str]): The loaders filter. Defaults to None.
+            game_versions (list[str]): The game versions filter. Defaults to None.
+            featured (bool): The is featured filter. Defaults to None.
+            types (list[str]): The types filter. Defaults to None.
+            auth (str): The authorization token. Defaults to None.
 
         Returns:
             Version: The project's latest version.
@@ -410,10 +443,10 @@ class Project:
         Args:
             auth (str): The authorization token to use when modifying the gallery image
             url (str): The url of the gallery image
-            featured (typing.Optional[bool], optional): If the new gallery image is featured. Defaults to None.
-            title (typing.Optional[str], optional): The new gallery image title. Defaults to None.
-            description (typing.Optional[str], optional): The new gallery image description. Defaults to None.
-            ordering (typing.Optional[int], optional): The new gallery image ordering. Defaults to None.
+            featured (typing.Optional[bool]): If the new gallery image is featured. Defaults to None.
+            title (typing.Optional[str]): The new gallery image title. Defaults to None.
+            description (typing.Optional[str]): The new gallery image description. Defaults to None.
+            ordering (typing.Optional[int]): The new gallery image ordering. Defaults to None.
 
         Returns:
             int: If the gallery image modification was successful
@@ -518,24 +551,24 @@ class Project:
 
         Args:
             auth (str): The authorization token to use to modify the project
-            slug (typing.Optional[str], optional): The new project slug. Defaults to None.
-            title (typing.Optional[str], optional): The new project title. Defaults to None.
-            description (typing.Optional[str], optional): The new project description. Defaults to None.
-            categories (typing.Optional[list[str]], optional): The new project categories. Defaults to None.
-            client_side (typing.Optional[str], optional): If the project is supported on client_side. Defaults to None.
-            server_side (typing.Optional[str], optional): If the project is supported on the server side. Defaults to None.
-            body (typing.Optional[str], optional): The new project body. Defaults to None.
-            additional_categories (typing.Optional[list[str]], optional): The new project additional categories. Defaults to None.
-            issues_url (typing.Optional[str], optional): The new project issues url. Defaults to None.
-            source_url (typing.Optional[str], optional): The new project source url. Defaults to None.
-            wiki_url (typing.Optional[str], optional): The new project wiki url. Defaults to None.
-            discord_url (typing.Optional[str], optional): The new project discord url. Defaults to None.
-            license_id (typing.Optional[str], optional): The new project license id. Defaults to None.
-            license_url (typing.Optional[str], optional): The new project license url. Defaults to None.
-            status (typing.Optional[str], optional): The new project status. Defaults to None.
-            requested_status (typing.Optional[str], optional): The new project requested status. Defaults to None.
-            moderation_message (typing.Optional[str], optional): The new project moderation message. Defaults to None.
-            moderation_message_body (typing.Optional[str], optional): The new project moderation message body. Defaults to None.
+            slug (typing.Optional[str]): The new project slug. Defaults to None.
+            title (typing.Optional[str]): The new project title. Defaults to None.
+            description (typing.Optional[str]): The new project description. Defaults to None.
+            categories (typing.Optional[list[str]]): The new project categories. Defaults to None.
+            client_side (typing.Optional[str]): If the project is supported on client_side. Defaults to None.
+            server_side (typing.Optional[str]): If the project is supported on the server side. Defaults to None.
+            body (typing.Optional[str]): The new project body. Defaults to None.
+            additional_categories (typing.Optional[list[str]]): The new project additional categories. Defaults to None.
+            issues_url (typing.Optional[str]): The new project issues url. Defaults to None.
+            source_url (typing.Optional[str]): The new project source url. Defaults to None.
+            wiki_url (typing.Optional[str]): The new project wiki url. Defaults to None.
+            discord_url (typing.Optional[str]): The new project discord url. Defaults to None.
+            license_id (typing.Optional[str]): The new project license id. Defaults to None.
+            license_url (typing.Optional[str]): The new project license url. Defaults to None.
+            status (typing.Optional[str]): The new project status. Defaults to None.
+            requested_status (typing.Optional[str]): The new project requested status. Defaults to None.
+            moderation_message (typing.Optional[str]): The new project moderation message. Defaults to None.
+            moderation_message_body (typing.Optional[str]): The new project moderation message body. Defaults to None.
 
         Raises:
             Exception: If no new project arguments are specified
@@ -647,6 +680,44 @@ class Project:
 
         response = json.loads(raw_response.content)
         return [Project(dependency) for dependency in response["projects"]]
+    
+    @staticmethod
+    def search(
+        query: str = "",
+        facets: typing.Optional[list[list[str]]] = None,
+        index: literals.index_literal = "relevance",
+        offset: int = 0,
+        limit: int = 10,
+        filters: typing.Optional[list[str]] = None,
+    ) -> list["SearchResult"]:
+        """Searches projects on modrinth
+
+        Raises:
+            InvalidRequestError: An invalid API call was sent.
+
+        Returns:
+            list[SearchResult]: The results that were found.
+        """
+        params = {}
+        if query != "":
+            params.update({"query": query})
+        if facets:
+            params.update({"facets": json.dumps(facets)})
+        if index != "relevance":
+            params.update({"index": index})
+        if offset != 0:
+            params.update({"offset": str(offset)})
+        if limit != 10:
+            params.update({"limit": str(limit)})
+        if filters:
+            params.update({"filters": json.dumps(filters)})
+        raw_response = r.get(
+            "https://api.modrinth.com/v2/search", params=params, timeout=60
+        )
+        if not raw_response.ok:
+            raise exceptions.InvalidRequestError()
+        response = json.loads(raw_response.content)
+        return [Project.SearchResult(project) for project in response["hits"]]
 
     def get_team_members(self) -> "list[Project.TeamMember]":
         raw_response = r.get(
@@ -720,13 +791,37 @@ class Project:
             for dependency in self.model.dependencies:
                 result.append(Project.Dependency.from_json(dependency))
             return result
+            
+        @staticmethod
+        def get(id_: str) -> "Project.Version":
+            """Gets a version.
+
+            Args:
+                id (str): The version ID to find.
+
+            Raises:
+                NotFoundError: The version was not found.
+                InvalidRequestError: An invalid API call was sent.
+
+            Returns:
+                Project.Version: The version that was found.
+            """
+            raw_response = r.get(f"https://api.modrinth.com/v2/version/{id_}", timeout=60)
+            if raw_response.status_code == 404:
+                raise exceptions.NotFoundError(
+                    "The requested version was not found or no authorization to see this version"
+                )
+            if not raw_response.ok:
+                raise exceptions.InvalidRequestError()
+            response = json.loads(raw_response.content)
+            return Project.Version(response)
 
         def get_files(self) -> list["Project.File"]:
             """
             Gets a versions files.
 
             Returns:
-                list[Project.File]: The versions files
+                list[File]: The versions files
             """
             result = []
             for file in self.model.files:
@@ -973,7 +1068,7 @@ class Project:
             self.dependency_type = dependency_type
             self.id = id_
             if dependency_type == "project":
-                self.id = modrinth.Modrinth.get_project(self.id).get_id()
+                self.id = Project.get(self.id).get_id()
             self.dependency_option = dependency_option
 
         def to_json(self) -> dict:
@@ -1010,13 +1105,13 @@ class Project:
             Returns:
                 Project: The dependency project
             """
-            return modrinth.Modrinth.get_project(self.id)
+            return Project.get(self.id)
 
         def get_version(self) -> "Project.Version":
             """Gets the dependencies project version."""
             if self.dependency_type == "version":
-                return modrinth.Modrinth.get_version(self.id)
-            project = modrinth.Modrinth.get_project(self.id)
+                return Project.Version.get(self.id)
+            project = Project.get(self.id)
             return project.get_latest_version()
 
         def is_required(self) -> bool:
@@ -1045,3 +1140,16 @@ class Project:
                 bool: If the dependency is incompatible
             """
             return True if self.dependency_option == "incompatible" else False
+
+    class SearchResult:
+        """A search result from using Modrinth.search_projects()."""
+
+        def __init__(self, search_result_model) -> None:
+            if isinstance(search_result_model, dict):
+                search_result_model = models.SearchResultModel.from_json(
+                    search_result_model
+                )
+            self.model = search_result_model
+
+        def __repr__(self) -> str:
+            return f"Search Result: {self.model.title}"

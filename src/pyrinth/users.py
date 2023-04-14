@@ -1,14 +1,14 @@
 """Used for users."""
 
-from datetime import datetime
+import datetime
 import json
-from typing import Optional
+import typing
 import requests as r
 import pyrinth.exceptions as exceptions
 import pyrinth.projects as projects
 import pyrinth.models as models
 import pyrinth.util as util
-import pyrinth.modrinth as modrinth
+import pyrinth.users as users
 
 
 class User:
@@ -22,7 +22,7 @@ class User:
     def __repr__(self) -> str:
         return f"User: {util.args_to_dict(username=self.model.username, name=self.model.name, id=self.model.id)}"
 
-    def get_auth(self) -> Optional[str]:
+    def get_auth(self) -> typing.Optional[str]:
         """Gets the users authorization token."""
         return self.model.auth
 
@@ -53,10 +53,32 @@ class User:
 
     @staticmethod
     def get(id_: str, auth=None) -> "User":
-        """Alternative method for Modrinth.get_user(id_, auth)."""
-        return modrinth.Modrinth.get_user(id_, auth)
+        """Gets a user.
 
-    def get_date_created(self) -> datetime:
+        Args:
+            id_ (str): The user's ID to find.
+            auth (str, optional): The authorization token to use when creating the user. Defaults to None.
+
+        Raises:
+            NotFoundError: The user was not found.
+            InvalidRequestError: An invalid API call was sent.
+
+        Returns:
+            User: The user that was found.
+        """
+        raw_response = r.get(f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
+
+        if raw_response.status_code == 404:
+            raise exceptions.NotFoundError("The requested user was not found")
+
+        if not raw_response.ok:
+            raise exceptions.InvalidRequestError()
+
+        response = raw_response.json()
+        response.update({"authorization": auth})
+        return users.User(response)
+
+    def get_date_created(self) -> datetime.datetime:
         """
         Gets the date of when the user was created.
 
@@ -134,13 +156,13 @@ class User:
 
         return len(projs)
 
-    def create_project(self, project_model, icon: Optional[str] = None) -> int:
+    def create_project(self, project_model, icon: typing.Optional[str] = None) -> int:
         """
         Creates a project.
 
         Args:
             project_model (ProjectModel): The model of the project to create
-            icon (str, optional): The path of the icon to use for the newly created project. NOT IMPLEMENTED
+            icon (str): The path of the icon to use for the newly created project. NOT IMPLEMENTED
 
         Returns:
             int: If the project creation was successful
@@ -249,7 +271,7 @@ class User:
         return True
 
     @staticmethod
-    def from_auth(auth: str) -> "User":
+    def get_from_auth(auth: str) -> "User":
         """
         Gets a user from authorization token.
 
