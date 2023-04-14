@@ -12,12 +12,13 @@ import pyrinth.models as models
 import pyrinth.modrinth as modrinth
 import pyrinth.users as users
 import pyrinth.util as util
+import pyrinth.teams as teams
 
 
 class Project:
     """Contains information about a users projects."""
 
-    def __init__(self, project_model) -> None:
+    def __init__(self, project_model: "models.ProjectModel") -> None:
         if isinstance(project_model, dict):
             project_model = models.ProjectModel.from_json(project_model)
         self.model = project_model
@@ -110,7 +111,8 @@ class Project:
             Version: The project's latest version.
         """
         versions = self.get_versions(
-            loaders, game_versions, featured, types, auth)
+            loaders, game_versions, featured, types, auth
+        )
 
         return versions[0]
 
@@ -744,6 +746,23 @@ class Project:
 
         return [Project.TeamMember.from_json(team_member) for team_member in response]
 
+    def get_team(self) -> "teams.Team":
+        raw_response = r.get(
+            f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
+        )
+
+        if raw_response.status_code == 404:
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
+
+        if not raw_response.ok:
+            raise exceptions.InvalidRequestError()
+
+        response = json.loads(raw_response.content)
+
+        return teams.Team.from_json(response)
+
     class TeamMember:
         def __init__(
             self, team_id, user, role, permissions, accepted, payouts_split, ordering
@@ -765,7 +784,7 @@ class Project:
         @staticmethod
         def from_json(json_: dict):
             return Project.TeamMember(
-                json_.get("user"),
+                json_.get("team_id"),
                 json_.get("user"),
                 json_.get("role"),
                 json_.get("permissions"),

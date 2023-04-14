@@ -135,10 +135,10 @@ Discord Server: Coming Soon!
   - [x] Get user's payout history
   - [x] Withdraw payout balance to PayPal or Venmo
 - Teams
-  - [ ] Get a project's team members
-  - [ ] Get a team's members
+  - [x] Get a project's team members
+  - [x] Get a team's members
   - [ ] Add a user to a team
-  - [ ] Get the members of multiple teams
+  - [x] Get the members of multiple teams
   - [ ] Join a team
   - [ ] Modify a team member's information
   - [ ] Remove a team member from a team

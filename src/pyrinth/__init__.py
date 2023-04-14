@@ -5,3 +5,4 @@ from pyrinth.modrinth import *
 from pyrinth.projects import *
 from pyrinth.tags import *
 from pyrinth.users import *
+from pyrinth.teams import *
