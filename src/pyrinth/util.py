@@ -1,9 +1,11 @@
 """Utility functions for Pyrinth."""
 
+import datetime
 import json
 import typing
-import datetime
+
 import dateutil.parser
+
 import pyrinth.projects as projects
 
 

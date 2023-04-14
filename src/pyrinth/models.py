@@ -1,10 +1,11 @@
 """Contains all models used in Pyrinth."""
 
-import typing
 import json
-import pyrinth.util as util
-import pyrinth.projects as projects
+import typing
+
 import pyrinth.literals as literals
+import pyrinth.projects as projects
+import pyrinth.util as util
 
 
 class ProjectModel:
@@ -63,41 +64,41 @@ class ProjectModel:
     @staticmethod
     def from_json(json_: dict) -> "ProjectModel":
         """Utility function."""
-        license_ = projects.Project.License.from_json(json_["license"])
+        license_ = projects.Project.License.from_json(json_.get("license"))  # type: ignore
 
         result = ProjectModel(
-            json_["slug"],
-            json_["title"],
-            json_["description"],
-            json_["categories"],
-            json_["client_side"],
-            json_["server_side"],
-            json_["body"],
+            json_.get("slug"),  # type: ignore
+            json_.get("title"),  # type: ignore
+            json_.get("description"),  # type: ignore
+            json_.get("categories"),  # type: ignore
+            json_.get("client_side"),  # type: ignore
+            json_.get("server_side"),  # type: ignore
+            json_.get("body"),  # type: ignore
             license_,
-            json_["project_type"],
-            json_["additional_categories"],
-            json_["issues_url"],
-            json_["source_url"],
-            json_["wiki_url"],
-            json_["discord_url"],
+            json_.get("project_type"),  # type: ignore
+            json_.get("additional_categories"),  # type: ignore
+            json_.get("issues_url"),  # type: ignore
+            json_.get("source_url"),  # type: ignore
+            json_.get("wiki_url"),  # type: ignore
+            json_.get("discord_url"),  # type: ignore
             json_.get("authorization"),
         )
-        result.id = json_["id"]
-        result.downloads = json_["downloads"]
-        result.donation_urls = json_["donation_urls"]
-        result.icon_url = json_["icon_url"]
-        result.color = json_["color"]
-        result.team = json_["team"]
-        result.moderator_message = json_["moderator_message"]
-        result.published = json_["published"]
-        result.updated = json_["updated"]
-        result.approved = json_["approved"]
-        result.followers = json_["followers"]
-        result.status = json_["status"]
-        result.version_ids = json_["versions"]
-        result.game_versions = json_["game_versions"]
-        result.loaders = json_["loaders"]
-        result.gallery = json_["gallery"]
+        result.id = json_.get("id")
+        result.downloads = json_.get("downloads")
+        result.donation_urls = json_.get("donation_urls")
+        result.icon_url = json_.get("icon_url")
+        result.color = json_.get("color")
+        result.team = json_.get("team")
+        result.moderator_message = json_.get("moderator_message")
+        result.published = json_.get("published")
+        result.updated = json_.get("updated")
+        result.approved = json_.get("approved")
+        result.followers = json_.get("followers")
+        result.status = json_.get("status")
+        result.version_ids = json_.get("versions")
+        result.game_versions = json_.get("game_versions")
+        result.loaders = json_.get("loaders")
+        result.gallery = json_.get("gallery")
         return result
 
     def to_json(self) -> dict:
@@ -110,7 +111,7 @@ class ProjectModel:
             "client_side": self.client_side,
             "server_side": self.server_side,
             "body": self.body,
-            "license_id": self.license["id"],
+            "license_id": self.license.get("id"),
             "project_type": self.project_type,
             "additional_categories": self.additional_categories,
             "issues_url": self.issues_url,
@@ -118,7 +119,7 @@ class ProjectModel:
             "wiki_url": self.wiki_url,
             "discord_url": self.discord_url,
             "donation_urls": self.donation_urls,
-            "license_url": self.license["url"],
+            "license_url": self.license.get("url"),
             "id": self.id,
             "authorization": self.auth,
             "is_draft": True,
@@ -162,27 +163,27 @@ class SearchResultModel:
     def from_json(json_: dict) -> "SearchResultModel":
         """Utility function."""
         result = SearchResultModel()
-        result.slug = json_["slug"]
-        result.title = json_["title"]
-        result.description = json_["description"]
-        result.client_side = json_["client_side"]
-        result.server_side = json_["server_side"]
-        result.project_type = json_["project_type"]
-        result.downloads = json_["downloads"]
-        result.project_id = json_["project_id"]
-        result.author = json_["author"]
-        result.versions = json_["versions"]
-        result.follows = json_["follows"]
-        result.date_created = json_["date_created"]
-        result.date_modified = json_["date_modified"]
-        result.license = json_["license"]
-        result.categories = json_["categories"]
-        result.icon_url = json_["icon_url"]
-        result.color = json_["color"]
-        result.display_categories = json_["display_categories"]
-        result.latest_version = json_["latest_version"]
-        result.gallery = json_["gallery"]
-        result.featured_gallery = json_["featured_gallery"]
+        result.slug = json_.get("slug")
+        result.title = json_.get("title")
+        result.description = json_.get("description")
+        result.client_side = json_.get("client_side")
+        result.server_side = json_.get("server_side")
+        result.project_type = json_.get("project_type")
+        result.downloads = json_.get("downloads")
+        result.project_id = json_.get("project_id")
+        result.author = json_.get("author")
+        result.versions = json_.get("versions")
+        result.follows = json_.get("follows")
+        result.date_created = json_.get("date_created")
+        result.date_modified = json_.get("date_modified")
+        result.license = json_.get("license")
+        result.categories = json_.get("categories")
+        result.icon_url = json_.get("icon_url")
+        result.color = json_.get("color")
+        result.display_categories = json_.get("display_categories")
+        result.latest_version = json_.get("latest_version")
+        result.gallery = json_.get("gallery")
+        result.featured_gallery = json_.get("featured_gallery")
 
         return result
 
@@ -234,7 +235,9 @@ class VersionModel:
         file_parts: list[str],
         changelog: typing.Optional[str] = None,
         status: typing.Optional[literals.version_status_literal] = None,
-        requested_status: typing.Optional[literals.requested_version_status_literal] = None,
+        requested_status: typing.Optional[
+            literals.requested_version_status_literal
+        ] = None,
     ) -> None:
         self.name = name
         self.version_number = version_number
@@ -257,23 +260,23 @@ class VersionModel:
     def from_json(json_: dict) -> "VersionModel":
         """Utility function."""
         result = VersionModel(
-            json_["name"],
-            json_["version_number"],
-            json_["dependencies"],
-            json_["game_versions"],
-            json_["version_type"],
-            json_["loaders"],
-            json_["featured"],
-            json_["files"],
-            json_["changelog"],
-            json_["status"],
-            json_["requested_status"],
+            json_.get("name"),  # type: ignore
+            json_.get("version_number"),  # type: ignore
+            json_.get("dependencies"),  # type: ignore
+            json_.get("game_versions"),  # type: ignore
+            json_.get("version_type"),  # type: ignore
+            json_.get("loaders"),  # type: ignore
+            json_.get("featured"),  # type: ignore
+            json_.get("files"),  # type: ignore
+            json_.get("changelog"),  # type: ignore
+            json_.get("status"),  # type: ignore
+            json_.get("requested_status"),  # type: ignore
         )
-        result.project_id = json_["project_id"]
-        result.id = json_["id"]
-        result.author_id = json_["author_id"]
-        result.date_published = json_["date_published"]
-        result.downloads = json_["downloads"]
+        result.project_id = json_.get("project_id")
+        result.id = json_.get("id")
+        result.author_id = json_.get("author_id")
+        result.date_published = json_.get("date_published")
+        result.downloads = json_.get("downloads")
         return result
 
     def to_json(self) -> dict:
@@ -325,18 +328,18 @@ class UserModel:
     def from_json(json_: dict) -> "UserModel":
         """Utility function."""
         result = UserModel()
-        result.username = json_["username"]
-        result.id = json_["id"]
-        result.avatar_url = json_["avatar_url"]
-        result.created = json_["created"]
-        result.role = json_["role"]
-        result.name = json_["name"]
-        result.email = json_["email"]
-        result.bio = json_["bio"]
-        result.payout_data = json_["payout_data"]
-        result.github_id = json_["github_id"]
-        result.badges = json_["badges"]
-        result.auth = json_["authorization"]
+        result.username = json_.get("username")
+        result.id = json_.get("id")
+        result.avatar_url = json_.get("avatar_url")
+        result.created = json_.get("created")
+        result.role = json_.get("role")
+        result.name = json_.get("name")
+        result.email = json_.get("email")
+        result.bio = json_.get("bio")
+        result.payout_data = json_.get("payout_data")
+        result.github_id = json_.get("github_id")
+        result.badges = json_.get("badges")
+        result.auth = json_.get("authorization", "")
 
         return result
 

@@ -1,9 +1,15 @@
 """The main Modrinth class used for anything modrinth related."""
 
 import json
+import typing
+
 import requests as r
+
 import pyrinth.exceptions as exceptions
+import pyrinth.literals as literals
+import pyrinth.models as models
 import pyrinth.projects as projects
+import pyrinth.users as users
 
 
 class Modrinth:
@@ -28,7 +34,7 @@ class Modrinth:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError()
         response = json.loads(raw_response.content)
-        return bool(response["id"])
+        return bool(response.get("id"))
 
     @staticmethod
     def get_random_projects(count: int = 1) -> list["projects.Project"]:
@@ -60,7 +66,7 @@ class Modrinth:
             raw_response = r.get(
                 "https://api.modrinth.com/v2/statistics", timeout=60)
             response = json.loads(raw_response.content)
-            self.authors = response["authors"]
-            self.files = response["files"]
-            self.projects = response["projects"]
-            self.versions = response["versions"]
+            self.authors = response.get("authors")
+            self.files = response.get("files")
+            self.projects = response.get("projects")
+            self.versions = response.get("versions")

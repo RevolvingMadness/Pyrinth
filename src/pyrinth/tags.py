@@ -1,4 +1,5 @@
 import requests as r
+
 import pyrinth.exceptions as exceptions
 
 
@@ -16,7 +17,10 @@ class Tag:
         response = raw_response.json()
         return [
             Tag.Category(
-                json["icon"], json["name"], json["project_type"], json["header"]
+                json.get("icon"),
+                json.get("name"),
+                json.get("project_type"),
+                json.get("header"),
             )
             for json in response
         ]
@@ -31,7 +35,9 @@ class Tag:
 
         response = raw_response.json()
         return [
-            Tag.Loader(json["icon"], json["name"], json["supported_project_types"])
+            Tag.Loader(
+                json.get("icon"), json.get("name"), json.get("supported_project_types")
+            )
             for json in response
         ]
 
@@ -46,7 +52,10 @@ class Tag:
         response = raw_response.json()
         return [
             Tag.GameVersion(
-                json["version"], json["version_type"], json["date"], json["major"]
+                json.get("version"),
+                json.get("version_type"),
+                json.get("date"),
+                json.get("major"),
             )
             for json in response
         ]
@@ -60,7 +69,7 @@ class Tag:
             raise exceptions.InvalidRequestError()
 
         response = raw_response.json()
-        return [Tag.License(json["short"], json["name"]) for json in response]
+        return [Tag.License(json.get("short"), json.get("name")) for json in response]
 
     @staticmethod
     def get_donation_platforms() -> list["Tag.DonationPlatform"]:
@@ -73,7 +82,7 @@ class Tag:
             raise exceptions.InvalidRequestError()
 
         response = raw_response.json()
-        return [Tag.DonationPlatform(json["short"], json["name"]) for json in response]
+        return [Tag.DonationPlatform(json.get("short"), json.get("name")) for json in response]
 
     @staticmethod
     def get_report_types() -> list[str]:

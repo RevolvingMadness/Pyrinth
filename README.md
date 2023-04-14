@@ -47,7 +47,7 @@ pip install python-modrinth
 
 #### Manual Installation
 If you want to get the latest beta or pre-releases, follow the steps below:
-1. Go to the releases page and download one of the `.whl` files.
+1. Go to the [releases page](https://github.com/RevolvingMadness/Pyrinth/releases/) and download one of the `.whl` files.
 2. Open a terminal and go to the downloads directory.
 3. Type this: `pip install pyrinth`, then press tab and it should autocomplete.
 
@@ -84,10 +84,10 @@ This project is distributed under the Apache 2.0 License. See `LICENSE.txt` for 
 
 ## Contact
 
-Project Link: [https://github.com/RevolvingMadness/Pyrinth](https://github.com/RevolvingMadness/Pyrinth)  
+Project Link: https://github.com/RevolvingMadness/Pyrinth 
 Discord Server: Coming Soon!
 
-### To-Do
+## To-Do
 - Projects
   - [x] Search Projects
   - [x] Get a project
