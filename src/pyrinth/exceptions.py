@@ -1,4 +1,4 @@
-"""Contains all of the errors used in Pyrinth."""
+"""Contains all the errors used in Pyrinth."""
 
 
 class NotFoundError(Exception):

@@ -8,7 +8,6 @@ import pyrinth.exceptions as exceptions
 import pyrinth.projects as projects
 import pyrinth.models as models
 import pyrinth.util as util
-import pyrinth.users as users
 
 
 class User:
@@ -33,6 +32,25 @@ class User:
 
         return result
 
+    def get_payout_history(self) -> "User.PayoutHistory":
+        raw_response = r.get(
+            f"https://api.modrinth.com/v2/user/{self.model.username}/payouts",
+            headers={"authorization": self.model.auth},  # type: ignore
+            timeout=60
+        )
+
+        if raw_response.status_code == 401:
+            raise exceptions.NoAuthorizationError(
+                "No authorization to get this user's followed projects"
+            )
+
+        if not raw_response.ok:
+            raise exceptions.InvalidRequestError()
+
+        response = json.loads(raw_response.content)
+
+        return User.PayoutHistory(response["all_time"], response["last_month"], response["payouts"])
+
     def to_json(self) -> dict:
         """Utility Function."""
         result = {
@@ -51,6 +69,50 @@ class User:
 
         return result
 
+    def withdraw_balance(self, amount: int) -> bool:
+        raw_response = r.post(
+            f"https://api.modrinth.com/v2/user/{self.model.id}/payouts",
+            headers={
+                "content-type": "application/json",
+                "authorization": self.model.auth  # type: ignore
+            },
+            json={"amount": amount},
+            timeout=60
+        )
+
+        if raw_response.status_code == 401:
+            raise exceptions.NoAuthorizationError(
+                "No authorization to withdraw this user's balance"
+            )
+
+        elif raw_response.status_code == 404:
+            raise exceptions.NotFoundError("The requested user was not found")
+
+        if not raw_response.ok:
+            raise exceptions.InvalidRequestError()
+
+        return True
+
+    def change_avatar(self, file_path) -> bool:
+        raw_response = r.patch(
+            f"https://api.modrinth.com/v2/user/{self.model.id}/icon",
+            headers={"authorization": self.model.auth},  # type: ignore
+            params={"ext": file_path.split('.')[-1]},
+            data=open(file_path, "rb"),
+            timeout=60
+        )
+
+        if raw_response.status_code == 401:
+            raise exceptions.InvalidParamError("Invalid format for new icon")
+
+        elif raw_response.status_code == 404:
+            raise exceptions.NotFoundError("The requested user was not found")
+
+        if not raw_response.ok:
+            raise exceptions.InvalidRequestError()
+
+        return True
+
     @staticmethod
     def get(id_: str, auth=None) -> "User":
         """Gets a user.
@@ -66,7 +128,8 @@ class User:
         Returns:
             User: The user that was found.
         """
-        raw_response = r.get(f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
+        raw_response = r.get(
+            f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
 
         if raw_response.status_code == 404:
             raise exceptions.NotFoundError("The requested user was not found")
@@ -76,7 +139,7 @@ class User:
 
         response = raw_response.json()
         response.update({"authorization": auth})
-        return users.User(response)
+        return User(response)
 
     def get_date_created(self) -> datetime.datetime:
         """
@@ -112,9 +175,9 @@ class User:
             raise exceptions.InvalidRequestError()
 
         followed_projects = []
-        projects = json.loads(raw_response.content)
-        for project in projects:
-            followed_projects.append(projects.Project(project))
+        projects_ = json.loads(raw_response.content)
+        for project in projects_:
+            followed_projects.append(projects_.Project(project))
 
         return followed_projects
 
@@ -152,17 +215,17 @@ class User:
         Returns:
             list[Project]: The users projects
         """
-        projs = self.get_projects()
+        projects_ = self.get_projects()
 
-        return len(projs)
+        return len(projects_)
 
     def create_project(self, project_model, icon: typing.Optional[str] = None) -> int:
         """
         Creates a project.
 
         Args:
-            project_model (ProjectModel): The model of the project to create
-            icon (str): The path of the icon to use for the newly created project. NOT IMPLEMENTED
+            project_model (ProjectModel): The model of the project to create.
+            icon (str): The path of the icon to use for the newly created project.
 
         Returns:
             int: If the project creation was successful
@@ -213,7 +276,7 @@ class User:
         Follow a project.
 
         Args:
-            id (str): The ID of the project to follow
+            id_ (str): The ID of the project to follow
 
         Returns:
             int: If the project follow was successful
@@ -244,7 +307,7 @@ class User:
         Unfollow a project.
 
         Args:
-            id (str): The ID of the project to unfollow
+            id_ (str): The ID of the project to unfollow
 
         Returns:
             int: If the project unfollow was successful
@@ -302,7 +365,8 @@ class User:
         Returns:
             User: The user that was found using the ID
         """
-        raw_response = r.get(f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
+        raw_response = r.get(
+            f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
 
         if raw_response.status_code == 404:
             raise exceptions.NotFoundError("The requested user was not found")
@@ -349,3 +413,9 @@ class User:
 
         def __repr__(self) -> str:
             return f"Notification: {self.text}"
+
+    class PayoutHistory:
+        def __init__(self, all_time: float, last_month: float, payouts: list) -> None:
+            self.all_time = all_time
+            self.last_month = last_month
+            self.payouts = payouts

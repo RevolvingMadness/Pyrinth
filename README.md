@@ -122,18 +122,18 @@ Discord Server: Coming Soon!
   - [ ] Latest version of a project from a has, loader(s), and game version(s)
   - [ ] Get versions from hashes
   - [ ] Latest versions multiple project from hashes, loader(s), and game version(s)
-- Users
+- Users - Complete
   - [x] Get a user
   - [x] Modify a user
   - [x] Delete a user
   - [x] Get user from authorization header
   - [x] Get multiple users
-  - [ ] Change user's avatar
+  - [x] Change user's avatar
   - [x] Get user's projects
   - [x] Get user's notifications
   - [x] Get user's followed projects
-  - [ ] Get user's payout history
-  - [ ] Withdraw payout balance to PayPal or Venmo
+  - [x] Get user's payout history
+  - [x] Withdraw payout balance to PayPal or Venmo
 - Teams
   - [ ] Get a project's team members
   - [ ] Get a team's members
@@ -143,7 +143,7 @@ Discord Server: Coming Soon!
   - [ ] Modify a team member's information
   - [ ] Remove a team member from a team
   - [ ] Transfer team's ownership to another user
-- Tags
+- Tags - Complete
   - [x] Get a list of categories
   - [x] Get a list of loaders
   - [x] Get a list of game versions

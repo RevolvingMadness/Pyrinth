@@ -9,6 +9,7 @@ import pyrinth.util as util
 import pyrinth.literals as literals
 import pyrinth.models as models
 import pyrinth.modrinth as modrinth
+import pyrinth.users as users
 
 
 class Project:
@@ -37,11 +38,11 @@ class Project:
         return self.model.auth
 
     @staticmethod
-    def get(id_: str, auth=None) -> "Project":
+    def get(id_: str, auth: object = None) -> "Project":
         """Gets a project based on an ID.
 
         Args:
-            id (str): The project's ID to get.
+            id_ (str): The project's ID to get.
             auth (str, optional): An optional authorization token when getting the project. Defaults to None.
 
         Raises:
@@ -65,7 +66,7 @@ class Project:
         response = json.loads(raw_response.content)
         response.update({"authorization": auth})
         return Project(response)
-    
+
     @staticmethod
     def get_multiple(ids: list[str]) -> list["Project"]:
         """Gets multiple projects.
@@ -106,7 +107,8 @@ class Project:
         Returns:
             Version: The project's latest version.
         """
-        versions = self.get_versions(loaders, game_versions, featured, types, auth)
+        versions = self.get_versions(
+            loaders, game_versions, featured, types, auth)
 
         return versions[0]
 
@@ -178,8 +180,8 @@ class Project:
             open(file.filename, "wb").write(file_content)
 
         if recursive:
-            deps = latest.get_dependencies()
-            for dep in deps:
+            dependencies = latest.get_dependencies()
+            for dep in dependencies:
                 files = dep.get_version().get_files()
                 for file in files:
                     file_content = r.get(file.url).content
@@ -249,7 +251,8 @@ class Project:
         Returns:
             Project.Version: The oldest project version
         """
-        versions = self.get_versions(loaders, game_versions, featured, types, auth)
+        versions = self.get_versions(
+            loaders, game_versions, featured, types, auth)
 
         return versions[-1]
 
@@ -289,7 +292,8 @@ class Project:
             Project.Version: The version that was found using the ID
             None: The version was not found
         """
-        raw_response = r.get(f"https://api.modrinth.com/v2/version/{id_}", timeout=60)
+        raw_response = r.get(
+            f"https://api.modrinth.com/v2/version/{id_}", timeout=60)
 
         if raw_response.status_code == 404:
             raise exceptions.NotFoundError(
@@ -318,7 +322,8 @@ class Project:
         files = {"data": version_model.to_bytes()}
 
         for file in version_model.files:
-            files.update({util.remove_file_path(file): open(file, "rb").read()})
+            files.update({util.remove_file_path(
+                file): open(file, "rb").read()})
 
         raw_response = r.post(
             "https://api.modrinth.com/v2/version",
@@ -398,8 +403,8 @@ class Project:
         Adds a gallery image to the project.
 
         Args:
-            auth (str): The authorization token to use when adding the gallery image
-            image (Project.GalleryImage): The gallery image to add
+            auth (str): The authorization token to use when adding the gallery image.
+            image (Project.GalleryImage): The gallery image to add.
 
         Returns:
             int: If the gallery image addition was successful
@@ -509,7 +514,8 @@ class Project:
         )
 
         if raw_response.status_code == 400:
-            raise exceptions.InvalidParamError("Invalid URL or project specified")
+            raise exceptions.InvalidParamError(
+                "Invalid URL or project specified")
 
         if raw_response.status_code == 401:
             raise exceptions.NoAuthorizationError(
@@ -645,7 +651,8 @@ class Project:
         )
 
         if raw_response.status_code == 400:
-            raise exceptions.NotFoundError("The requested project was not found")
+            raise exceptions.NotFoundError(
+                "The requested project was not found")
 
         if raw_response.status_code == 401:
             raise exceptions.NoAuthorizationError(
@@ -679,7 +686,7 @@ class Project:
 
         response = json.loads(raw_response.content)
         return [Project(dependency) for dependency in response["projects"]]
-    
+
     @staticmethod
     def search(
         query: str = "",
@@ -742,13 +749,13 @@ class Project:
             for dependency in self.model.dependencies:
                 result.append(Project.Dependency.from_json(dependency))
             return result
-            
+
         @staticmethod
         def get(id_: str) -> "Project.Version":
             """Gets a version.
 
             Args:
-                id (str): The version ID to find.
+                id_ (str): The version ID to find.
 
             Raises:
                 NotFoundError: The version was not found.
@@ -757,7 +764,8 @@ class Project:
             Returns:
                 Project.Version: The version that was found.
             """
-            raw_response = r.get(f"https://api.modrinth.com/v2/version/{id_}", timeout=60)
+            raw_response = r.get(
+                f"https://api.modrinth.com/v2/version/{id_}", timeout=60)
             if raw_response.status_code == 404:
                 raise exceptions.NotFoundError(
                     "The requested version was not found or no authorization to see this version"
@@ -791,8 +799,8 @@ class Project:
                 open(file.filename, "wb").write(file_content)
 
             if recursive:
-                deps = self.get_dependencies()
-                for dep in deps:
+                dependencies = self.get_dependencies()
+                for dep in dependencies:
                     files = dep.get_version().get_files()
                     for file in files:
                         file_content = r.get(file.url).content
@@ -827,7 +835,8 @@ class Project:
             Returns:
                 User: The user who published the version
             """
-            user = modrinth.Modrinth.get_user(self.model.author_id)  # type: ignore
+            user = users.User.get(
+                self.model.author_id)  # type: ignore
             return user
 
         def is_featured(self) -> bool:
@@ -1005,7 +1014,8 @@ class Project:
         @staticmethod
         def from_json(json_: dict) -> "Project.Donation":
             """Utility Function."""
-            result = Project.Donation(json_["id"], json_["platform"], json_["url"])
+            result = Project.Donation(
+                json_["id"], json_["platform"], json_["url"])
 
             return result
 
@@ -1045,7 +1055,8 @@ class Project:
                 dependency_type = "version"
                 id_ = json_["version_id"]
 
-            result = Project.Dependency(dependency_type, id_, json_["dependency_type"])
+            result = Project.Dependency(
+                dependency_type, id_, json_["dependency_type"])
 
             return result
 
