@@ -763,17 +763,16 @@ class Project:
             return users.User.from_json(self.user)
 
         @staticmethod
-        def from_json(json):
-            result = Project.TeamMember(
-                json.get("user"),
-                json.get("user"),
-                json.get("role"),
-                json.get("permissions"),
-                json.get("accepted"),
-                json.get("payouts_split"),
-                json.get("ordering"),
+        def from_json(json_: dict):
+            return Project.TeamMember(
+                json_.get("user"),
+                json_.get("user"),
+                json_.get("role"),
+                json_.get("permissions"),
+                json_.get("accepted"),
+                json_.get("payouts_split"),
+                json_.get("ordering"),
             )
-            return result
 
     class Version:
         """Used for a projects versions."""
@@ -959,7 +958,7 @@ class Project:
         @staticmethod
         def from_json(json_: dict) -> "Project.GalleryImage":
             """Utility Function."""
-            result = Project.GalleryImage(
+            return Project.GalleryImage(
                 json_.get("url"),  # type: ignore
                 json_.get("featured"),  # type: ignore
                 json_.get("title"),  # type: ignore
@@ -967,19 +966,8 @@ class Project:
                 json_.get("ordering"),  # type: ignore
             )
 
-            return result
-
         def to_json(self) -> dict:
-            """Utility Function."""
-            result = {
-                "ext": self.ext,
-                "featured": self.featured,
-                "title": self.title,
-                "description": self.description,
-                "ordering": self.ordering,
-            }
-            result = util.remove_null_values(result)
-            return result
+            return util.remove_null_values(self.__dict__)
 
     class File:
         """Used for a projects files."""
@@ -1049,10 +1037,7 @@ class Project:
             return result
 
         def to_json(self) -> dict:
-            """Utility Function."""
-            result = {"id": self.id, "name": self.name, "url": self.url}
-
-            return result
+            return self.__dict__
 
         def __repr__(self) -> str:
             return f"License: {self.name if self.name else self.id}"
@@ -1088,12 +1073,7 @@ class Project:
 
         def to_json(self) -> dict:
             """Utility Function."""
-            result = {
-                "version_id": None,
-                "project_id": None,
-                "file_name": None,
-                "dependency_type": self.dependency_option,
-            }
+            result = self.__dict__
             if self.dependency_type == "project":
                 result.update({"project_id": self.id})
             elif self.dependency_type == "version":

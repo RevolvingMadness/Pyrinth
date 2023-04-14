@@ -1,15 +1,11 @@
 """The main Modrinth class used for anything modrinth related."""
 
 import json
-import typing
 
 import requests as r
 
 import pyrinth.exceptions as exceptions
-import pyrinth.literals as literals
-import pyrinth.models as models
 import pyrinth.projects as projects
-import pyrinth.users as users
 
 
 class Modrinth:

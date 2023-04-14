@@ -9,7 +9,6 @@ import requests as r
 import pyrinth.exceptions as exceptions
 import pyrinth.models as models
 import pyrinth.projects as projects
-import pyrinth.users as users
 import pyrinth.util as util
 
 
@@ -31,9 +30,7 @@ class User:
     @staticmethod
     def from_json(json_: dict) -> "User":
         """Utility Function."""
-        result = User(models.UserModel.from_json(json_))
-
-        return result
+        return User(models.UserModel.from_json(json_))
 
     def get_payout_history(self) -> "User.PayoutHistory":
         raw_response = r.get(
@@ -53,24 +50,6 @@ class User:
         response = json.loads(raw_response.content)
 
         return User.PayoutHistory(response["all_time"], response["last_month"], response["payouts"])
-
-    def to_json(self) -> dict:
-        """Utility Function."""
-        result = {
-            "id": self.model.id,
-            "github_id": self.model.github_id,
-            "username": self.model.username,
-            "name": self.model.name,
-            "email": self.model.email,
-            "avatar_url": self.model.avatar_url,
-            "bio": self.model.bio,
-            "created": self.model.created,
-            "role": self.model.role,
-            "badges": self.model.badges,
-            "payout_data": self.model.payout_data,
-        }
-
-        return result
 
     def withdraw_balance(self, amount: int) -> bool:
         raw_response = r.post(

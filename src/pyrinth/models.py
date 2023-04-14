@@ -12,22 +12,22 @@ class ProjectModel:
     """The model used for the Project class."""
 
     def __init__(
-        self,
-        slug: str,
-        title: str,
-        description: str,
-        categories: list[str],
-        client_side: str,
-        server_side: str,
-        body: str,
-        license_: "projects.Project.License",
-        project_type: str,
-        additional_categories: typing.Optional[list[str]] = None,
-        issues_url: typing.Optional[str] = None,
-        source_url: typing.Optional[str] = None,
-        wiki_url: typing.Optional[str] = None,
-        discord_url: typing.Optional[str] = None,
-        auth=None,
+            self,
+            slug: str,
+            title: str,
+            description: str,
+            categories: list[str],
+            client_side: str,
+            server_side: str,
+            body: str,
+            license_: "projects.Project.License",
+            project_type: str,
+            additional_categories: typing.Optional[list[str]] = None,
+            issues_url: typing.Optional[str] = None,
+            source_url: typing.Optional[str] = None,
+            wiki_url: typing.Optional[str] = None,
+            discord_url: typing.Optional[str] = None,
+            auth=None,
     ) -> None:
         self.slug = slug
         self.title = title
@@ -102,31 +102,7 @@ class ProjectModel:
         return result
 
     def to_json(self) -> dict:
-        """Utility function."""
-        result = {
-            "slug": self.slug,
-            "title": self.title,
-            "description": self.description,
-            "categories": self.categories,
-            "client_side": self.client_side,
-            "server_side": self.server_side,
-            "body": self.body,
-            "license_id": self.license.get("id"),
-            "project_type": self.project_type,
-            "additional_categories": self.additional_categories,
-            "issues_url": self.issues_url,
-            "source_url": self.source_url,
-            "wiki_url": self.wiki_url,
-            "discord_url": self.discord_url,
-            "donation_urls": self.donation_urls,
-            "license_url": self.license.get("url"),
-            "id": self.id,
-            "authorization": self.auth,
-            "is_draft": True,
-            "initial_versions": [],
-        }
-        result = util.remove_null_values(result)
-        return result
+        return util.remove_null_values(self.__dict__)
 
     def to_bytes(self) -> bytes:
         """Utility function."""
@@ -188,32 +164,7 @@ class SearchResultModel:
         return result
 
     def to_json(self) -> dict:
-        """Utility function."""
-        result = {
-            "slug": self.slug,
-            "title": self.title,
-            "description": self.description,
-            "client_side": self.client_side,
-            "server_side": self.server_side,
-            "project_type": self.project_type,
-            "downloads": self.downloads,
-            "project_id": self.project_id,
-            "author": self.author,
-            "versions": self.versions,
-            "follows": self.follows,
-            "date_created": self.date_created,
-            "date_modified": self.date_modified,
-            "license": self.license,
-            "categories": self.categories,
-            "icon_url": self.icon_url,
-            "color": self.color,
-            "display_categories": self.display_categories,
-            "latest_version": self.latest_version,
-            "gallery": self.gallery,
-            "featured_gallery": self.featured_gallery,
-        }
-        result = util.remove_null_values(result)
-        return result
+        return util.remove_null_values(self.__dict__)
 
     def to_bytes(self) -> bytes:
         """Utility function."""
@@ -224,20 +175,20 @@ class VersionModel:
     """The model used for the Version class."""
 
     def __init__(
-        self,
-        name: str,
-        version_number: str,
-        dependencies: list["projects.Project.Dependency"],
-        game_versions: list[str],
-        version_type: literals.version_type_literal,
-        loaders: list[str],
-        featured: bool,
-        file_parts: list[str],
-        changelog: typing.Optional[str] = None,
-        status: typing.Optional[literals.version_status_literal] = None,
-        requested_status: typing.Optional[
-            literals.requested_version_status_literal
-        ] = None,
+            self,
+            name: str,
+            version_number: str,
+            dependencies: list["projects.Project.Dependency"],
+            game_versions: list[str],
+            version_type: literals.version_type_literal,
+            loaders: list[str],
+            featured: bool,
+            file_parts: list[str],
+            changelog: typing.Optional[str] = None,
+            status: typing.Optional[literals.version_status_literal] = None,
+            requested_status: typing.Optional[
+                literals.requested_version_status_literal
+            ] = None,
     ) -> None:
         self.name = name
         self.version_number = version_number
@@ -280,27 +231,7 @@ class VersionModel:
         return result
 
     def to_json(self) -> dict:
-        """Utility function."""
-        result = {
-            "name": self.name,
-            "version_number": self.version_number,
-            "changelog": self.changelog,
-            "dependencies": self.dependencies,
-            "game_versions": self.game_versions,
-            "version_type": self.version_type,
-            "loaders": self.loaders,
-            "featured": self.featured,
-            "status": self.status,
-            "requested_status": self.requested_status,
-            "file_parts": self.files,
-            "project_id": self.project_id,
-            "id": self.id,
-            "author_id": self.author_id,
-            "date_published": self.date_published,
-            "downloads": self.downloads,
-        }
-        result = util.remove_null_values(result)
-        return result
+        return util.remove_null_values(self.__dict__)
 
     def to_bytes(self) -> bytes:
         """Utility function."""
@@ -344,23 +275,7 @@ class UserModel:
         return result
 
     def to_json(self) -> dict:
-        """Utility function."""
-        result = {
-            "username": self.username,
-            "id": self.id,
-            "avatar_url": self.avatar_url,
-            "created": self.created,
-            "role": self.role,
-            "name": self.name,
-            "email": self.email,
-            "bio": self.bio,
-            "payout_data": self.payout_data,
-            "github_id": self.github_id,
-            "badges": self.badges,
-            "authorization": self.auth,
-        }
-        result = util.remove_null_values(result)
-        return result
+        return util.remove_null_values(self.__dict__)
 
     def to_bytes(self) -> bytes:
         """Utility function."""
