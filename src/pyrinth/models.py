@@ -1,10 +1,11 @@
 """Contains all models used in Pyrinth."""
 
-import typing
 import json
-import pyrinth.util as util
-import pyrinth.projects as projects
+import typing
+
 import pyrinth.literals as literals
+import pyrinth.projects as projects
+import pyrinth.util as util
 
 
 class ProjectModel:

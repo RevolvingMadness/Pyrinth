@@ -3,12 +3,14 @@
 import datetime
 import json
 import typing
+
 import requests as r
+
 import pyrinth.exceptions as exceptions
-import pyrinth.projects as projects
 import pyrinth.models as models
-import pyrinth.util as util
+import pyrinth.projects as projects
 import pyrinth.users as users
+import pyrinth.util as util
 
 
 class User:

@@ -1,15 +1,17 @@
 """User projects."""
 
 import datetime
-import typing
 import json
+import typing
+
 import requests as r
+
 import pyrinth.exceptions as exceptions
-import pyrinth.util as util
 import pyrinth.literals as literals
 import pyrinth.models as models
 import pyrinth.modrinth as modrinth
 import pyrinth.users as users
+import pyrinth.util as util
 
 
 class Project:
