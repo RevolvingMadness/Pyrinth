@@ -234,7 +234,9 @@ class VersionModel:
         file_parts: list[str],
         changelog: typing.Optional[str] = None,
         status: typing.Optional[literals.version_status_literal] = None,
-        requested_status: typing.Optional[literals.requested_version_status_literal] = None,
+        requested_status: typing.Optional[
+            literals.requested_version_status_literal
+        ] = None,
     ) -> None:
         self.name = name
         self.version_number = version_number
@@ -336,7 +338,7 @@ class UserModel:
         result.payout_data = json_["payout_data"]
         result.github_id = json_["github_id"]
         result.badges = json_["badges"]
-        result.auth = json_["authorization"]
+        result.auth = json_.get("authorization", "")
 
         return result
 

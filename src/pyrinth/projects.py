@@ -9,6 +9,7 @@ import pyrinth.util as util
 import pyrinth.literals as literals
 import pyrinth.models as models
 import pyrinth.modrinth as modrinth
+import pyrinth.users as users
 
 
 class Project:
@@ -646,6 +647,54 @@ class Project:
 
         response = json.loads(raw_response.content)
         return [Project(dependency) for dependency in response["projects"]]
+
+    def get_team_members(self) -> "list[Project.TeamMember]":
+        raw_response = r.get(
+            f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
+        )
+
+        if raw_response.status_code == 404:
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
+
+        if not raw_response.ok:
+            raise exceptions.InvalidRequestError()
+
+        response = json.loads(raw_response.content)
+
+        return [Project.TeamMember.from_json(team_member) for team_member in response]
+
+    class TeamMember:
+        def __init__(
+            self, team_id, user, role, permissions, accepted, payouts_split, ordering
+        ) -> None:
+            self.team_id = team_id
+            self.user = user
+            self.role = role
+            self.permissions = permissions
+            self.accepted = accepted
+            self.payouts_split = payouts_split
+            self.ordering = ordering
+
+        def __repr__(self) -> str:
+            return f"Team Member"
+
+        def get_user(self) -> "users.User":
+            return users.User.from_json(self.user)
+
+        @staticmethod
+        def from_json(json):
+            result = Project.TeamMember(
+                json["user"],
+                json["user"],
+                json["role"],
+                json["permissions"],
+                json["accepted"],
+                json["payouts_split"],
+                json["ordering"],
+            )
+            return result
 
     class Version:
         """Used for a projects versions."""
