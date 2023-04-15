@@ -34,10 +34,11 @@ class User:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to get this user's payout history"
-            )
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to get this user's payout history"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -59,13 +60,14 @@ class User:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to withdraw this user's balance"
-            )
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to withdraw this user's balance"
+                )
 
-        elif raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested user was not found")
+            case 404:
+                raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -81,11 +83,12 @@ class User:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.InvalidParamError("Invalid format for new icon")
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.InvalidParamError("Invalid format for new icon")
 
-        elif raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested user was not found")
+            case 404:
+                raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -109,8 +112,9 @@ class User:
         """
         raw_response = r.get(f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested user was not found")
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -141,13 +145,14 @@ class User:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to get this user's followed projects"
-            )
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to get this user's followed projects"
+                )
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested user was not found")
+            case 404:
+                raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -172,13 +177,14 @@ class User:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to get this user's notifications"
-            )
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to get this user's notifications"
+                )
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested user was not found")
+            case 404:
+                raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -219,10 +225,11 @@ class User:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to create a project"
-            )
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to create a project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -240,8 +247,9 @@ class User:
             f"https://api.modrinth.com/v2/user/{self.model.id}/projects", timeout=60
         )
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested user was not found")
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -265,15 +273,16 @@ class User:
             timeout=60,
         )
 
-        if raw_response.status_code == 400:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or you are already following the specified project"
-            )
+        match raw_response.status_code:
+            case 400:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or you are already following the specified project"
+                )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to follow a project"
-            )
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to follow a project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -296,15 +305,16 @@ class User:
             timeout=60,
         )
 
-        if raw_response.status_code == 400:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or you are not following the specified project"
-            )
+        match raw_response.status_code:
+            case 400:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or you are not following the specified project"
+                )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to unfollow a project"
-            )
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to unfollow a project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -325,8 +335,9 @@ class User:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.InvalidParamError("Invalid authorization token")
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.InvalidParamError("Invalid authorization token")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -345,8 +356,9 @@ class User:
         """
         raw_response = r.get(f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested user was not found")
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)

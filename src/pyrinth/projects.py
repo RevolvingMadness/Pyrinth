@@ -74,10 +74,11 @@ class Project:
             headers={"authorization": auth},  # type: ignore
             timeout=60,
         )
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or no authorization to see this project"
-            )
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or no authorization to see this project"
+                )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
@@ -270,10 +271,11 @@ class Project:
             timeout=60,
         )
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or no authorization to see this project"
-            )
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or no authorization to see this project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -356,10 +358,11 @@ class Project:
         """
         raw_response = r.get(f"https://api.modrinth.com/v2/version/{id_}", timeout=60)
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or no authorization to see this project"
-            )
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or no authorization to see this project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -391,10 +394,11 @@ class Project:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to create this version"
-            )
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to create this version"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -419,8 +423,9 @@ class Project:
             timeout=60,
         )
 
-        if raw_response.status_code == 400:
-            raise exceptions.InvalidParamError("Invalid input for new icon")
+        match raw_response.status_code:
+            case 400:
+                raise exceptions.InvalidParamError("Invalid input for new icon")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -442,13 +447,14 @@ class Project:
             timeout=60,
         )
 
-        if raw_response.status_code == 400:
-            raise exceptions.InvalidParamError("Invalid input")
+        match raw_response.status_code:
+            case 400:
+                raise exceptions.InvalidParamError("Invalid input")
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to edit this project"
-            )
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to edit this project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -473,15 +479,16 @@ class Project:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to create a gallery image"
-            )
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to create a gallery image"
+                )
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or no authorization to see this project"
-            )
+            case 404:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or no authorization to see this project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -527,15 +534,16 @@ class Project:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to edit this gallery image"
-            )
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to edit this gallery image"
+                )
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or no authorization to see this project"
-            )
+            case 404:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or no authorization to see this project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -564,13 +572,14 @@ class Project:
             timeout=60,
         )
 
-        if raw_response.status_code == 400:
-            raise exceptions.InvalidParamError("Invalid URL or project specified")
+        match raw_response.status_code:
+            case 400:
+                raise exceptions.InvalidParamError("Invalid URL or project specified")
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to delete this gallery image"
-            )
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to delete this gallery image"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -663,15 +672,16 @@ class Project:
             timeout=60,
         )
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to edit this project"
-            )
+        match raw_response.status_code:
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to edit this project"
+                )
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or no authorization to see this project"
-            )
+            case 404:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or no authorization to see this project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -693,13 +703,14 @@ class Project:
             timeout=60,
         )
 
-        if raw_response.status_code == 400:
-            raise exceptions.NotFoundError("The requested project was not found")
+        match raw_response.status_code:
+            case 400:
+                raise exceptions.NotFoundError("The requested project was not found")
 
-        if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to delete this project"
-            )
+            case 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to delete this project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -717,10 +728,11 @@ class Project:
             timeout=60,
         )
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or no authorization to see this project"
-            )
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or no authorization to see this project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -784,10 +796,11 @@ class Project:
             f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
         )
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or no authorization to see this project"
-            )
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or no authorization to see this project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -808,10 +821,11 @@ class Project:
             f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
         )
 
-        if raw_response.status_code == 404:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or no authorization to see this project"
-            )
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError(
+                    "The requested project was not found or no authorization to see this project"
+                )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -876,10 +890,11 @@ class Project:
             raw_response = r.get(
                 f"https://api.modrinth.com/v2/version/{id_}", timeout=60
             )
-            if raw_response.status_code == 404:
-                raise exceptions.NotFoundError(
-                    "The requested version was not found or no authorization to see this version"
-                )
+            match raw_response.status_code:
+                case 404:
+                    raise exceptions.NotFoundError(
+                        "The requested version was not found or no authorization to see this version"
+                    )
             if not raw_response.ok:
                 raise exceptions.InvalidRequestError(raw_response.text)
             response = json.loads(raw_response.content)
@@ -906,10 +921,11 @@ class Project:
                 params={"algorithm": algorithm, "multiple": str(multiple).lower()},
                 timeout=60,
             )
-            if raw_response.status_code == 404:
-                raise exceptions.NotFoundError(
-                    "The requested version file was not found or no authorization to see this version"
-                )
+            match raw_response.status_code:
+                case 404:
+                    raise exceptions.NotFoundError(
+                        "The requested version file was not found or no authorization to see this version"
+                    )
             if not raw_response.ok:
                 raise exceptions.InvalidRequestError(raw_response.text)
             response = json.loads(raw_response.content)
@@ -936,14 +952,15 @@ class Project:
                 headers={"authorization": auth},
                 timeout=60,
             )
-            if raw_response.status_code == 404:
-                raise exceptions.NotFoundError(
-                    "The requested version was not found"
-                )
-            if raw_response.status_code == 401:
-                raise exceptions.NoAuthorizationError(
-                    "No authorization to delete this file"
-                )
+            match raw_response.status_code:
+                case 404:
+                    raise exceptions.NotFoundError(
+                        "The requested version was not found"
+                    )
+                case 401:
+                    raise exceptions.NoAuthorizationError(
+                        "No authorization to delete this file"
+                    )
             if not raw_response.ok:
                 raise exceptions.InvalidRequestError(raw_response.text)
             return True
