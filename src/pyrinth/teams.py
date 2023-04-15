@@ -27,7 +27,7 @@ class Team:
         )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
 
@@ -43,7 +43,7 @@ class Team:
 
         if not raw_response.ok:
             print(raw_response.url)
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
 

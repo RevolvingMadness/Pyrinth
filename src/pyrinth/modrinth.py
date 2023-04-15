@@ -28,7 +28,7 @@ class Modrinth:
             f"https://api.modrinth.com/v2/project/{id_}/check", timeout=60
         )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
         return bool(response.get("id"))
 
@@ -51,7 +51,7 @@ class Modrinth:
             timeout=60,
         )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
         return [projects.Project(project) for project in response]
 

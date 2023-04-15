@@ -12,7 +12,7 @@ class Tag:
         raw_response = r.get("https://api.modrinth.com/v2/tag/category", timeout=60)
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = raw_response.json()
         return [
@@ -31,7 +31,7 @@ class Tag:
         raw_response = r.get("https://api.modrinth.com/v2/tag/loader", timeout=60)
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = raw_response.json()
         return [
@@ -47,7 +47,7 @@ class Tag:
         raw_response = r.get("https://api.modrinth.com/v2/tag/game_version", timeout=60)
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = raw_response.json()
         return [
@@ -66,7 +66,7 @@ class Tag:
         raw_response = r.get("https://api.modrinth.com/v2/tag/license", timeout=60)
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = raw_response.json()
         return [Tag.License(json.get("short"), json.get("name")) for json in response]
@@ -79,7 +79,7 @@ class Tag:
         )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = raw_response.json()
         return [Tag.DonationPlatform(json.get("short"), json.get("name")) for json in response]
@@ -90,7 +90,7 @@ class Tag:
         raw_response = r.get("https://api.modrinth.com/v2/tag/report_type", timeout=60)
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = raw_response.json()
         return response

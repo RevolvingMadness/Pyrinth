@@ -45,7 +45,7 @@ class User:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
 
@@ -71,7 +71,7 @@ class User:
             raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -91,7 +91,7 @@ class User:
             raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -117,7 +117,7 @@ class User:
             raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = raw_response.json()
         response.update({"authorization": auth})
@@ -154,7 +154,7 @@ class User:
             raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         followed_projects = []
         projects_ = json.loads(raw_response.content)
@@ -185,7 +185,7 @@ class User:
             raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
         return [User.Notification(notification) for notification in response]
@@ -229,7 +229,7 @@ class User:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -248,7 +248,7 @@ class User:
             raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
         return [projects.Project(project) for project in response]
@@ -280,7 +280,7 @@ class User:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -311,7 +311,7 @@ class User:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -333,7 +333,7 @@ class User:
             raise exceptions.InvalidParamError("Invalid authorization token")
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = raw_response.json()
         response.update({"authorization": auth})
@@ -354,7 +354,7 @@ class User:
             raise exceptions.NotFoundError("The requested user was not found")
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return User._from_json(raw_response.json())
 
@@ -373,7 +373,7 @@ class User:
         )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
         return [User.get(user.get("username")) for user in response]

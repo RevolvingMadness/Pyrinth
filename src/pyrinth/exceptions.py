@@ -11,8 +11,8 @@ class NotFoundError(Exception):
 class InvalidRequestError(Exception):
     """Used when a 400 occurs."""
 
-    def __init__(self) -> None:
-        super().__init__("Invalid Request")
+    def __init__(self, reason) -> None:
+        super().__init__(f"Invalid Request. Reason: {reason}")
 
 
 class NoAuthorizationError(Exception):

@@ -65,7 +65,7 @@ class Project:
                 "The requested project was not found or no authorization to see this project"
             )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
         response.update({"authorization": auth})
         return Project(response)
@@ -86,7 +86,7 @@ class Project:
             timeout=60,
         )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
         return [Project(project) for project in response]
 
@@ -225,7 +225,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
 
@@ -305,7 +305,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
         return Project.Version(response)
@@ -342,7 +342,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -369,7 +369,7 @@ class Project:
             raise exceptions.InvalidParamError("Invalid input for new icon")
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -398,7 +398,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -432,7 +432,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -487,7 +487,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -527,7 +527,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -634,7 +634,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -664,7 +664,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         return True
 
@@ -686,7 +686,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
         return [Project(dependency) for dependency in response.get("projects")]
@@ -725,7 +725,7 @@ class Project:
             "https://api.modrinth.com/v2/search", params=params, timeout=60
         )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
         return [Project.SearchResult(project) for project in response.get("hits")]
 
@@ -740,7 +740,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
 
@@ -757,7 +757,7 @@ class Project:
             )
 
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
 
@@ -840,7 +840,7 @@ class Project:
                     "The requested version was not found or no authorization to see this version"
                 )
             if not raw_response.ok:
-                raise exceptions.InvalidRequestError()
+                raise exceptions.InvalidRequestError(raw_response.text)
             response = json.loads(raw_response.content)
             return Project.Version(response)
 
