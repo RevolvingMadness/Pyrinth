@@ -15,10 +15,7 @@ class Tag:
         Raises:
             exceptions.InvalidRequestError: If the request to the API fails.
         """
-        raw_response = r.get(
-            "https://api.modrinth.com/v2/tag/category",
-            timeout=60
-        )
+        raw_response = r.get("https://api.modrinth.com/v2/tag/category", timeout=60)
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -45,10 +42,7 @@ class Tag:
         Raises:
             exceptions.InvalidRequestError: If the request to the API fails.
         """
-        raw_response = r.get(
-            "https://api.modrinth.com/v2/tag/loader",
-            timeout=60
-        )
+        raw_response = r.get("https://api.modrinth.com/v2/tag/loader", timeout=60)
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -56,9 +50,7 @@ class Tag:
         response = raw_response.json()
         return [
             Tag.Loader(
-                json.get("icon"),
-                json.get("name"),
-                json.get("supported_project_types")
+                json.get("icon"), json.get("name"), json.get("supported_project_types")
             )
             for json in response
         ]
@@ -74,10 +66,7 @@ class Tag:
         Raises:
             (InvalidRequestError): If the request to the API fails.
         """
-        raw_response = r.get(
-            "https://api.modrinth.com/v2/tag/game_version",
-            timeout=60
-        )
+        raw_response = r.get("https://api.modrinth.com/v2/tag/game_version", timeout=60)
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -104,10 +93,7 @@ class Tag:
         Raises:
             exceptions.InvalidRequestError: If the request to the API fails.
         """
-        raw_response = r.get(
-            "https://api.modrinth.com/v2/tag/license",
-            timeout=60
-        )
+        raw_response = r.get("https://api.modrinth.com/v2/tag/license", timeout=60)
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -127,15 +113,17 @@ class Tag:
             exceptions.InvalidRequestError: If the request to the API fails.
         """
         raw_response = r.get(
-            "https://api.modrinth.com/v2/tag/donation_platform",
-            timeout=60
+            "https://api.modrinth.com/v2/tag/donation_platform", timeout=60
         )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
         response = raw_response.json()
-        return [Tag.DonationPlatform(json.get("short"), json.get("name")) for json in response]
+        return [
+            Tag.DonationPlatform(json.get("short"), json.get("name"))
+            for json in response
+        ]
 
     @staticmethod
     def get_report_types() -> list[str]:
@@ -148,10 +136,7 @@ class Tag:
         Raises:
             exceptions.InvalidRequestError: If the request to the API fails.
         """
-        raw_response = r.get(
-            "https://api.modrinth.com/v2/tag/report_type",
-            timeout=60
-        )
+        raw_response = r.get("https://api.modrinth.com/v2/tag/report_type", timeout=60)
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -171,7 +156,9 @@ class Tag:
 
         """
 
-        def __init__(self, icon: str, name: str, project_type: str, header: str) -> None:
+        def __init__(
+            self, icon: str, name: str, project_type: str, header: str
+        ) -> None:
             """
             Initializes a Category object.
 
@@ -201,10 +188,7 @@ class Tag:
         """
 
         def __init__(
-            self,
-            icon: str,
-            name: str,
-            supported_project_types: list[str]
+            self, icon: str, name: str, supported_project_types: list[str]
         ) -> None:
             """
             Initializes a Loader object.
@@ -234,11 +218,7 @@ class Tag:
         """
 
         def __init__(
-            self,
-            version: str,
-            version_type: str,
-            date: str,
-            major: bool
+            self, version: str, version_type: str, date: str, major: bool
         ) -> None:
             """
             Initializes a GameVersion object.

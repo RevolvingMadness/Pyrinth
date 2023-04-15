@@ -16,7 +16,7 @@ import pyrinth.teams as teams
 
 
 class Project:
-    """Contains information about a users projects.
+    """Contains information about a user's projects.
 
     Attributes:
         model (ProjectModel): The model associated with the project.
@@ -80,10 +80,12 @@ class Project:
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{id_}",
             headers={"authorization": auth},  # type: ignore
-            timeout=60
+            timeout=60,
         )
         if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested project was not found or no authorization to see this project")
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
@@ -106,7 +108,7 @@ class Project:
         raw_response = r.get(
             "https://api.modrinth.com/v2/projects",
             params={"ids": json.dumps(ids)},
-            timeout=60
+            timeout=60,
         )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -164,7 +166,7 @@ class Project:
         return True if self.model.server_side == "required" else False
 
     def get_downloads(self) -> int:
-        """Gets the amount of downloads this project has.
+        """Gets the number of downloads this project has.
 
         Returns:
             (int): The number of downloads for this project.
@@ -196,14 +198,16 @@ class Project:
         return self.get_categories() + self.get_additional_categories()
 
     def get_license(self) -> "Project.License":
-        """Gets this projects license.
+        """Gets this project license.
 
         Returns:
             (Project.License): The license associated with this project.
         """
         return Project.License._from_json(self.model.license)
 
-    def get_specific_version(self, semantic_version: str) -> typing.Optional["Project.Version"]:
+    def get_specific_version(
+        self, semantic_version: str
+    ) -> typing.Optional["Project.Version"]:
         """Gets a specific project version based on the semantic version.
 
         Args:
@@ -224,7 +228,7 @@ class Project:
         """Downloads this project.
 
         Args:
-            recursive (bool): Whether or not to download dependencies. Defaults to False.
+            recursive (bool): Whether to download dependencies. Defaults to False.
         """
         latest = self.get_latest_version()
         files = latest.get_files()
@@ -271,11 +275,13 @@ class Project:
             f"https://api.modrinth.com/v2/project/{self.model.slug}/version",
             params=util.json_to_query_params(filters),
             headers={"authorization": self.get_auth(auth)},
-            timeout=60
+            timeout=60,
         )
 
         if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested project was not found or no authorization to see this project")
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -351,15 +357,14 @@ class Project:
 
         Returns:
             (Project.Version): The version that was found using the ID.
-            (None): The version was not found.
+            (None): The version wasn't found.
         """
-        raw_response = r.get(
-            f"https://api.modrinth.com/v2/version/{id_}",
-            timeout=60
-        )
+        raw_response = r.get(f"https://api.modrinth.com/v2/version/{id_}", timeout=60)
 
         if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested project was not found or no authorization to see this project")
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -382,19 +387,19 @@ class Project:
         files = {"data": version_model.to_bytes()}
 
         for file in version_model.files:
-            files.update({
-                util.remove_file_path(file): open(file, "rb").read()
-            })
+            files.update({util.remove_file_path(file): open(file, "rb").read()})
 
         raw_response = r.post(
             "https://api.modrinth.com/v2/version",
             headers={"authorization": self.get_auth(auth)},
             files=files,
-            timeout=60
+            timeout=60,
         )
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError("No authorization to create this version")
+            raise exceptions.NoAuthorizationError(
+                "No authorization to create this version"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -402,11 +407,11 @@ class Project:
         return True
 
     def change_icon(self, file_path: str, auth=None) -> int:
-        """Changes the projects icon.
+        """Changes the project icon.
 
         Args:
             file_path (str): The file path of the image to use for the new project icon.
-            auth (str): The authorization token to use when changing the projects icon.
+            auth (str): The authorization token to use when changing the project icon.
 
         Returns:
             (int): If the project icon change was successful.
@@ -416,7 +421,7 @@ class Project:
             params={"ext": file_path.split(".")[-1]},
             headers={"authorization": self.get_auth(auth)},
             data=open(file_path, "rb"),
-            timeout=60
+            timeout=60,
         )
 
         if raw_response.status_code == 400:
@@ -428,10 +433,10 @@ class Project:
         return True
 
     def delete_icon(self, auth=None) -> int:
-        """Deletes the projects icon.
+        """Deletes the project icon.
 
         Args:
-            auth (str): The authorization token to use when deleting the projects icon.
+            auth (str): The authorization token to use when deleting the project icon.
 
         Returns:
             (int): If the project icon deletion was successful.
@@ -439,14 +444,16 @@ class Project:
         raw_response = r.delete(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/icon",
             headers={"authorization": self.get_auth(auth)},
-            timeout=60
+            timeout=60,
         )
 
         if raw_response.status_code == 400:
             raise exceptions.InvalidParamError("Invalid input")
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError("No authorization to edit this project")
+            raise exceptions.NoAuthorizationError(
+                "No authorization to edit this project"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -468,14 +475,18 @@ class Project:
             headers={"authorization": self.get_auth(auth)},
             params=image._to_json(),
             data=open(image.file_path, "rb"),
-            timeout=60
+            timeout=60,
         )
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError("No authorization to create a gallery image")
+            raise exceptions.NoAuthorizationError(
+                "No authorization to create a gallery image"
+            )
 
         if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested project was not found or no authorization to see this project")
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -518,14 +529,18 @@ class Project:
             f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
             params=modified_json,
             headers={"authorization": self.get_auth(auth)},
-            timeout=60
+            timeout=60,
         )
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError("No authorization to edit this gallery image")
+            raise exceptions.NoAuthorizationError(
+                "No authorization to edit this gallery image"
+            )
 
         if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested project was not found or no authorization to see this project")
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -543,20 +558,24 @@ class Project:
             (int): If the gallery image deletion was successful.
         """
         if "-raw" in url:
-            raise exceptions.InvalidParamError("Please use cdn.modrinth.com instead of cdn-raw.modrinth.com")
+            raise exceptions.InvalidParamError(
+                "Please use cdn.modrinth.com instead of cdn-raw.modrinth.com"
+            )
 
         raw_response = r.delete(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
             headers={"authorization": self.get_auth(auth)},
             params={"url": url},
-            timeout=60
+            timeout=60,
         )
 
         if raw_response.status_code == 400:
             raise exceptions.InvalidParamError("Invalid URL or project specified")
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError("No authorization to delete this gallery image")
+            raise exceptions.NoAuthorizationError(
+                "No authorization to delete this gallery image"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -637,7 +656,9 @@ class Project:
         modified_json = util.remove_null_values(modified_json)
 
         if not modified_json:
-            raise exceptions.InvalidParamError("Please specify at least 1 optional argument.")
+            raise exceptions.InvalidParamError(
+                "Please specify at least 1 optional argument."
+            )
 
         raw_response = r.patch(
             f"https://api.modrinth.com/v2/project/{self.model.slug}",
@@ -646,14 +667,18 @@ class Project:
                 "Content-Type": "application/json",
                 "authorization": self.get_auth(auth),
             },
-            timeout=60
+            timeout=60,
         )
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError("No authorization to edit this project")
+            raise exceptions.NoAuthorizationError(
+                "No authorization to edit this project"
+            )
 
         if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested project was not found or no authorization to see this project")
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -672,14 +697,16 @@ class Project:
         raw_response = r.delete(
             f"https://api.modrinth.com/v2/project/{self.model.slug}",
             headers={"authorization": self.get_auth(auth)},
-            timeout=60
+            timeout=60,
         )
 
         if raw_response.status_code == 400:
             raise exceptions.NotFoundError("The requested project was not found")
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError("No authorization to delete this project")
+            raise exceptions.NoAuthorizationError(
+                "No authorization to delete this project"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -694,11 +721,13 @@ class Project:
         """
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/dependencies",
-            timeout=60
+            timeout=60,
         )
 
         if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested project was not found or no authorization to see this project")
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -742,14 +771,15 @@ class Project:
         if filters:
             params.update({"filters": json.dumps(filters)})
         raw_response = r.get(
-            "https://api.modrinth.com/v2/search",
-            params=params,
-            timeout=60
+            "https://api.modrinth.com/v2/search", params=params, timeout=60
         )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
-        return [Project.SearchResult(models.SearchResultModel._from_json(project)) for project in response.get("hits")]
+        return [
+            Project.SearchResult(models.SearchResultModel._from_json(project))
+            for project in response.get("hits")
+        ]
 
     def get_team_members(self) -> "list[teams.Team.TeamMember]":
         """Gets the team members of the project.
@@ -758,19 +788,22 @@ class Project:
             (list[Project.TeamMember)]: The team members of the project.
         """
         raw_response = r.get(
-            f"https://api.modrinth.com/v2/project/{self.model.id}/members",
-            timeout=60
+            f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
         )
 
         if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested project was not found or no authorization to see this project")
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
 
-        return [teams.Team.TeamMember._from_json(team_member) for team_member in response]
+        return [
+            teams.Team.TeamMember._from_json(team_member) for team_member in response
+        ]
 
     def get_team(self) -> "teams.Team":
         """Gets the team of the project.
@@ -779,12 +812,13 @@ class Project:
             (Team): The team of the project.
         """
         raw_response = r.get(
-            f"https://api.modrinth.com/v2/project/{self.model.id}/members",
-            timeout=60
+            f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
         )
 
         if raw_response.status_code == 404:
-            raise exceptions.NotFoundError("The requested project was not found or no authorization to see this project")
+            raise exceptions.NotFoundError(
+                "The requested project was not found or no authorization to see this project"
+            )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -837,14 +871,15 @@ class Project:
 
             Returns:
                 (Project.Version): The version that was found using the ID.
-                (None): The version was not found.
+                (None): The version wasn't found.
             """
             raw_response = r.get(
-                f"https://api.modrinth.com/v2/version/{id_}",
-                timeout=60
+                f"https://api.modrinth.com/v2/version/{id_}", timeout=60
             )
             if raw_response.status_code == 404:
-                raise exceptions.NotFoundError("The requested version was not found or no authorization to see this version")
+                raise exceptions.NotFoundError(
+                    "The requested version was not found or no authorization to see this version"
+                )
             if not raw_response.ok:
                 raise exceptions.InvalidRequestError(raw_response.text)
             response = json.loads(raw_response.content)
@@ -926,7 +961,7 @@ class Project:
             return util.format_time(self.model.date_published)
 
         def get_downloads(self) -> int:
-            """Gets the number of downloads of the version.
+            """Gets the number of downloads for the version.
 
             Returns:
                 (int): The number of downloads of the version.
@@ -982,7 +1017,7 @@ class Project:
                 featured (bool): Whether the image is featured or not.
                 title (str): The title of the image.
                 description (str): The description of the image.
-                ordering (int, optional): The ordering of the image in the gallery. Defaults to 0.
+                ordering (int, optional): The ordering of the image in the gallery. Default's to 0.
             """
             self.file_path = file_path
             self.ext = file_path.split(".")[-1]
@@ -1085,10 +1120,7 @@ class Project:
         """
 
         def __init__(
-            self,
-            id_: str,
-            name: str,
-            url: typing.Optional[str] = None
+            self, id_: str, name: str, url: typing.Optional[str] = None
         ) -> None:
             """
             Initializes a License object.
@@ -1107,7 +1139,7 @@ class Project:
             result = Project.License(
                 json_.get("id"),  # type: ignore
                 json_.get("name"),  # type: ignore
-                json_.get("url")  # type: ignore
+                json_.get("url"),  # type: ignore
             )
 
             return result
@@ -1144,8 +1176,10 @@ class Project:
 
         @staticmethod
         def _from_json(json_: dict) -> "Project.Donation":
-            result = Project.Donation(json_.get("id"), json_.get(  # type: ignore
-                "platform"), json_.get("url")  # type: ignore
+            result = Project.Donation(
+                json_.get("id"),
+                json_.get("platform"),  # type: ignore
+                json_.get("url"),  # type: ignore
             )
 
             return result
@@ -1164,7 +1198,9 @@ class Project:
 
         """
 
-        def __init__(self, dependency_type: str, id_: str, dependency_option: str) -> None:
+        def __init__(
+            self, dependency_type: str, id_: str, dependency_option: str
+        ) -> None:
             """
             Initializes a Dependency object.
 
@@ -1195,7 +1231,7 @@ class Project:
                 dependency_type = "version"
                 id_ = json_.get("version_id")
 
-            result = Project.Dependency(dependency_type, id_, json_.get("dependency_type")) # type: ignore
+            result = Project.Dependency(dependency_type, id_, json_.get("dependency_type"))  # type: ignore
 
             return result
 

@@ -1,25 +1,20 @@
-# Files
 main*.py
 test.py
 *.zip
 test*.*
 
-# Folders
 references/
 imgs/
 dist/
 src/pyrinth_download
 
-# Any file/folder that starts with 'private'
 private*
 
-# Any file/folder that starts with a period
 .*
+*.patch
 
-# Every '__pycache__' folder
 **/__pycache__
 
-# Any folder that ends with 'egg-info'
 **/*.egg-info
 
 # Ignore MkDocs

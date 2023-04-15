@@ -19,7 +19,7 @@ class ProjectModel:
         client_side (str): The client side of the project.
         server_side (str): The server side of the project.
         body (str): The body of the project.
-        license_ (Project.License): The license of the project.
+        license (Project.License): The license of the project.
         project_type (str): The type of the project.
         additional_categories (list[str]): Additional categories for the project.
         issues_url (str): URL for issues related to the project.
@@ -30,22 +30,22 @@ class ProjectModel:
     """
 
     def __init__(
-            self,
-            slug: str,
-            title: str,
-            description: str,
-            categories: list[str],
-            client_side: str,
-            server_side: str,
-            body: str,
-            license_: "projects.Project.License",
-            project_type: str,
-            additional_categories: typing.Optional[list[str]] = None,
-            issues_url: typing.Optional[str] = None,
-            source_url: typing.Optional[str] = None,
-            wiki_url: typing.Optional[str] = None,
-            discord_url: typing.Optional[str] = None,
-            auth: typing.Optional[str] = None,
+        self,
+        slug: str,
+        title: str,
+        description: str,
+        categories: list[str],
+        client_side: str,
+        server_side: str,
+        body: str,
+        license_: "projects.Project.License",
+        project_type: str,
+        additional_categories: typing.Optional[list[str]] = None,
+        issues_url: typing.Optional[str] = None,
+        source_url: typing.Optional[str] = None,
+        wiki_url: typing.Optional[str] = None,
+        discord_url: typing.Optional[str] = None,
+        auth: typing.Optional[str] = None,
     ) -> None:
         """Initializes a new instance of ProjectModel.
 
@@ -239,8 +239,8 @@ class VersionModel:
         game_versions (list[str]): The game versions associated with the version.
         version_type (version_type_literal): The type of the version.
         loaders (list[str]): The loaders associated with the version.
-        featured (bool): Whether or not the version is featured.
-        file_parts (list[str]): The file parts associated with the version.
+        featured (bool): Whether the version is featured.
+        files (list[str]): The file parts associated with the version.
         changelog (str, optional): The changelog for the version. Defaults to None.
         status (version_status_literal, optional): The status of the version. Defaults to None.
         requested_status (requested_version_status_literal, optional): The requested status of the version. Defaults to None.
@@ -248,20 +248,23 @@ class VersionModel:
     """
 
     def __init__(
-            self,
-            name: str,
-            version_number: str,
-            dependencies: list["projects.Project.Dependency"],
-            game_versions: list[str],
-            version_type: literals.version_type_literal,
-            loaders: list[str],
-            featured: bool,
-            file_parts: list[str],
-            changelog: typing.Optional[str] = None,
-            status: typing.Optional[literals.version_status_literal] = None,
-            requested_status: typing.Optional[literals.requested_version_status_literal] = None,
+        self,
+        name: str,
+        version_number: str,
+        dependencies: list["projects.Project.Dependency"],
+        game_versions: list[str],
+        version_type: literals.version_type_literal,
+        loaders: list[str],
+        featured: bool,
+        file_parts: list[str],
+        changelog: typing.Optional[str] = None,
+        status: typing.Optional[literals.version_status_literal] = None,
+        requested_status: typing.Optional[
+            literals.requested_version_status_literal
+        ] = None,
     ) -> None:
-        """Initializes a new instance of VersionModel.
+        """
+        Initializes a new instance of VersionModel.
 
         Args:
             name (str): The name of the version.
@@ -270,7 +273,7 @@ class VersionModel:
             game_versions (list[str]): The game versions associated with the version.
             version_type (version_type_literal): The type of the version.
             loaders (list[str]): The loaders associated with the version.
-            featured (bool): Whether or not the version is featured.
+            featured (bool): Whether the version is featured.
             file_parts (list[str]): The file parts associated with the version.
             changelog (str, optional): The changelog for the version. Defaults to None.
             status (version_status_literal, optional): The status of the version. Defaults to None.

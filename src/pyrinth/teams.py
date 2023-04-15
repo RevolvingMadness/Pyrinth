@@ -33,10 +33,7 @@ class Team:
         Returns:
             (list[Project.TeamMember]): A list of team members.
         """
-        return [
-            Team.TeamMember._from_json(team_member)
-            for team_member in self.members
-        ]
+        return [Team.TeamMember._from_json(team_member) for team_member in self.members]
 
     @staticmethod
     def _from_json(list_: dict) -> "Team":
@@ -67,7 +64,7 @@ class Team:
             permissions,
             accepted: bool,
             payouts_split,
-            ordering: bool
+            ordering: bool,
         ) -> None:
             self.team_id = team_id
             self.user = user
@@ -91,11 +88,11 @@ class Team:
         @staticmethod
         def _from_json(json_: dict):
             return Team.TeamMember(
-                json_.get("team_id"), # type: ignore
-                json_.get("user"), # type: ignore
-                json_.get("role"), # type: ignore
+                json_.get("team_id"),  # type: ignore
+                json_.get("user"),  # type: ignore
+                json_.get("role"),  # type: ignore
                 json_.get("permissions"),
-                json_.get("accepted"), # type: ignore
+                json_.get("accepted"),  # type: ignore
                 json_.get("payouts_split"),
-                json_.get("ordering"), # type: ignore
+                json_.get("ordering"),  # type: ignore
             )

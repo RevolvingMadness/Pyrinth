@@ -25,8 +25,7 @@ class Modrinth:
             (bool): If the project exists.
         """
         raw_response = r.get(
-            f"https://api.modrinth.com/v2/project/{id_}/check",
-            timeout=60
+            f"https://api.modrinth.com/v2/project/{id_}/check", timeout=60
         )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -49,7 +48,7 @@ class Modrinth:
         raw_response = r.get(
             "https://api.modrinth.com/v2/projects_random",
             params={"count": count},
-            timeout=60
+            timeout=60,
         )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -68,10 +67,7 @@ class Modrinth:
         """
 
         def __init__(self) -> None:
-            raw_response = r.get(
-                "https://api.modrinth.com/v2/statistics",
-                timeout=60
-            )
+            raw_response = r.get("https://api.modrinth.com/v2/statistics", timeout=60)
             response = json.loads(raw_response.content)
             self.authors: int = response.get("authors")
             self.files: int = response.get("files")
