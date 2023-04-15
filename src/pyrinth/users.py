@@ -13,23 +13,19 @@ import pyrinth.util as util
 
 
 class User:
-    """Contains information about users."""
-
     def __init__(self, user_model: "models.UserModel") -> None:
         self.model = user_model
         if isinstance(user_model, dict):
             self.model = models.UserModel._from_json(user_model)
 
     def __repr__(self) -> str:
-        return f"User: {util.args_to_dict(username=self.model.username, name=self.model.name, id=self.model.id)}"
+        return f"User: {self.model.name if self.model.name else self.model.username}"
 
     def get_auth(self) -> typing.Optional[str]:
-        """Gets the users authorization token."""
         return self.model.auth
 
     @staticmethod
     def _from_json(json_: dict) -> "User":
-        """Utility Function."""
         return User(models.UserModel._from_json(json_))
 
     def get_payout_history(self) -> "User.PayoutHistory":
@@ -40,9 +36,7 @@ class User:
         )
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to get this user's followed projects"
-            )
+            raise exceptions.NoAuthorizationError("No authorization to get this user's payout history")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -63,9 +57,7 @@ class User:
         )
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to withdraw this user's balance"
-            )
+            raise exceptions.NoAuthorizationError("No authorization to withdraw this user's balance")
 
         elif raw_response.status_code == 404:
             raise exceptions.NotFoundError("The requested user was not found")
@@ -108,10 +100,12 @@ class User:
             InvalidRequestError: An invalid API call was sent.
 
         Returns:
-            User: The user that was found.
+            (User): The user that was found.
         """
         raw_response = r.get(
-            f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
+            f"https://api.modrinth.com/v2/user/{id_}",
+            timeout=60
+        )
 
         if raw_response.status_code == 404:
             raise exceptions.NotFoundError("The requested user was not found")
@@ -128,7 +122,7 @@ class User:
         Gets the date of when the user was created.
 
         Returns:
-            datetime: The time of when the user was created
+            (datetime): The time of when the user was created
         """
         return util.format_time(self.model.created)
 
@@ -137,18 +131,16 @@ class User:
         Gets a users followed projects.
 
         Returns:
-            list[Project]: The users followed projects
+            (list[Project]): The users followed projects
         """
         raw_response = r.get(
             f"https://api.modrinth.com/v2/user/{self.model.username}/follows",
             headers={"authorization": self.model.auth},  # type: ignore
-            timeout=60,
+            timeout=60
         )
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to get this user's followed projects"
-            )
+            raise exceptions.NoAuthorizationError("No authorization to get this user's followed projects")
 
         if raw_response.status_code == 404:
             raise exceptions.NotFoundError("The requested user was not found")
@@ -168,18 +160,16 @@ class User:
         Gets a users notifications.
 
         Returns:
-            list[User.Notification]: The users notifications
+            (list[User.Notification]): The users notifications
         """
         raw_response = r.get(
             f"https://api.modrinth.com/v2/user/{self.model.username}/notifications",
             headers={"authorization": self.model.auth},  # type: ignore
-            timeout=60,
+            timeout=60
         )
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to get this user's notifications"
-            )
+            raise exceptions.NoAuthorizationError("No authorization to get this user's notifications")
 
         if raw_response.status_code == 404:
             raise exceptions.NotFoundError("The requested user was not found")
@@ -195,7 +185,7 @@ class User:
         Gets the amount of projects a user has.
 
         Returns:
-            list[Project]: The users projects
+            (list[Project]): The users projects
         """
         projects_ = self.get_projects()
 
@@ -210,7 +200,7 @@ class User:
             icon (str): The path of the icon to use for the newly created project.
 
         Returns:
-            int: If the project creation was successful
+            (int): If the project creation was successful
         """
         files = {"data": project_model.to_bytes()}
         if icon:
@@ -220,13 +210,11 @@ class User:
             "https://api.modrinth.com/v2/project",
             files=files,
             headers={"authorization": self.model.auth},  # type: ignore
-            timeout=60,
+            timeout=60
         )
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to create a project"
-            )
+            raise exceptions.NoAuthorizationError("No authorization to create a project")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -238,10 +226,11 @@ class User:
         Gets a users projects.
 
         Returns:
-            list[Project]: The users projects
+            (list[Project]): The users projects
         """
         raw_response = r.get(
-            f"https://api.modrinth.com/v2/user/{self.model.id}/projects", timeout=60
+            f"https://api.modrinth.com/v2/user/{self.model.id}/projects",
+            timeout=60
         )
 
         if raw_response.status_code == 404:
@@ -261,23 +250,19 @@ class User:
             id_ (str): The ID of the project to follow
 
         Returns:
-            int: If the project follow was successful
+            (int): If the project follow was successful
         """
         raw_response = r.post(
             f"https://api.modrinth.com/v2/project/{id_}/follow",
             headers={"authorization": self.model.auth},  # type: ignore
-            timeout=60,
+            timeout=60
         )
 
         if raw_response.status_code == 400:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or you are already following the specified project"
-            )
+            raise exceptions.NotFoundError("The requested project was not found or you are already following the specified project")
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to follow a project"
-            )
+            raise exceptions.NoAuthorizationError("No authorization to follow a project")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -292,23 +277,19 @@ class User:
             id_ (str): The ID of the project to unfollow
 
         Returns:
-            int: If the project unfollow was successful
+            (int): If the project unfollow was successful
         """
         raw_response = r.delete(
             f"https://api.modrinth.com/v2/project/{id_}/follow",
             headers={"authorization": self.model.auth},  # type: ignore
-            timeout=60,
+            timeout=60
         )
 
         if raw_response.status_code == 400:
-            raise exceptions.NotFoundError(
-                "The requested project was not found or you are not following the specified project"
-            )
+            raise exceptions.NotFoundError("The requested project was not found or you are not following the specified project")
 
         if raw_response.status_code == 401:
-            raise exceptions.NoAuthorizationError(
-                "No authorization to unfollow a project"
-            )
+            raise exceptions.NoAuthorizationError("No authorization to unfollow a project")
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
@@ -321,12 +302,12 @@ class User:
         Gets a user from authorization token.
 
         Returns:
-            User: The user that was found using the authorization token
+            (User): The user that was found using the authorization token
         """
         raw_response = r.get(
             "https://api.modrinth.com/v2/user",
             headers={"authorization": auth},
-            timeout=60,
+            timeout=60
         )
 
         if raw_response.status_code == 401:
@@ -345,10 +326,12 @@ class User:
         Gets a user from ID.
 
         Returns:
-            User: The user that was found using the ID
+            (User): The user that was found using the ID
         """
         raw_response = r.get(
-            f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
+            f"https://api.modrinth.com/v2/user/{id_}",
+            timeout=60
+        )
 
         if raw_response.status_code == 404:
             raise exceptions.NotFoundError("The requested user was not found")
@@ -364,12 +347,12 @@ class User:
         Gets a users from IDs.
 
         Returns:
-            User: The users that were found using the IDs
+            (User): The users that were found using the IDs
         """
         raw_response = r.get(
             "https://api.modrinth.com/v2/users",
             params={"ids": json.dumps(ids)},
-            timeout=60,
+            timeout=60
         )
 
         if not raw_response.ok:

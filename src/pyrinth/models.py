@@ -9,7 +9,25 @@ import pyrinth.util as util
 
 
 class ProjectModel:
-    """The model used for the Project class."""
+    """The model used for the Project class.
+
+    Attributes:
+        slug (str): The slug of the project.
+        title (str): The title of the project.
+        description (str): The description of the project.
+        categories (list[str]): The categories of the project.
+        client_side (str): The client side of the project.
+        server_side (str): The server side of the project.
+        body (str): The body of the project.
+        license_ (Project.License): The license of the project.
+        project_type (str): The type of the project.
+        additional_categories (list[str]): Additional categories for the project.
+        issues_url (str): URL for issues related to the project.
+        source_url (str): URL for the source code of the project.
+        wiki_url (str): URL for the wiki page of the project.
+        discord_url (str): URL for the Discord server of the project.
+        auth (str): Authentication token for the project.
+    """
 
     def __init__(
             self,
@@ -27,8 +45,27 @@ class ProjectModel:
             source_url: typing.Optional[str] = None,
             wiki_url: typing.Optional[str] = None,
             discord_url: typing.Optional[str] = None,
-            auth=None,
+            auth: typing.Optional[str] = None,
     ) -> None:
+        """Initializes a new instance of ProjectModel.
+
+        Args:
+            slug (str): The slug of the project.
+            title (str): The title of the project.
+            description (str): The description of the project.
+            categories (list[str]): The categories of the project.
+            client_side (str): The client side of the project.
+            server_side (str): The server side of the project.
+            body (str): The body of the project.
+            license_ (Project.License): The license of the project.
+            project_type (str): The type of the project.
+            additional_categories (list[str], optional): Additional categories for the project. Defaults to None.
+            issues_url (str, optional): URL for issues related to the project. Defaults to None.
+            source_url (str, optional): URL for the source code of the project. Defaults to None.
+            wiki_url (str, optional): URL for the wiki page of the project. Defaults to None.
+            discord_url (str, optional): URL for Discord server related to this project. Defaults to None.
+            auth (str, optional): Authentication token for this instance. Defaults to None.
+        """
         self.slug = slug
         self.title = title
         self.description = description
@@ -108,7 +145,32 @@ class ProjectModel:
 
 
 class SearchResultModel:
-    """The model used for the SearchResult class."""
+    """The model used for the SearchResult class.
+
+    Attributes:
+        slug (str): The slug of the search result.
+        title (str): The title of the search result.
+        description (str): The description of the search result.
+        client_side (str): The client side of the search result.
+        server_side (str): The server side of the search result.
+        project_type (str): The type of the search result.
+        downloads (int): The number of downloads for the search result.
+        project_id (str): The ID of the project associated with the search result.
+        author (str): The author of the search result.
+        versions (list[str]): The versions associated with the search result.
+        follows (int): The number of follows for the search result.
+        date_created (str): The date when the search result was created.
+        date_modified (str): The date when the search result was last modified.
+        license (str): The license associated with the search result.
+        categories (list[str]): The categories associated with the search result.
+        icon_url (str): The URL for the icon associated with the search result.
+        color (str): The color associated with the search result.
+        display_categories (list[str]): The categories to display for the search result.
+        latest_version (str): The latest version associated with the search result.
+        gallery (list[str]): The gallery associated with the search result.
+        featured_gallery (list[str]): The featured gallery associated with the search result.
+
+    """
 
     def __init__(self) -> None:
         self.slug: typing.Optional[str] = None
@@ -119,19 +181,19 @@ class SearchResultModel:
         self.project_type: typing.Optional[str] = None
         self.downloads: typing.Optional[int] = None
         self.project_id: typing.Optional[str] = None
-        self.author = None
+        self.author: typing.Optional[str] = None
         self.versions: typing.Optional[list[str]] = None
         self.follows: typing.Optional[int] = None
         self.date_created = None
         self.date_modified = None
-        self.license: typing.Optional["projects.Project.License"] = None
+        self.license: typing.Optional[str] = None
         self.categories: typing.Optional[list[str]] = None
         self.icon_url: typing.Optional[str] = None
         self.color: typing.Optional[str] = None
-        self.display_categories: typing.Optional[list] = None
-        self.latest_version = None
-        self.gallery = None
-        self.featured_gallery = None
+        self.display_categories: typing.Optional[list[str]] = None
+        self.latest_version: typing.Optional[list[str]] = None
+        self.gallery: typing.Optional[list[str]] = None
+        self.featured_gallery: typing.Optional[list[str]] = None
 
     @staticmethod
     def _from_json(json_: dict) -> "SearchResultModel":
@@ -168,7 +230,22 @@ class SearchResultModel:
 
 
 class VersionModel:
-    """The model used for the Version class."""
+    """The model used for the Version class.
+
+    Attributes:
+        name (str): The name of the version.
+        version_number (str): The version number of the version.
+        dependencies (list[Project.Dependency]): The dependencies of the version.
+        game_versions (list[str]): The game versions associated with the version.
+        version_type (version_type_literal): The type of the version.
+        loaders (list[str]): The loaders associated with the version.
+        featured (bool): Whether or not the version is featured.
+        file_parts (list[str]): The file parts associated with the version.
+        changelog (str, optional): The changelog for the version. Defaults to None.
+        status (version_status_literal, optional): The status of the version. Defaults to None.
+        requested_status (requested_version_status_literal, optional): The requested status of the version. Defaults to None.
+
+    """
 
     def __init__(
             self,
@@ -182,10 +259,23 @@ class VersionModel:
             file_parts: list[str],
             changelog: typing.Optional[str] = None,
             status: typing.Optional[literals.version_status_literal] = None,
-            requested_status: typing.Optional[
-                literals.requested_version_status_literal
-            ] = None,
+            requested_status: typing.Optional[literals.requested_version_status_literal] = None,
     ) -> None:
+        """Initializes a new instance of VersionModel.
+
+        Args:
+            name (str): The name of the version.
+            version_number (str): The version number of the version.
+            dependencies (list[projects.Project.Dependency]): The dependencies of the version.
+            game_versions (list[str]): The game versions associated with the version.
+            version_type (version_type_literal): The type of the version.
+            loaders (list[str]): The loaders associated with the version.
+            featured (bool): Whether or not the version is featured.
+            file_parts (list[str]): The file parts associated with the version.
+            changelog (str, optional): The changelog for the version. Defaults to None.
+            status (version_status_literal, optional): The status of the version. Defaults to None.
+            requested_status (requested_version_status_literal, optional): The requested status of the version. Defaults to None.
+        """
         self.name = name
         self.version_number = version_number
         self.changelog = changelog
@@ -233,13 +323,29 @@ class VersionModel:
 
 
 class UserModel:
-    """The model used for the User class."""
+    """The model used for the User class.
+
+    Attributes:
+        username (str, optional): The username of the user.
+        id (str, optional): The ID of the user.
+        avatar_url (str, optional): The URL for the avatar of the user.
+        created (str, optional): The date when the user was created.
+        role (str, optional): The role of the user.
+        name (str, optional): The name of the user.
+        email (str, optional): The email address of the user.
+        bio (str, optional): The bio of the user.
+        payout_data (UNKNOWN, optional): The payout data for the user.
+        github_id (int, optional): The GitHub ID of the user.
+        badges (list[str], optional): The badges associated with the user.
+        auth (str, optional): Authentication information for the user.
+
+    """
 
     def __init__(self) -> None:
         self.username: typing.Optional[str] = None
         self.id: typing.Optional[str] = None
         self.avatar_url: typing.Optional[str] = None
-        self.created = None
+        self.created: typing.Optional[str] = None
         self.role: typing.Optional[str] = None
         self.name: typing.Optional[str] = None
         self.email: typing.Optional[str] = None

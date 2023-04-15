@@ -1,53 +1,101 @@
 import json
 import requests as r
-import pyrinth.projects as projects
-import pyrinth.exceptions as exceptions
+import pyrinth.users as users
 
 
 class Team:
+    """
+    Represents a team.
+
+    Attributes:
+        members (list[dict]): A list of team members.
+        id (str): The ID of the team.
+
+    Methods:
+        get_members: Gets a list of team members.
+        _from_json: Creates a Team object from a JSON dictionary.
+        get: Gets a team by its ID.
+        get_multiple: Gets multiple teams by their IDs.
+
+    """
+
     def __init__(self):
+        """
+        Initializes a Team object.
+        """
         self.members = None
         self.id = None
 
-    def get_members(self):
-        return [projects.Project.TeamMember._from_json(team_member) for team_member in self.members]
+    def get_members(self) -> list["Team.TeamMember"]:
+        """
+        Gets a list of team members.
+
+        Returns:
+            (list[Project.TeamMember]): A list of team members.
+        """
+        return [
+            Team.TeamMember._from_json(team_member)
+            for team_member in self.members
+        ]
 
     @staticmethod
-    def _from_json(list_: dict):
+    def _from_json(list_: dict) -> "Team":
         result = Team()
         result.members = list_
         result.id = list_[0]["team_id"]
         return result
 
-    @staticmethod
-    def get(id_: str):
-        raw_response = r.get(
-            f"https://api.modrinth.com/v2/team/{id_}/members",
-            timeout=60
-        )
+    class TeamMember:
+        """Represents a team member of a project.
 
-        if not raw_response.ok:
-            raise exceptions.InvalidRequestError(raw_response.text)
+        Attributes:
+            team_id (str): The ID of the team the member belongs to.
+            user (dict): The user associated with the team member.
+            role (str): The role of the team member within the team.
+            permissions: The permissions of the team member within the team.
+            accepted (bool): Whether the team member has accepted their invitation to join the team.
+            payouts_split: The percentage of payouts that the team member receives.
+            ordering (int): The ordering of the team member within the team.
 
-        response = json.loads(raw_response.content)
+        """
 
-        return Team._from_json(response)
+        def __init__(
+            self,
+            team_id: str,
+            user: dict,
+            role: str,
+            permissions,
+            accepted: bool,
+            payouts_split,
+            ordering: bool
+        ) -> None:
+            self.team_id = team_id
+            self.user = user
+            self.role = role
+            self.permissions = permissions
+            self.accepted = accepted
+            self.payouts_split = payouts_split
+            self.ordering = ordering
 
-    @staticmethod
-    def get_multiple(ids: list[str]):
-        raw_response = r.get(
-            f"https://api.modrinth.com/v2/teams",
-            params={"ids": json.dumps(ids)},
-            timeout=60
-        )
+        def __repr__(self) -> str:
+            return f"Team Member"
 
-        if not raw_response.ok:
-            print(raw_response.url)
-            raise exceptions.InvalidRequestError(raw_response.text)
+        def get_user(self) -> "users.User":
+            """Gets the user associated with the team member.
 
-        response = json.loads(raw_response.content)
+            Returns:
+                (User): The user associated with the team member.
+            """
+            return users.User._from_json(self.user)
 
-        return [Team._from_json(team) for team in response]
-
-    def __repr__(self):
-        return f"Team: {len(self.members)} member(s)"
+        @staticmethod
+        def _from_json(json_: dict):
+            return Team.TeamMember(
+                json_.get("team_id"), # type: ignore
+                json_.get("user"), # type: ignore
+                json_.get("role"), # type: ignore
+                json_.get("permissions"),
+                json_.get("accepted"), # type: ignore
+                json_.get("payouts_split"),
+                json_.get("ordering"), # type: ignore
+            )
