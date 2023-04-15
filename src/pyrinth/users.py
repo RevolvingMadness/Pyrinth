@@ -18,7 +18,7 @@ class User:
     def __init__(self, user_model: "models.UserModel") -> None:
         self.model = user_model
         if isinstance(user_model, dict):
-            self.model = models.UserModel.from_json(user_model)
+            self.model = models.UserModel._from_json(user_model)
 
     def __repr__(self) -> str:
         return f"User: {util.args_to_dict(username=self.model.username, name=self.model.name, id=self.model.id)}"
@@ -28,9 +28,9 @@ class User:
         return self.model.auth
 
     @staticmethod
-    def from_json(json_: dict) -> "User":
+    def _from_json(json_: dict) -> "User":
         """Utility Function."""
-        return User(models.UserModel.from_json(json_))
+        return User(models.UserModel._from_json(json_))
 
     def get_payout_history(self) -> "User.PayoutHistory":
         raw_response = r.get(
@@ -337,7 +337,7 @@ class User:
 
         response = raw_response.json()
         response.update({"authorization": auth})
-        return User.from_json(response)
+        return User._from_json(response)
 
     @staticmethod
     def from_id(id_: str) -> "User":
@@ -356,7 +356,7 @@ class User:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError()
 
-        return User.from_json(raw_response.json())
+        return User._from_json(raw_response.json())
 
     @staticmethod
     def from_ids(ids: list[str]) -> list["User"]:

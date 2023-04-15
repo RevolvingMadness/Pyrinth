@@ -10,10 +10,10 @@ class Team:
         self.id = None
 
     def get_members(self):
-        return [projects.Project.TeamMember.from_json(team_member) for team_member in self.members]
+        return [projects.Project.TeamMember._from_json(team_member) for team_member in self.members]
 
     @staticmethod
-    def from_json(list_: dict):
+    def _from_json(list_: dict):
         result = Team()
         result.members = list_
         result.id = list_[0]["team_id"]
@@ -31,7 +31,7 @@ class Team:
 
         response = json.loads(raw_response.content)
 
-        return Team.from_json(response)
+        return Team._from_json(response)
 
     @staticmethod
     def get_multiple(ids: list[str]):
@@ -47,7 +47,7 @@ class Team:
 
         response = json.loads(raw_response.content)
 
-        return [Team.from_json(team) for team in response]
+        return [Team._from_json(team) for team in response]
 
     def __repr__(self):
         return f"Team: {len(self.members)} member(s)"

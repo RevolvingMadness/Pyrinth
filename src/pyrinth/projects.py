@@ -20,7 +20,7 @@ class Project:
 
     def __init__(self, project_model: "models.ProjectModel") -> None:
         if isinstance(project_model, dict):
-            project_model = models.ProjectModel.from_json(project_model)
+            project_model = models.ProjectModel._from_json(project_model)
         self.model = project_model
 
     def __repr__(self) -> str:
@@ -152,7 +152,7 @@ class Project:
 
     def get_license(self) -> "Project.License":
         """Gets this projects license."""
-        return Project.License.from_json(self.model.license)
+        return Project.License._from_json(self.model.license)
 
     def get_specific_version(
         self, semantic_version: str
@@ -416,7 +416,7 @@ class Project:
         raw_response = r.post(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
             headers={"authorization": self.get_auth(auth)},
-            params=image.to_json(),
+            params=image._to_json(),
             data=open(image.file_path, "rb"),
             timeout=60,
         )
@@ -744,7 +744,7 @@ class Project:
 
         response = json.loads(raw_response.content)
 
-        return [Project.TeamMember.from_json(team_member) for team_member in response]
+        return [Project.TeamMember._from_json(team_member) for team_member in response]
 
     def get_team(self) -> "teams.Team":
         raw_response = r.get(
@@ -761,7 +761,7 @@ class Project:
 
         response = json.loads(raw_response.content)
 
-        return teams.Team.from_json(response)
+        return teams.Team._from_json(response)
 
     class TeamMember:
         def __init__(
@@ -779,10 +779,10 @@ class Project:
             return f"Team Member"
 
         def get_user(self) -> "users.User":
-            return users.User.from_json(self.user)
+            return users.User._from_json(self.user)
 
         @staticmethod
-        def from_json(json_: dict):
+        def _from_json(json_: dict):
             return Project.TeamMember(
                 json_.get("team_id"),
                 json_.get("user"),
@@ -798,7 +798,7 @@ class Project:
 
         def __init__(self, version_model) -> None:
             if isinstance(version_model, dict):
-                version_model = models.VersionModel.from_json(version_model)
+                version_model = models.VersionModel._from_json(version_model)
                 self.model = version_model
             self.model = version_model
 
@@ -815,7 +815,7 @@ class Project:
             """
             result = []
             for dependency in self.model.dependencies:
-                result.append(Project.Dependency.from_json(dependency))
+                result.append(Project.Dependency._from_json(dependency))
             return result
 
         @staticmethod
@@ -853,7 +853,7 @@ class Project:
             """
             result = []
             for file in self.model.files:
-                result.append(Project.File.from_json(file))  # type: ignore
+                result.append(Project.File._from_json(file))  # type: ignore
             return result
 
         def download(self, recursive: bool = False) -> None:
@@ -975,7 +975,7 @@ class Project:
             self.ordering = ordering
 
         @staticmethod
-        def from_json(json_: dict) -> "Project.GalleryImage":
+        def _from_json(json_: dict) -> "Project.GalleryImage":
             """Utility Function."""
             return Project.GalleryImage(
                 json_.get("url"),  # type: ignore
@@ -985,7 +985,7 @@ class Project:
                 json_.get("ordering"),  # type: ignore
             )
 
-        def to_json(self) -> dict:
+        def _to_json(self) -> dict:
             return util.remove_null_values(self.__dict__)
 
     class File:
@@ -1020,7 +1020,7 @@ class Project:
             return True
 
         @staticmethod
-        def from_json(json_: dict) -> "Project.File":
+        def _from_json(json_: dict) -> "Project.File":
             """Utility Function."""
             result = Project.File(
                 json_.get("hashes"),  # type: ignore
@@ -1046,16 +1046,17 @@ class Project:
             self.url = url
 
         @staticmethod
-        def from_json(json_: dict) -> "Project.License":
+        def _from_json(json_: dict) -> "Project.License":
             """Utility Function."""
             result = Project.License(
-                json_.get("id"), json_.get(
-                    "name"), json_.get("url")  # type: ignore
+                json_.get("id"), # type: ignore
+                json_.get("name"), # type: ignore
+                json_.get("url") # type: ignore
             )
 
             return result
 
-        def to_json(self) -> dict:
+        def _to_json(self) -> dict:
             return self.__dict__
 
         def __repr__(self) -> str:
@@ -1070,10 +1071,11 @@ class Project:
             self.url = url
 
         @staticmethod
-        def from_json(json_: dict) -> "Project.Donation":
+        def _from_json(json_: dict) -> "Project.Donation":
             """Utility Function."""
-            result = Project.Donation(json_.get("id"), json_.get(
-                "platform"), json_.get("url"))  # type: ignore
+            result = Project.Donation(json_.get("id"), json_.get(  # type: ignore
+                "platform"), json_.get("url")  # type: ignore
+            )
 
             return result
 
@@ -1090,7 +1092,7 @@ class Project:
                 self.id = Project.get(self.id).get_id()
             self.dependency_option = dependency_option
 
-        def to_json(self) -> dict:
+        def _to_json(self) -> dict:
             """Utility Function."""
             result = self.__dict__
             if self.dependency_type == "project":
@@ -1100,7 +1102,7 @@ class Project:
             return result
 
         @staticmethod
-        def from_json(json_: dict) -> "Project.Dependency":
+        def _from_json(json_: dict) -> "Project.Dependency":
             """Utility Function."""
             dependency_type = "project"
             id_ = json_.get("project_id")
@@ -1162,7 +1164,7 @@ class Project:
 
         def __init__(self, search_result_model) -> None:
             if isinstance(search_result_model, dict):
-                search_result_model = models.SearchResultModel.from_json(
+                search_result_model = models.SearchResultModel._from_json(
                     search_result_model
                 )
             self.model = search_result_model

@@ -26,7 +26,7 @@ def remove_null_values(json_: dict) -> dict:
 
 def to_image_from_json(json_: dict) -> list:
     """Utility Function."""
-    return [projects.Project.GalleryImage.from_json(image) for image in json_]
+    return [projects.Project.GalleryImage._from_json(image) for image in json_]
 
 
 def json_to_query_params(json_: dict) -> str:

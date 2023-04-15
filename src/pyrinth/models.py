@@ -36,7 +36,7 @@ class ProjectModel:
         self.client_side = client_side
         self.server_side = server_side
         self.body = body
-        self.license = license_.to_json()
+        self.license = license_._to_json()
         self.project_type = project_type
         self.additional_categories = additional_categories
         self.issues_url = issues_url
@@ -62,9 +62,9 @@ class ProjectModel:
         self.gallery = None
 
     @staticmethod
-    def from_json(json_: dict) -> "ProjectModel":
+    def _from_json(json_: dict) -> "ProjectModel":
         """Utility function."""
-        license_ = projects.Project.License.from_json(json_.get("license"))  # type: ignore
+        license_ = projects.Project.License._from_json(json_.get("license"))  # type: ignore
 
         result = ProjectModel(
             json_.get("slug"),  # type: ignore
@@ -101,12 +101,12 @@ class ProjectModel:
         result.gallery = json_.get("gallery")
         return result
 
-    def to_json(self) -> dict:
+    def _to_json(self) -> dict:
         return util.remove_null_values(self.__dict__)
 
-    def to_bytes(self) -> bytes:
+    def _to_bytes(self) -> bytes:
         """Utility function."""
-        return json.dumps(self.to_json()).encode()
+        return json.dumps(self._to_json()).encode()
 
 
 class SearchResultModel:
@@ -136,7 +136,7 @@ class SearchResultModel:
         self.featured_gallery = None
 
     @staticmethod
-    def from_json(json_: dict) -> "SearchResultModel":
+    def _from_json(json_: dict) -> "SearchResultModel":
         """Utility function."""
         result = SearchResultModel()
         result.slug = json_.get("slug")
@@ -163,12 +163,12 @@ class SearchResultModel:
 
         return result
 
-    def to_json(self) -> dict:
+    def _to_json(self) -> dict:
         return util.remove_null_values(self.__dict__)
 
-    def to_bytes(self) -> bytes:
+    def _to_bytes(self) -> bytes:
         """Utility function."""
-        return json.dumps(self.to_json()).encode()
+        return json.dumps(self._to_json()).encode()
 
 
 class VersionModel:
@@ -208,7 +208,7 @@ class VersionModel:
         self.downloads = None
 
     @staticmethod
-    def from_json(json_: dict) -> "VersionModel":
+    def _from_json(json_: dict) -> "VersionModel":
         """Utility function."""
         result = VersionModel(
             json_.get("name"),  # type: ignore
@@ -230,12 +230,12 @@ class VersionModel:
         result.downloads = json_.get("downloads")
         return result
 
-    def to_json(self) -> dict:
+    def _to_json(self) -> dict:
         return util.remove_null_values(self.__dict__)
 
-    def to_bytes(self) -> bytes:
+    def _to_bytes(self) -> bytes:
         """Utility function."""
-        return json.dumps(self.to_json()).encode()
+        return json.dumps(self._to_json()).encode()
 
 
 class UserModel:
@@ -256,7 +256,7 @@ class UserModel:
         self.auth: typing.Optional[str] = None
 
     @staticmethod
-    def from_json(json_: dict) -> "UserModel":
+    def _from_json(json_: dict) -> "UserModel":
         """Utility function."""
         result = UserModel()
         result.username = json_.get("username")
@@ -274,9 +274,9 @@ class UserModel:
 
         return result
 
-    def to_json(self) -> dict:
+    def _to_json(self) -> dict:
         return util.remove_null_values(self.__dict__)
 
-    def to_bytes(self) -> bytes:
+    def _to_bytes(self) -> bytes:
         """Utility function."""
-        return json.dumps(self.to_json()).encode()
+        return json.dumps(self._to_json()).encode()
