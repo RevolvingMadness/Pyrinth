@@ -16,17 +16,21 @@ class Modrinth:
         """Checks if a project exists.
 
         Args:
-            id_ (str): The project ID to check if it exists.
+            id_ (str): The ID or slug of the project
 
         Raises:
-            InvalidRequestError: An invalid API call was sent.
+            InvalidRequestError: Invalid request
+            NotFoundError: The requested project was not found
 
         Returns:
-            (bool): If the project exists.
+            (bool): Whether the project exists
         """
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{id_}/check", timeout=60
         )
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError("The requested project was not found")
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
@@ -37,10 +41,10 @@ class Modrinth:
         """Gets a certain number of random projects.
 
         Args:
-            count (int, optional): The number of projects to find.
+            count (int, optional): The number of random projects to return
 
         Raises:
-            InvalidRequestError: An invalid API call was sent.
+            InvalidRequestError: Invalid request
 
         Returns:
             (list[Project]): The projects that were randomly found.

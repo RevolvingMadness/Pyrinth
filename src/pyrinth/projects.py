@@ -16,40 +16,30 @@ import pyrinth.teams as teams
 
 
 class Project:
-    """Contains information about a user's projects.
+    """Projects can be mods or modpacks and are created by users.
 
     Attributes:
-        model (ProjectModel): The model associated with the project.
-
+        model (ProjectModel): The model of the project
     """
 
     def __init__(self, project_model: "models.ProjectModel") -> None:
-        """Initializes a new instance of Project.
-
+        """
         Args:
-            project_model (ProjectModel): The model associated with the project.
+            project_model (ProjectModel): The model associated with the project
         """
         if isinstance(project_model, dict):
             project_model = models.ProjectModel._from_json(project_model)
         self.model = project_model
 
     def get_donations(self) -> list["Project.Donation"]:
-        """Gets this project's donations.
+        """Gets this project's donations
 
         Returns:
-            (list[Donation]): The donations that this project has.
+            (list[Donation]): The donations that this project has
         """
         return util.list_to_object(Project.Donation, self.model.donation_urls)
 
-    def get_auth(self, auth: str | None) -> str:
-        """Utility Function.
-
-        Args:
-            auth (Optional[str]): An optional authorization token. Defaults to None.
-
-        Returns:
-            (str): The authorization token.
-        """
+    def _get_auth(self, auth: str | None) -> str:
         if auth:
             return auth
         return self.model.auth  # type: ignore
@@ -59,12 +49,12 @@ class Project:
         """Gets a project based on an ID.
 
         Args:
-            id_ (str): The project's ID to get.
-            auth (str, optional): An optional authorization token when getting the project. Defaults to None.
+            id_ (str): The ID or slug of the project
+            auth (str, optional): An optional authorization token when getting the project
 
         Raises:
-            NotFoundError: The project wasn't found.
-            InvalidRequestError: An invalid API call was sent.
+            NotFoundError: The requested project wasn't found or no authorization to see this project
+            InvalidRequestError: Invalid request
 
         Returns:
             (Project): The project that was found.
@@ -90,10 +80,10 @@ class Project:
         """Gets multiple projects.
 
         Args:
-            ids (list[str]): The IDs of the projects to get.
+            ids (list[str]): The IDs of the projects.
 
         Raises:
-            InvalidRequestError: An invalid API call was sent.
+            InvalidRequestError: Invalid request
 
         Returns:
             (list[Project]): The projects that were found.
@@ -245,17 +235,17 @@ class Project:
         types: literals.version_type_literal | None = None,
         auth: str | None = None,
     ) -> list["Project.Version"]:
-        """Gets project versions based on filters.
+        """Gets project versions based on filters
 
         Args:
-            loaders (Optional[list[str]]): The loaders filter. Defaults to None.
-            game_versions (Optional[list[str]]): The game versions filter. Defaults to None.
-            featured (Optional[bool]): The is featured filter. Defaults to None.
-            types (Optional[version_type_literal]): The types filter. Defaults to None.
-            auth (str, optional): The authorization token. Defaults to None.
+            loaders (Optional[list[str]]): The types of loaders to filter for
+            game_versions (Optional[list[str]]): The game versions to filter for
+            featured (Optional[bool]): Allows to filter for featured or non-featured versions only
+            types (Optional[version_type_literal]): The type of version
+            auth (str, optional): An optional authorization token to use when getting the project versions
 
         Returns:
-            (list[Project.Version]): The versions that were found using the filters.
+            (list[Project.Version]): The versions that were found
         """
         filters = {
             "loaders": loaders,
@@ -267,7 +257,7 @@ class Project:
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/version",
             params=util.json_to_query_params(filters),
-            headers={"authorization": self.get_auth(auth)},
+            headers={"authorization": self._get_auth(auth)},
             timeout=60,
         )
 
@@ -305,17 +295,17 @@ class Project:
         types: literals.version_type_literal | None = None,
         auth=None,
     ) -> "Project.Version":
-        """Gets the oldest project version.
+        """Gets the oldest project version
 
         Args:
-            loaders (list[str], optional): A list of loaders to filter by.
-            game_versions (list[str], optional): A list of game versions to filter by.
-            featured (bool, optional): Whether to only include featured versions.
-            types (version_type_literal, optional): The type of version to filter by.
-            auth (optional): Authentication information.
+            loaders (Optional[list[str]]): The types of loaders to filter for
+            game_versions (Optional[list[str]]): The game versions to filter for
+            featured (Optional[bool]): Allows to filter for featured or non-featured versions only
+            types (Optional[version_type_literal]): The type of version
+            auth (str, optional): An optional authorization token to use when getting the project versions
 
         Returns:
-            (Project.Version): The oldest project version.
+            (Project.Version): The version that was found
         """
         versions = self.get_versions(loaders, game_versions, featured, types, auth)
 
@@ -347,14 +337,13 @@ class Project:
 
     @staticmethod
     def get_version(id_: str) -> "Project.Version":
-        """Gets a version by ID.
+        """Gets a version by ID
 
         Args:
-            id_ (str): The ID of the version to get.
+            id_ (str): The ID of the version
 
         Returns:
-            (Project.Version): The version that was found using the ID.
-            (None): The version wasn't found.
+            (Project.Version): The version that was found
         """
         raw_response = r.get(f"https://api.modrinth.com/v2/version/{id_}", timeout=60)
 
@@ -371,14 +360,14 @@ class Project:
         return Project.Version(models.VersionModel._from_json(response))
 
     def create_version(self, version_model, auth=None) -> int:
-        """Creates a new version on the project.
+        """Creates a new version on the project
 
         Args:
-            auth (str): The authorization token to use when creating a version.
-            version_model (VersionModel): The VersionModel to use for the new project version.
+            auth (str): The authorization token to use when creating the version
+            version_model (VersionModel): The model to use when creating the version
 
         Returns:
-            (int): If creating the new project version was successful.
+            (int): Whether creating the version was successful.
         """
         version_model.project_id = self.model.id
 
@@ -389,7 +378,7 @@ class Project:
 
         raw_response = r.post(
             "https://api.modrinth.com/v2/version",
-            headers={"authorization": self.get_auth(auth)},
+            headers={"authorization": self._get_auth(auth)},
             files=files,
             timeout=60,
         )
@@ -413,12 +402,12 @@ class Project:
             auth (str): The authorization token to use when changing the project icon.
 
         Returns:
-            (int): If the project icon change was successful.
+            (int): Whether the project icon change was successful.
         """
         raw_response = r.patch(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/icon",
             params={"ext": file_path.split(".")[-1]},
-            headers={"authorization": self.get_auth(auth)},
+            headers={"authorization": self._get_auth(auth)},
             data=open(file_path, "rb"),
             timeout=60,
         )
@@ -433,17 +422,17 @@ class Project:
         return True
 
     def delete_icon(self, auth=None) -> int:
-        """Deletes the project icon.
+        """Deletes the project icon
 
         Args:
-            auth (str): The authorization token to use when deleting the project icon.
+            auth (str): The authorization token to use when deleting the project icon
 
         Returns:
-            (int): If the project icon deletion was successful.
+            (int): Whether the project icon deletion was successful
         """
         raw_response = r.delete(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/icon",
-            headers={"authorization": self.get_auth(auth)},
+            headers={"authorization": self._get_auth(auth)},
             timeout=60,
         )
 
@@ -462,18 +451,18 @@ class Project:
         return True
 
     def add_gallery_image(self, image: "Project.GalleryImage", auth=None) -> int:
-        """Adds a gallery image to the project.
+        """Adds a gallery image to the project
 
         Args:
-            auth (str): The authorization token to use when adding the gallery image.
-            image (Project.GalleryImage): The gallery image to add.
+            auth (str): The authorization token to use when adding the gallery image
+            image (Project.GalleryImage): The gallery image to add
 
         Returns:
             (int): If the gallery image addition was successful.
         """
         raw_response = r.post(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
-            headers={"authorization": self.get_auth(auth)},
+            headers={"authorization": self._get_auth(auth)},
             params=image._to_json(),
             data=open(image.file_path, "rb"),
             timeout=60,
@@ -504,18 +493,18 @@ class Project:
         ordering: int | None = None,
         auth=None,
     ) -> int:
-        """Modifies a gallery image.
+        """Modifies a gallery image
 
         Args:
-            url (str): The URL of the gallery image to modify.
-            featured (bool, optional): Whether the image should be featured.
-            title (str, optional): The title of the image.
-            description (str, optional): The description of the image.
-            ordering (int, optional): The ordering of the image.
-            auth (optional): Authentication information.
+            url (str): URL link of the image to modify
+            featured (bool, optional): Whether the image is featured
+            title (str, optional): New title of the image
+            description (str, optional): New description of the image
+            ordering (int, optional): New ordering of the image
+            auth (optional): Authentication token when modifying the gallery image
 
         Returns:
-            (int): If the gallery image modification was successful.
+            (int): Whether the gallery image modification was successful
         """
         modified_json = {
             "url": url,
@@ -530,7 +519,7 @@ class Project:
         raw_response = r.patch(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
             params=modified_json,
-            headers={"authorization": self.get_auth(auth)},
+            headers={"authorization": self._get_auth(auth)},
             timeout=60,
         )
 
@@ -551,14 +540,14 @@ class Project:
         return True
 
     def delete_gallery_image(self, url: str, auth=None) -> int:
-        """Deletes a gallery image.
+        """Deletes a gallery image
 
         Args:
-            url (str): The URL of the gallery image to delete.
-            auth (optional): Authentication information.
+            url (str): URL link of the image to delete
+            auth (optional): Authentication token to use when deleting the gallery image
 
         Returns:
-            (int): If the gallery image deletion was successful.
+            (int): Whether the gallery image deletion was successful
         """
         if "-raw" in url:
             raise exceptions.InvalidParamError(
@@ -567,7 +556,7 @@ class Project:
 
         raw_response = r.delete(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
-            headers={"authorization": self.get_auth(auth)},
+            headers={"authorization": self._get_auth(auth)},
             params={"url": url},
             timeout=60,
         )
@@ -611,28 +600,28 @@ class Project:
         """Modifies the project.
 
         Args:
-            slug (str, optional): The new slug of the project.
-            title (str, optional): The new title of the project.
-            description (str, optional): The new description of the project.
-            categories (list[str], optional): The new categories of the project.
-            client_side (str, optional): The new client side of the project.
-            server_side (str, optional): The new server side of the project.
-            body (str, optional): The new body of the project.
-            additional_categories (list[str], optional): The new additional categories of the project.
-            issues_url (str, optional): The new issues URL of the project.
-            source_url (str, optional): The new source URL of the project.
-            wiki_url (str, optional): The new wiki URL of the project.
-            discord_url (str, optional): The new discord URL of the project.
-            license_id (str, optional): The new license ID of the project.
-            license_url (str, optional): The new license URL of the project.
-            status (literals.project_status_literal, optional): The new status of the project.
-            requested_status (literals.requested_project_status_literal, optional): The new requested status of the project.
-            moderation_message (str, optional): The new moderation message of the project.
-            moderation_message_body (str, optional): The new moderation message body of the project.
-            auth (optional): Authentication information.
+            slug (str, optional): The slug of a project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
+            title (str, optional): The title or name of the project
+            description (str, optional): A short description of the project
+            categories (list[str], optional): A list of categories that the project has
+            client_side (str, optional): The client side support of the project
+            server_side (str, optional): The server side support of the project
+            body (str, optional): A long form description of the project
+            additional_categories (list[str], optional): A list of categories which are searchable but non-primary
+            issues_url (str, optional): An optional link to where to submit bugs or issues with the project
+            source_url (str, optional): An optional link to the source code of the project
+            wiki_url (str, optional): An optional link to the project's wiki page or other relevant information
+            discord_url (str, optional): An optional invite link to the project's discord
+            license_id (str, optional): The SPDX license ID of a project
+            license_url (str, optional): The URL to this license
+            status (literals.project_status_literal, optional): The status of the project
+            requested_status (literals.requested_project_status_literal, optional): The requested status when submitting for review or scheduling the project for release
+            moderation_message (str, optional): The title of the moderators' message for the project
+            moderation_message_body (str, optional): The body of the moderators' message for the project
+            auth (optional): Authentication token to use when modifying the project.
 
         Returns:
-            (int): If the modification was successful.
+            (int): Whether the project modification was successful.
         """
         modified_json = {
             "slug": slug,
@@ -667,7 +656,7 @@ class Project:
             data=json.dumps(modified_json),
             headers={
                 "Content-Type": "application/json",
-                "authorization": self.get_auth(auth),
+                "authorization": self._get_auth(auth),
             },
             timeout=60,
         )
@@ -688,18 +677,18 @@ class Project:
 
         return True
 
-    def delete(self, auth=None) -> int:
+    def delete(self, auth=None) -> bool:
         """Deletes the project.
 
         Args:
-            auth (optional): Authentication token.
+            auth (optional): Authentication token to use when deleting the project.
 
         Returns:
-            (int): If the deletion was successful.
+            (bool): Whether the project deletion was successful.
         """
         raw_response = r.delete(
             f"https://api.modrinth.com/v2/project/{self.model.slug}",
-            headers={"authorization": self.get_auth(auth)},
+            headers={"authorization": self._get_auth(auth)},
             timeout=60,
         )
 
@@ -752,15 +741,15 @@ class Project:
         """Searches for projects.
 
         Args:
-            query (str, optional): The search query.
-            facets (list[list[str]], optional): The facets to filter by.
-            index (literals.index_literal, optional): The index to search by.
-            offset (int, optional): The offset of the search results.
-            limit (int, optional): The limit of the search results.
-            filters (list[str], optional): The filters to apply to the search.
+            query (str, optional): The query to search for
+            facets (list[list[str]], optional): The recommended way of filtering search results. [Learn more about using facets](https://docs.modrinth.com/docs/tutorials/api_search).
+            index (literals.index_literal, optional): The sorting method used for sorting search results
+            offset (int, optional): The offset into the search. Skip this number of results
+            limit (int, optional): The number of results returned by the search
+            filters (list[str], optional): A list of filters relating to the properties of a project. Use filters when there isn't an available facet for your needs. [More information](https://docs.meilisearch.com/reference/features/filtering.html)
 
         Returns:
-            (list[Project.SearchResult]): The search results.
+            (list[Project.SearchResult]): The project search results.
         """
         params = {}
         if query != "":
@@ -812,10 +801,10 @@ class Project:
         ]
 
     def get_team(self) -> "teams.Team":
-        """Gets the team of the project.
+        """Gets the project's team.
 
         Returns:
-            (Team): The team of the project.
+            (Team): The project's team.
         """
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
@@ -843,16 +832,15 @@ class Project:
         return f"Project: {self.model.title}"
 
     class Version:
-        """Represents a version of a project.
+        """Versions contain download links to files with additional metadata.
 
         Attributes:
-            model: The version model associated with the version.
+            model (VersionModel): The version model associated with the version.
 
         """
 
         def __init__(self, version_model: "models.VersionModel") -> None:
-            """Initializes a Version object.
-
+            """
             Args:
                 version_model (VersionModel): The version model to associate with the Version object.
             """
@@ -879,13 +867,13 @@ class Project:
 
         @staticmethod
         def get(id_: str) -> "Project.Version":
-            """Gets a version by ID.
+            """Gets a version by ID
 
             Args:
-                id_ (str): The ID of the version to get.
+                id_ (str): The ID of the version
 
             Returns:
-                (Project.Version): The version that was found using the ID.
+                (Project.Version): The version that was found
             """
             raw_response = r.get(
                 f"https://api.modrinth.com/v2/version/{id_}", timeout=60
@@ -909,12 +897,12 @@ class Project:
             """Gets a version by hash.
 
             Args:
-                hash_ (str): The hash of the version to get.
+                hash_ (str): The hash of the file, considering its byte content, and encoded in hexadecimal
                 algorithm (sha_algorithm_literal): The algorithm of the hash.
-                multiple (bool): Whether to return multiple results when looking for this hash.
+                multiple (bool): Whether to return multiple results when looking for this hash
 
             Returns:
-                (Project.Version): The version that was found using the hash.
+                (Project.Version): The version that was found
             """
             raw_response = r.get(
                 f"https://api.modrinth.com/v2/version_file/{hash_}",
@@ -930,18 +918,26 @@ class Project:
                 raise exceptions.InvalidRequestError(raw_response.text)
             response = json.loads(raw_response.content)
             if isinstance(response, list):
-                return [Project.Version(models.VersionModel._from_json(version)) for version in response]
+                return [
+                    Project.Version(models.VersionModel._from_json(version))
+                    for version in response
+                ]
             return Project.Version(models.VersionModel._from_json(response))
 
         @staticmethod
-        def delete_file_from_hash(auth: str, hash_: str, version_id: str, algorithm: literals.sha_algorithm_literal = "sha1"):
+        def delete_file_from_hash(
+            auth: str,
+            hash_: str,
+            version_id: str,
+            algorithm: literals.sha_algorithm_literal = "sha1",
+        ):
             """Deletes a file from its hash.
 
             Args:
-                hash_ (str): The hash of the version to get.
-                algorithm (sha_algorithm_literal): The algorithm of the hash.
-                version_id (bool): Version ID to delete the version from if multiple files of the same hash exist
-                auth (str): The authorization token to use when deleting the file.
+                hash_ (str): The hash of the file, considering its byte content, and encoded in hexadecimal
+                algorithm (sha_algorithm_literal): The algorithm of the hash
+                version_id (bool): Version ID to delete the version from, if multiple files of the same hash exist
+                auth (str): The authorization token to use when deleting the file from its hash.
 
             Returns:
                 (bool): If the file deletion was successful
@@ -1072,12 +1068,12 @@ class Project:
         Represents an image in a gallery.
 
         Attributes:
-            file_path (str): The path to the image file.
-            ext (str): The file extension of the image.
-            featured (str): Whether the image is featured or not. Stored as a string with values "true" or "false".
-            title (str): The title of the image.
-            description (str): The description of the image.
-            ordering (int): The ordering of the image in the gallery.
+            file_path (str): The path to the image.
+            ext (str): Image extension
+            featured (str): Whether an image is featured
+            title (str): Title of the image.
+            description (str): Description of the image.
+            ordering (int): Ordering of the image
 
         """
 
@@ -1093,11 +1089,11 @@ class Project:
             Initializes a GalleryImage object.
 
             Args:
-                file_path (str): The path to the image file.
-                featured (bool): Whether the image is featured or not.
-                title (str): The title of the image.
-                description (str): The description of the image.
-                ordering (int, optional): The ordering of the image in the gallery. Default's to 0.
+                file_path (str): The path to the image.
+                featured (str): Whether an image is featured
+                title (str): Title of the image.
+                description (str): Description of the image.
+                ordering (int): Ordering of the image
             """
             self.file_path = file_path
             self.ext = file_path.split(".")[-1]
@@ -1193,9 +1189,9 @@ class Project:
         Represents a license.
 
         Attributes:
-            id (str): The ID of the license.
-            name (str): The name of the license.
-            url (str): The URL to the license's website.
+            id (str): The SPDX license ID of a project
+            name (str): The long name of a license
+            url (str): The URL to this license
 
         """
 
@@ -1204,9 +1200,9 @@ class Project:
             Initializes a License object.
 
             Args:
-                id_ (str): The ID of the license.
-                name (str): The name of the license.
-                url (str, optional): The URL to the license's website. Defaults to None.
+                id_ (str): The SPDX license ID of a project
+                name (str): The long name of a license
+                url (str): The URL to this license
             """
             self.id = id_
             self.name = name
@@ -1233,9 +1229,9 @@ class Project:
         Represents a donation.
 
         Attributes:
-            id (str): The ID of the donation.
-            platform (str): The platform used for the donation.
-            url (str): The URL to the donation page.
+            id (str): The ID of the donation platform
+            platform (str): The donation platform this link is to
+            url (str): The URL of the donation platform and user
 
         """
 

@@ -11,20 +11,21 @@ class ProjectModel:
     """The model used for the Project class.
 
     Attributes:
-        slug (str): The slug of the project.
-        title (str): The title of the project.
-        description (str): The description of the project.
-        categories (list[str]): The categories of the project.
-        client_side (str): The client side of the project.
-        server_side (str): The server side of the project.
-        body (str): The body of the project.
-        license (Project.License): The license of the project.
-        project_type (str): The type of the project.
-        additional_categories (list[str]): Additional categories for the project.
-        issues_url (str): URL for issues related to the project.
-        source_url (str): URL for the source code of the project.
-        wiki_url (str): URL for the wiki page of the project.
-        discord_url (str): URL for the Discord server of the project.
+        slug (str): The slug of a project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
+        title (str): The title or name of the project
+        description (str): A short description of the project
+        categories (list[str]): A list of categories that the project has
+        client_side (str): The client side support of the project
+        server_side (str): The server side support of the project.
+        body (str): A long form description of the project
+        license (Project.License): The license of the project
+        project_type (str): The project type of the project
+        additional_categories (list[str]): A list of categories which are searchable but non-primary
+        issues_url (str): An optional link to where to submit bugs or issues with the project
+        source_url (str): An optional link to the source code of the project
+        wiki_url (str): An optional link to the project's wiki page or other relevant
+        discord_url (str): An optional invite link to the project's discord
+        donation_urls (list[str], optional): <INSERT>
         auth (str): Authentication token for the project.
     """
 
@@ -79,12 +80,12 @@ class ProjectModel:
         self.source_url = source_url
         self.wiki_url = wiki_url
         self.discord_url = discord_url
-        self.donation_urls = None
+        self.donation_urls: list[str] | None = None
         self.auth = auth
-        self.id = None
-        self.downloads = None
-        self.icon_url = None
-        self.color = None
+        self.id: str | None = None
+        self.downloads: int | None = None
+        self.icon_url: str | None = None
+        self.color: str | None = None
         self.team = None
         self.moderator_message = None
         self.published = None
