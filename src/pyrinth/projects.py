@@ -2,7 +2,6 @@
 
 import datetime
 import json
-import typing
 
 import requests as r
 
@@ -197,9 +196,7 @@ class Project:
         """
         return Project.License._from_json(self.model.license)
 
-    def get_specific_version(
-        self, semantic_version: str
-    ) -> "Project.Version" | None:
+    def get_specific_version(self, semantic_version: str) -> "Project.Version" | None:
         """Gets a specific project version based on the semantic version.
 
         Args:
@@ -1117,9 +1114,7 @@ class Project:
 
         """
 
-        def __init__(
-            self, id_: str, name: str, url: str | None = None
-        ) -> None:
+        def __init__(self, id_: str, name: str, url: str | None = None) -> None:
             """
             Initializes a License object.
 

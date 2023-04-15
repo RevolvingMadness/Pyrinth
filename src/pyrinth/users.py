@@ -2,7 +2,6 @@
 
 import datetime
 import json
-import typing
 
 import requests as r
 
@@ -162,7 +161,7 @@ class User:
 
     def get_notifications(self) -> list["User.Notification"]:
         """
-        Gets a users notifications.
+        Gets a user's notifications.
 
         Returns:
             (list[User.Notification]): The users notifications
@@ -232,7 +231,7 @@ class User:
 
     def get_projects(self) -> list["projects.Project"]:
         """
-        Gets a users projects.
+        Gets a user's projects.
 
         Returns:
             (list[Project]): The users projects
@@ -375,7 +374,7 @@ class User:
         return [User.get(user.get("username")) for user in response]
 
     class Notification:
-        """Used for the users notifications."""
+        """Used for the user's notifications."""
 
         def __init__(self, notification_json: dict) -> None:
             self.id = notification_json.get("id")

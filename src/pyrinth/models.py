@@ -1,7 +1,6 @@
 """Contains all models used in Pyrinth."""
 
 import json
-import typing
 
 import pyrinth.literals as literals
 import pyrinth.projects as projects

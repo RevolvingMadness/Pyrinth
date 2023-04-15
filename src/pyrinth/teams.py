@@ -1,5 +1,3 @@
-import json
-import requests as r
 import pyrinth.users as users
 
 
@@ -12,10 +10,10 @@ class Team:
         id (str): The ID of the team.
 
     Methods:
-        get_members: Gets a list of team members.
+        get_members: Get a list of team members.
         _from_json: Creates a Team object from a JSON dictionary.
-        get: Gets a team by its ID.
-        get_multiple: Gets multiple teams by their IDs.
+        get: Get a team by its ID.
+        get_multiple: Get multiple teams by their IDs.
 
     """
 
