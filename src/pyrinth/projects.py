@@ -2,6 +2,7 @@
 
 import datetime
 import json
+import typing
 
 import requests as r
 
@@ -196,7 +197,9 @@ class Project:
         """
         return Project.License._from_json(self.model.license)
 
-    def get_specific_version(self, semantic_version: str) -> "Project.Version" | None:
+    def get_specific_version(
+        self, semantic_version: str
+    ) -> typing.Optional["Project.Version"]:
         """Gets a specific project version based on the semantic version.
 
         Args:
@@ -223,7 +226,7 @@ class Project:
         files = latest.get_files()
         for file in files:
             file_content = r.get(file.url).content
-            open(file.filename, "wb").write(file_content)
+            open(file.name, "wb").write(file_content)
 
         if recursive:
             dependencies = latest.get_dependencies()
@@ -231,7 +234,7 @@ class Project:
                 files = dep.get_version().get_files()
                 for file in files:
                     file_content = r.get(file.url).content
-                    open(file.filename, "wb").write(file_content)
+                    open(file.name, "wb").write(file_content)
 
     def get_versions(
         self,
@@ -277,7 +280,10 @@ class Project:
 
         response = json.loads(raw_response.content)
 
-        versions = [self.Version(version) for version in response]
+        versions = [
+            self.Version(models.VersionModel._from_json(version))
+            for version in response
+        ]
 
         if not types:
             return versions
@@ -359,7 +365,7 @@ class Project:
             raise exceptions.InvalidRequestError(raw_response.text)
 
         response = json.loads(raw_response.content)
-        return Project.Version(response)
+        return Project.Version(models.VersionModel._from_json(response))
 
     def create_version(self, version_model, auth=None) -> int:
         """Creates a new version on the project.
@@ -866,7 +872,6 @@ class Project:
 
             Returns:
                 (Project.Version): The version that was found using the ID.
-                (None): The version wasn't found.
             """
             raw_response = r.get(
                 f"https://api.modrinth.com/v2/version/{id_}", timeout=60
@@ -878,7 +883,70 @@ class Project:
             if not raw_response.ok:
                 raise exceptions.InvalidRequestError(raw_response.text)
             response = json.loads(raw_response.content)
-            return Project.Version(response)
+            return Project.Version(models.VersionModel._from_json(response))
+
+        @staticmethod
+        def get_from_hash(
+            hash_: str,
+            algorithm: literals.sha_algorithm_literal = "sha1",
+            multiple: bool = False,
+        ) -> typing.Union["Project.Version", list["Project.Version"]]:
+            """Gets a version by hash.
+
+            Args:
+                hash_ (str): The hash of the version to get.
+                algorithm (sha_algorithm_literal): The algorithm of the hash.
+                multiple (bool): Whether to return multiple results when looking for this hash.
+
+            Returns:
+                (Project.Version): The version that was found using the hash.
+            """
+            raw_response = r.get(
+                f"https://api.modrinth.com/v2/version_file/{hash_}",
+                params={"algorithm": algorithm, "multiple": str(multiple).lower()},
+                timeout=60,
+            )
+            if raw_response.status_code == 404:
+                raise exceptions.NotFoundError(
+                    "The requested version file was not found or no authorization to see this version"
+                )
+            if not raw_response.ok:
+                raise exceptions.InvalidRequestError(raw_response.text)
+            response = json.loads(raw_response.content)
+            if isinstance(response, list):
+                return [Project.Version(models.VersionModel._from_json(version)) for version in response]
+            return Project.Version(models.VersionModel._from_json(response))
+
+        @staticmethod
+        def delete_file_from_hash(auth: str, hash_: str, version_id: str, algorithm: literals.sha_algorithm_literal = "sha1"):
+            """Deletes a file from its hash.
+
+            Args:
+                hash_ (str): The hash of the version to get.
+                algorithm (sha_algorithm_literal): The algorithm of the hash.
+                version_id (bool): Version ID to delete the version from if multiple files of the same hash exist
+                auth (str): The authorization token to use when deleting the file.
+
+            Returns:
+                (bool): If the file deletion was successful
+            """
+            raw_response = r.delete(
+                f"https://api.modrinth.com/v2/version_file/{hash_}",
+                params={"algorithm": algorithm, "version_id": version_id},
+                headers={"authorization": auth},
+                timeout=60,
+            )
+            if raw_response.status_code == 404:
+                raise exceptions.NotFoundError(
+                    "The requested version was not found"
+                )
+            if raw_response.status_code == 401:
+                raise exceptions.NoAuthorizationError(
+                    "No authorization to delete this file"
+                )
+            if not raw_response.ok:
+                raise exceptions.InvalidRequestError(raw_response.text)
+            return True
 
         def get_files(self) -> list["Project.File"]:
             """Gets the files associated with the version.
@@ -900,7 +968,7 @@ class Project:
             files = self.get_files()
             for file in files:
                 file_content = r.get(file.url).content
-                open(file.filename, "wb").write(file_content)
+                open(file.name, "wb").write(file_content)
 
             if recursive:
                 dependencies = self.get_dependencies()
@@ -908,7 +976,7 @@ class Project:
                     files = dep.get_version().get_files()
                     for file in files:
                         file_content = r.get(file.url).content
-                        open(file.filename, "wb").write(file_content)
+                        open(file.name, "wb").write(file_content)
 
         def get_project(self) -> "Project":
             """Gets the project associated with the version.
@@ -1041,7 +1109,7 @@ class Project:
         Attributes:
             hashes (dict[str, str]): A dictionary of hash algorithms and their corresponding hash values for the file.
             url (str): The URL where the file can be downloaded.
-            filename (str): The name of the file.
+            name (str): The name of the file.
             primary (str): The primary hash algorithm used to verify the file's integrity.
             size (int): The size of the file in bytes.
             file_type (str): The type of the file.
@@ -1071,7 +1139,7 @@ class Project:
             """
             self.hashes = hashes
             self.url = url
-            self.filename = filename
+            self.name = filename
             self.primary = primary
             self.size = size
             self.file_type = file_type
@@ -1101,7 +1169,7 @@ class Project:
             return result
 
         def __repr__(self) -> str:
-            return f"File: {self.filename}"
+            return f"File: {self.name}"
 
     class License:
         """
