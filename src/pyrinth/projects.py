@@ -33,14 +33,6 @@ class Project:
             project_model = models.ProjectModel._from_json(project_model)
         self.model = project_model
 
-    def __repr__(self) -> str:
-        """Returns a string representation of the Project instance.
-
-        Returns:
-            (str): A string representation of the Project instance.
-        """
-        return f"Project: {self.model.title}"
-
     def get_donations(self) -> list["Project.Donation"]:
         """Gets this project's donations.
 
@@ -49,7 +41,7 @@ class Project:
         """
         return util.list_to_object(Project.Donation, self.model.donation_urls)
 
-    def get_auth(self, auth: typing.Optional[str]) -> str:
+    def get_auth(self, auth: str | None) -> str:
         """Utility Function.
 
         Args:
@@ -117,11 +109,11 @@ class Project:
 
     def get_latest_version(
         self,
-        loaders: typing.Optional[list[str]] = None,
-        game_versions: typing.Optional[list[str]] = None,
-        featured: typing.Optional[bool] = None,
-        types: typing.Optional[literals.version_type_literal] = None,
-        auth: typing.Optional[str] = None,
+        loaders: list[str] | None = None,
+        game_versions: list[str] | None = None,
+        featured: bool | None = None,
+        types: literals.version_type_literal | None = None,
+        auth: str | None = None,
     ) -> "Project.Version":
         """Gets this project's latest version.
 
@@ -207,7 +199,7 @@ class Project:
 
     def get_specific_version(
         self, semantic_version: str
-    ) -> typing.Optional["Project.Version"]:
+    ) -> "Project.Version" | None:
         """Gets a specific project version based on the semantic version.
 
         Args:
@@ -246,11 +238,11 @@ class Project:
 
     def get_versions(
         self,
-        loaders: typing.Optional[list[str]] = None,
-        game_versions: typing.Optional[list[str]] = None,
-        featured: typing.Optional[bool] = None,
-        types: typing.Optional[literals.version_type_literal] = None,
-        auth: typing.Optional[str] = None,
+        loaders: list[str] | None = None,
+        game_versions: list[str] | None = None,
+        featured: bool | None = None,
+        types: literals.version_type_literal | None = None,
+        auth: str | None = None,
     ) -> list["Project.Version"]:
         """Gets project versions based on filters.
 
@@ -302,10 +294,10 @@ class Project:
 
     def get_oldest_version(
         self,
-        loaders: typing.Optional[list[str]] = None,
-        game_versions: typing.Optional[list[str]] = None,
-        featured: typing.Optional[bool] = None,
-        types: typing.Optional[literals.version_type_literal] = None,
+        loaders: list[str] | None = None,
+        game_versions: list[str] | None = None,
+        featured: bool | None = None,
+        types: literals.version_type_literal | None = None,
         auth=None,
     ) -> "Project.Version":
         """Gets the oldest project version.
@@ -496,10 +488,10 @@ class Project:
     def modify_gallery_image(
         self,
         url: str,
-        featured: typing.Optional[bool] = None,
-        title: typing.Optional[str] = None,
-        description: typing.Optional[str] = None,
-        ordering: typing.Optional[int] = None,
+        featured: bool | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        ordering: int | None = None,
         auth=None,
     ) -> int:
         """Modifies a gallery image.
@@ -584,26 +576,24 @@ class Project:
 
     def modify(
         self,
-        slug: typing.Optional[str] = None,
-        title: typing.Optional[str] = None,
-        description: typing.Optional[str] = None,
-        categories: typing.Optional[list[str]] = None,
-        client_side: typing.Optional[str] = None,
-        server_side: typing.Optional[str] = None,
-        body: typing.Optional[str] = None,
-        additional_categories: typing.Optional[list[str]] = None,
-        issues_url: typing.Optional[str] = None,
-        source_url: typing.Optional[str] = None,
-        wiki_url: typing.Optional[str] = None,
-        discord_url: typing.Optional[str] = None,
-        license_id: typing.Optional[str] = None,
-        license_url: typing.Optional[str] = None,
-        status: typing.Optional[literals.project_status_literal] = None,
-        requested_status: typing.Optional[
-            literals.requested_project_status_literal
-        ] = None,
-        moderation_message: typing.Optional[str] = None,
-        moderation_message_body: typing.Optional[str] = None,
+        slug: str | None = None,
+        title: str | None = None,
+        description: str | None = None,
+        categories: list[str] | None = None,
+        client_side: str | None = None,
+        server_side: str | None = None,
+        body: str | None = None,
+        additional_categories: list[str] | None = None,
+        issues_url: str | None = None,
+        source_url: str | None = None,
+        wiki_url: str | None = None,
+        discord_url: str | None = None,
+        license_id: str | None = None,
+        license_url: str | None = None,
+        status: literals.project_status_literal | None = None,
+        requested_status: literals.requested_project_status_literal | None = None,
+        moderation_message: str | None = None,
+        moderation_message_body: str | None = None,
         auth=None,
     ) -> int:
         """Modifies the project.
@@ -738,11 +728,11 @@ class Project:
     @staticmethod
     def search(
         query: str = "",
-        facets: typing.Optional[list[list[str]]] = None,
+        facets: list[list[str]] | None = None,
         index: literals.index_literal = "relevance",
         offset: int = 0,
         limit: int = 10,
-        filters: typing.Optional[list[str]] = None,
+        filters: list[str] | None = None,
     ) -> list["SearchResult"]:
         """Searches for projects.
 
@@ -826,6 +816,14 @@ class Project:
         response = json.loads(raw_response.content)
 
         return teams.Team._from_json(response)
+
+    def __repr__(self) -> str:
+        """Returns a string representation of the Project instance.
+
+        Returns:
+            (str): A string representation of the Project instance.
+        """
+        return f"Project: {self.model.title}"
 
     class Version:
         """Represents a version of a project.
@@ -1120,7 +1118,7 @@ class Project:
         """
 
         def __init__(
-            self, id_: str, name: str, url: typing.Optional[str] = None
+            self, id_: str, name: str, url: str | None = None
         ) -> None:
             """
             Initializes a License object.
@@ -1177,7 +1175,7 @@ class Project:
         @staticmethod
         def _from_json(json_: dict) -> "Project.Donation":
             result = Project.Donation(
-                json_.get("id"),
+                json_.get("id"),  # type: ignore
                 json_.get("platform"),  # type: ignore
                 json_.get("url"),  # type: ignore
             )

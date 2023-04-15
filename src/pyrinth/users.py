@@ -21,7 +21,7 @@ class User:
     def __repr__(self) -> str:
         return f"User: {self.model.name if self.model.name else self.model.username}"
 
-    def get_auth(self) -> typing.Optional[str]:
+    def get_auth(self) -> str | None:
         return self.model.auth
 
     @staticmethod
@@ -198,7 +198,7 @@ class User:
 
         return len(projects_)
 
-    def create_project(self, project_model, icon: typing.Optional[str] = None) -> int:
+    def create_project(self, project_model, icon: str | None = None) -> int:
         """
         Creates a project.
 

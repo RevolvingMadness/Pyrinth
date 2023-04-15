@@ -34,10 +34,10 @@ class Modrinth:
 
     @staticmethod
     def get_random_projects(count: int = 1) -> list["projects.Project"]:
-        """Gets a certain amount of random projects.
+        """Gets a certain number of random projects.
 
         Args:
-            count (int, optional): The amount of projects to find.
+            count (int, optional): The number of projects to find.
 
         Raises:
             InvalidRequestError: An invalid API call was sent.

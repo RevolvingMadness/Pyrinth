@@ -40,12 +40,12 @@ class ProjectModel:
         body: str,
         license_: "projects.Project.License",
         project_type: str,
-        additional_categories: typing.Optional[list[str]] = None,
-        issues_url: typing.Optional[str] = None,
-        source_url: typing.Optional[str] = None,
-        wiki_url: typing.Optional[str] = None,
-        discord_url: typing.Optional[str] = None,
-        auth: typing.Optional[str] = None,
+        additional_categories: list[str] | None = None,
+        issues_url: str | None = None,
+        source_url: str | None = None,
+        wiki_url: str | None = None,
+        discord_url: str | None = None,
+        auth: str | None = None,
     ) -> None:
         """Initializes a new instance of ProjectModel.
 
@@ -173,27 +173,27 @@ class SearchResultModel:
     """
 
     def __init__(self) -> None:
-        self.slug: typing.Optional[str] = None
-        self.title: typing.Optional[str] = None
-        self.description: typing.Optional[str] = None
-        self.client_side: typing.Optional[str] = None
-        self.server_side: typing.Optional[str] = None
-        self.project_type: typing.Optional[str] = None
-        self.downloads: typing.Optional[int] = None
-        self.project_id: typing.Optional[str] = None
-        self.author: typing.Optional[str] = None
-        self.versions: typing.Optional[list[str]] = None
-        self.follows: typing.Optional[int] = None
+        self.slug: str | None = None
+        self.title: str | None = None
+        self.description: str | None = None
+        self.client_side: str | None = None
+        self.server_side: str | None = None
+        self.project_type: str | None = None
+        self.downloads: int | None = None
+        self.project_id: str | None = None
+        self.author: str | None = None
+        self.versions: list[str] | None = None
+        self.follows: int | None = None
         self.date_created = None
         self.date_modified = None
-        self.license: typing.Optional[str] = None
-        self.categories: typing.Optional[list[str]] = None
-        self.icon_url: typing.Optional[str] = None
-        self.color: typing.Optional[str] = None
-        self.display_categories: typing.Optional[list[str]] = None
-        self.latest_version: typing.Optional[list[str]] = None
-        self.gallery: typing.Optional[list[str]] = None
-        self.featured_gallery: typing.Optional[list[str]] = None
+        self.license: str | None = None
+        self.categories: list[str] | None = None
+        self.icon_url: str | None = None
+        self.color: str | None = None
+        self.display_categories: list[str] | None = None
+        self.latest_version: list[str] | None = None
+        self.gallery: list[str] | None = None
+        self.featured_gallery: list[str] | None = None
 
     @staticmethod
     def _from_json(json_: dict) -> "SearchResultModel":
@@ -257,11 +257,9 @@ class VersionModel:
         loaders: list[str],
         featured: bool,
         file_parts: list[str],
-        changelog: typing.Optional[str] = None,
-        status: typing.Optional[literals.version_status_literal] = None,
-        requested_status: typing.Optional[
-            literals.requested_version_status_literal
-        ] = None,
+        changelog: str | None = None,
+        status: literals.version_status_literal | None = None,
+        requested_status: literals.requested_version_status_literal | None = None,
     ) -> None:
         """
         Initializes a new instance of VersionModel.
@@ -345,18 +343,18 @@ class UserModel:
     """
 
     def __init__(self) -> None:
-        self.username: typing.Optional[str] = None
-        self.id: typing.Optional[str] = None
-        self.avatar_url: typing.Optional[str] = None
-        self.created: typing.Optional[str] = None
-        self.role: typing.Optional[str] = None
-        self.name: typing.Optional[str] = None
-        self.email: typing.Optional[str] = None
-        self.bio: typing.Optional[str] = None
+        self.username: str | None = None
+        self.id: str | None = None
+        self.avatar_url: str | None = None
+        self.created: str | None = None
+        self.role: str | None = None
+        self.name: str | None = None
+        self.email: str | None = None
+        self.bio: str | None = None
         self.payout_data = None
-        self.github_id: typing.Optional[int] = None
-        self.badges: typing.Optional[list[str]] = None
-        self.auth: typing.Optional[str] = None
+        self.github_id: int | None = None
+        self.badges: list[str] | None = None
+        self.auth: str | None = None
 
     @staticmethod
     def _from_json(json_: dict) -> "UserModel":
