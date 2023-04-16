@@ -16,7 +16,7 @@ import pyrinth.teams as teams
 
 
 class Project:
-    """Projects can be mods or modpacks and are created by users.
+    """Projects can be mods or modpacks and are created by users
 
     Attributes:
         model (ProjectModel): The model of the project
@@ -46,7 +46,7 @@ class Project:
 
     @staticmethod
     def get(id_: str, auth: object = None) -> "Project":
-        """Gets a project based on an ID.
+        """Gets a project based on an ID
 
         Args:
             id_ (str): The ID or slug of the project
@@ -57,7 +57,7 @@ class Project:
             InvalidRequestError: Invalid request
 
         Returns:
-            (Project): The project that was found.
+            (Project): The project that was found
         """
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{id_}",
@@ -77,16 +77,16 @@ class Project:
 
     @staticmethod
     def get_multiple(ids: list[str]) -> list["Project"]:
-        """Gets multiple projects.
+        """Gets multiple projects
 
         Args:
-            ids (list[str]): The IDs of the projects.
+            ids (list[str]): The IDs of the projects
 
         Raises:
             InvalidRequestError: Invalid request
 
         Returns:
-            (list[Project]): The projects that were found.
+            (list[Project]): The projects that were found
         """
         raw_response = r.get(
             "https://api.modrinth.com/v2/projects",
@@ -106,98 +106,98 @@ class Project:
         types: literals.version_type_literal | None = None,
         auth: str | None = None,
     ) -> "Project.Version":
-        """Gets this project's latest version.
+        """Gets this project's latest version
 
         Args:
-            loaders (Optional[list[str]]): The loaders filter. Defaults to None.
-            game_versions (Optional[list[str]]): The game versions filter. Defaults to None.
-            featured (Optional[bool]): The is featured filter. Defaults to None.
-            types (Optional[literals.version_type_literal]): The types filter. Defaults to None.
-            auth (Optional[str]): The authorization token. Defaults to None.
+            loaders (Optional[list[str]]): The loaders filter. Defaults to None
+            game_versions (Optional[list[str]]): The game versions filter. Defaults to None
+            featured (Optional[bool]): The is featured filter. Defaults to None
+            types (Optional[literals.version_type_literal]): The types filter. Defaults to None
+            auth (Optional[str]): The authorization token. Defaults to None
 
         Returns:
-            (Project.Version): The project's latest version.
+            (Project.Version): The project's latest version
         """
         versions = self.get_versions(loaders, game_versions, featured, types, auth)
 
         return versions[0]
 
     def get_gallery(self) -> list["Project.GalleryImage"]:
-        """Gets the project's gallery.
+        """Gets the project's gallery
 
         Returns:
-            (list[Project.GalleryImage]): The project's gallery images.
+            (list[Project.GalleryImage]): The project's gallery images
         """
         result = util.list_to_object(Project.GalleryImage, self.model.gallery)
 
         return result
 
     def is_client_side(self) -> bool:
-        """Checks if this project is client side.
+        """Checks if this project is client side
 
         Returns:
-            (bool): Whether or not this project is client side.
+            (bool): Whether or not this project is client side
         """
         return True if self.model.client_side == "required" else False
 
     def is_server_side(self) -> bool:
-        """Checks if this project is server side.
+        """Checks if this project is server side
 
         Returns:
-            (bool): Whether or not this project is server side.
+            (bool): Whether or not this project is server side
         """
         return True if self.model.server_side == "required" else False
 
     def get_downloads(self) -> int:
-        """Gets the number of downloads this project has.
+        """Gets the number of downloads this project has
 
         Returns:
-            (int): The number of downloads for this project.
+            (int): The number of downloads for this project
         """
         return self.model.downloads  # type: ignore
 
     def get_categories(self) -> list[str]:
-        """Gets this projects categories.
+        """Gets this projects categories
 
         Returns:
-            (list[str]): The categories associated with this project.
+            (list[str]): The categories associated with this project
         """
         return self.model.categories
 
     def get_additional_categories(self) -> list[str]:
-        """Gets this projects additional categories.
+        """Gets this projects additional categories
 
         Returns:
-            (list[str]): The additional categories associated with this project.
+            (list[str]): The additional categories associated with this project
         """
         return self.model.additional_categories  # type: ignore
 
     def get_all_categories(self) -> list[str]:
-        """Gets this projects categories and additional categories.
+        """Gets this projects categories and additional categories
 
         Returns:
-            (list[str]): The categories and additional categories associated with this project.
+            (list[str]): The categories and additional categories associated with this project
         """
         return self.get_categories() + self.get_additional_categories()
 
     def get_license(self) -> "Project.License":
-        """Gets this project license.
+        """Gets this project license
 
         Returns:
-            (Project.License): The license associated with this project.
+            (Project.License): The license associated with this project
         """
         return Project.License._from_json(self.model.license)
 
     def get_specific_version(
         self, semantic_version: str
     ) -> typing.Optional["Project.Version"]:
-        """Gets a specific project version based on the semantic version.
+        """Gets a specific project version based on the semantic version
 
         Args:
-            semantic_version (str): The semantic version to search for.
+            semantic_version (str): The semantic version to search for
 
         Returns:
-            (Project.Version, optional): The version that was found using the semantic version.
+            (Project.Version, optional): The version that was found using the semantic version
         """
         versions = self.get_versions()
         if versions:
@@ -208,10 +208,10 @@ class Project:
         return None
 
     def download(self, recursive: bool = False) -> None:
-        """Downloads this project.
+        """Downloads this project
 
         Args:
-            recursive (bool): Whether to download dependencies. Defaults to False.
+            recursive (bool): Whether to download dependencies. Defaults to False
         """
         latest = self.get_latest_version()
         files = latest.get_files()
@@ -312,26 +312,26 @@ class Project:
         return versions[-1]
 
     def get_id(self) -> str:
-        """Gets the ID of the project.
+        """Gets the ID of the project
 
         Returns:
-            (str): The ID of the project.
+            (str): The ID of the project
         """
         return self.model.id  # type: ignore
 
     def get_slug(self) -> str:
-        """Gets the slug of the project.
+        """Gets the slug of the project
 
         Returns:
-            (str): The slug of the project.
+            (str): The slug of the project
         """
         return self.model.slug
 
     def get_name(self) -> str:
-        """Gets the name of the project.
+        """Gets the name of the project
 
         Returns:
-            (str): The name of the project.
+            (str): The name of the project
         """
         return self.model.title
 
@@ -367,7 +367,7 @@ class Project:
             version_model (VersionModel): The model to use when creating the version
 
         Returns:
-            (int): Whether creating the version was successful.
+            (int): Whether creating the version was successful
         """
         version_model.project_id = self.model.id
 
@@ -395,14 +395,14 @@ class Project:
         return True
 
     def change_icon(self, file_path: str, auth=None) -> int:
-        """Changes the project icon.
+        """Changes the project icon
 
         Args:
-            file_path (str): The file path of the image to use for the new project icon.
-            auth (str): The authorization token to use when changing the project icon.
+            file_path (str): The file path of the image to use for the new project icon
+            auth (str): The authorization token to use when changing the project icon
 
         Returns:
-            (int): Whether the project icon change was successful.
+            (int): Whether the project icon change was successful
         """
         raw_response = r.patch(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/icon",
@@ -458,7 +458,7 @@ class Project:
             image (Project.GalleryImage): The gallery image to add
 
         Returns:
-            (int): If the gallery image addition was successful.
+            (int): If the gallery image addition was successful
         """
         raw_response = r.post(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
@@ -597,7 +597,7 @@ class Project:
         moderation_message_body: str | None = None,
         auth=None,
     ) -> int:
-        """Modifies the project.
+        """Modifies the project
 
         Args:
             slug (str, optional): The slug of a project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
@@ -618,10 +618,10 @@ class Project:
             requested_status (literals.requested_project_status_literal, optional): The requested status when submitting for review or scheduling the project for release
             moderation_message (str, optional): The title of the moderators' message for the project
             moderation_message_body (str, optional): The body of the moderators' message for the project
-            auth (optional): Authentication token to use when modifying the project.
+            auth (optional): Authentication token to use when modifying the project
 
         Returns:
-            (int): Whether the project modification was successful.
+            (int): Whether the project modification was successful
         """
         modified_json = {
             "slug": slug,
@@ -678,13 +678,13 @@ class Project:
         return True
 
     def delete(self, auth=None) -> bool:
-        """Deletes the project.
+        """Deletes the project
 
         Args:
-            auth (optional): Authentication token to use when deleting the project.
+            auth (optional): Authentication token to use when deleting the project
 
         Returns:
-            (bool): Whether the project deletion was successful.
+            (bool): Whether the project deletion was successful
         """
         raw_response = r.delete(
             f"https://api.modrinth.com/v2/project/{self.model.slug}",
@@ -707,10 +707,10 @@ class Project:
         return True
 
     def get_dependencies(self) -> list["Project"]:
-        """Gets the dependencies of the project.
+        """Gets the dependencies of the project
 
         Returns:
-            (list[Project]): The dependencies of the project.
+            (list[Project]): The dependencies of the project
         """
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/dependencies",
@@ -738,18 +738,18 @@ class Project:
         limit: int = 10,
         filters: list[str] | None = None,
     ) -> list["SearchResult"]:
-        """Searches for projects.
+        """Searches for projects
 
         Args:
             query (str, optional): The query to search for
-            facets (list[list[str]], optional): The recommended way of filtering search results. [Learn more about using facets](https://docs.modrinth.com/docs/tutorials/api_search).
+            facets (list[list[str]], optional): The recommended way of filtering search results. [Learn more about using facets](https://docs.modrinth.com/docs/tutorials/api_search)
             index (literals.index_literal, optional): The sorting method used for sorting search results
             offset (int, optional): The offset into the search. Skip this number of results
             limit (int, optional): The number of results returned by the search
             filters (list[str], optional): A list of filters relating to the properties of a project. Use filters when there isn't an available facet for your needs. [More information](https://docs.meilisearch.com/reference/features/filtering.html)
 
         Returns:
-            (list[Project.SearchResult]): The project search results.
+            (list[Project.SearchResult]): The project search results
         """
         params = {}
         if query != "":
@@ -776,10 +776,10 @@ class Project:
         ]
 
     def get_team_members(self) -> "list[teams.Team.TeamMember]":
-        """Gets the team members of the project.
+        """Gets the team members of the project
 
         Returns:
-            (list[Project.TeamMember)]: The team members of the project.
+            (list[Project.TeamMember)]: The team members of the project
         """
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
@@ -801,10 +801,10 @@ class Project:
         ]
 
     def get_team(self) -> "teams.Team":
-        """Gets the project's team.
+        """Gets the project's team
 
         Returns:
-            (Team): The project's team.
+            (Team): The project's team
         """
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
@@ -824,41 +824,41 @@ class Project:
         return teams.Team._from_json(response)
 
     def __repr__(self) -> str:
-        """Returns a string representation of the Project instance.
+        """Returns a string representation of the Project instance
 
         Returns:
-            (str): A string representation of the Project instance.
+            (str): A string representation of the Project instance
         """
         return f"Project: {self.model.title}"
 
     class Version:
-        """Versions contain download links to files with additional metadata.
+        """Versions contain download links to files with additional metadata
 
         Attributes:
-            model (VersionModel): The version model associated with the version.
+            model (VersionModel): The version model associated with the version
 
         """
 
         def __init__(self, version_model: "models.VersionModel") -> None:
             """
             Args:
-                version_model (VersionModel): The version model to associate with the Version object.
+                version_model (VersionModel): The version model to associate with the Version object
             """
             self.model = version_model
 
         def get_type(self) -> str:
-            """Gets the type of the version.
+            """Gets the type of the version
 
             Returns:
-                (str): The type of the version.
+                (str): The type of the version
             """
             return self.model.version_type
 
         def get_dependencies(self) -> list["Project.Dependency"]:
-            """Gets the dependencies of the version.
+            """Gets the dependencies of the version
 
             Returns:
-                (list[Project.Dependency]): The dependencies of the version.
+                (list[Project.Dependency]): The dependencies of the version
             """
             result = []
             for dependency in self.model.dependencies:
@@ -894,11 +894,11 @@ class Project:
             algorithm: literals.sha_algorithm_literal = "sha1",
             multiple: bool = False,
         ) -> typing.Union["Project.Version", list["Project.Version"]]:
-            """Gets a version by hash.
+            """Gets a version by hash
 
             Args:
                 hash_ (str): The hash of the file, considering its byte content, and encoded in hexadecimal
-                algorithm (sha_algorithm_literal): The algorithm of the hash.
+                algorithm (sha_algorithm_literal): The algorithm of the hash
                 multiple (bool): Whether to return multiple results when looking for this hash
 
             Returns:
@@ -931,13 +931,13 @@ class Project:
             version_id: str,
             algorithm: literals.sha_algorithm_literal = "sha1",
         ):
-            """Deletes a file from its hash.
+            """Deletes a file from its hash
 
             Args:
                 hash_ (str): The hash of the file, considering its byte content, and encoded in hexadecimal
                 algorithm (sha_algorithm_literal): The algorithm of the hash
                 version_id (bool): Version ID to delete the version from, if multiple files of the same hash exist
-                auth (str): The authorization token to use when deleting the file from its hash.
+                auth (str): The authorization token to use when deleting the file from its hash
 
             Returns:
                 (bool): If the file deletion was successful
@@ -962,10 +962,10 @@ class Project:
             return True
 
         def get_files(self) -> list["Project.File"]:
-            """Gets the files associated with the version.
+            """Gets the files associated with the version
 
             Returns:
-                (list[Project.File]): The files associated with the version.
+                (list[Project.File]): The files associated with the version
             """
             result = []
             for file in self.model.files:
@@ -973,10 +973,10 @@ class Project:
             return result
 
         def download(self, recursive: bool = False) -> None:
-            """Downloads the files associated with the version.
+            """Downloads the files associated with the version
 
             Args:
-                recursive (bool, optional): Whether to also download the files of the dependencies.
+                recursive (bool, optional): Whether to also download the files of the dependencies
             """
             files = self.get_files()
             for file in files:
@@ -992,18 +992,18 @@ class Project:
                         open(file.name, "wb").write(file_content)
 
         def get_project(self) -> "Project":
-            """Gets the project associated with the version.
+            """Gets the project associated with the version
 
             Returns:
-                (Project): The project associated with the version.
+                (Project): The project associated with the version
             """
             return modrinth.Modrinth.get_project(self.model.project_id)  # type: ignore
 
         def get_primary_files(self) -> list["Project.File"]:
-            """Gets the primary files associated with the version.
+            """Gets the primary files associated with the version
 
             Returns:
-                (list[Project.File]): The primary files associated with the version.
+                (list[Project.File]): The primary files associated with the version
             """
             result = []
             for file in self.get_files():
@@ -1012,51 +1012,51 @@ class Project:
             return result
 
         def get_author(self) -> "users.User":
-            """Gets the author of the version.
+            """Gets the author of the version
 
             Returns:
-                (User): The author of the version.
+                (User): The author of the version
             """
             user = users.User.get(self.model.author_id)  # type: ignore
             return user
 
         def is_featured(self) -> bool:
-            """Checks if the version is featured.
+            """Checks if the version is featured
 
             Returns:
-                (bool): Whether the version is featured.
+                (bool): Whether the version is featured
             """
             return self.model.featured
 
         def get_date_published(self) -> "datetime.datetime":
-            """Gets the date when the version was published.
+            """Gets the date when the version was published
 
             Returns:
-                (datetime): The date when the version was published.
+                (datetime): The date when the version was published
             """
             return util.format_time(self.model.date_published)
 
         def get_downloads(self) -> int:
-            """Gets the number of downloads for the version.
+            """Gets the number of downloads for the version
 
             Returns:
-                (int): The number of downloads of the version.
+                (int): The number of downloads of the version
             """
             return self.model.downloads  # type: ignore
 
         def get_name(self) -> str:
-            """Gets the name of the version.
+            """Gets the name of the version
 
             Returns:
-                (str): The name of the version.
+                (str): The name of the version
             """
             return self.model.name
 
         def get_version_number(self) -> str:
-            """Gets the version number of the version.
+            """Gets the version number of the version
 
             Returns:
-                (str): The version number of the version.
+                (str): The version number of the version
             """
             return self.model.version_number
 
@@ -1065,14 +1065,14 @@ class Project:
 
     class GalleryImage:
         """
-        Represents an image in a gallery.
+        Represents an image in a gallery
 
         Attributes:
-            file_path (str): The path to the image.
+            file_path (str): The path to the image
             ext (str): Image extension
             featured (str): Whether an image is featured
-            title (str): Title of the image.
-            description (str): Description of the image.
+            title (str): Title of the image
+            description (str): Description of the image
             ordering (int): Ordering of the image
 
         """
@@ -1086,13 +1086,13 @@ class Project:
             ordering: int = 0,
         ) -> None:
             """
-            Initializes a GalleryImage object.
+            Initializes a GalleryImage object
 
             Args:
-                file_path (str): The path to the image.
+                file_path (str): The path to the image
                 featured (str): Whether an image is featured
-                title (str): Title of the image.
-                description (str): Description of the image.
+                title (str): Title of the image
+                description (str): Description of the image
                 ordering (int): Ordering of the image
             """
             self.file_path = file_path
@@ -1117,16 +1117,16 @@ class Project:
 
     class File:
         """
-        Represents a file with various attributes and methods.
+        Represents a file with various attributes and methods
 
         Attributes:
-            hashes (dict[str, str]): A dictionary of hash algorithms and their corresponding hash values for the file.
-            url (str): The URL where the file can be downloaded.
-            name (str): The name of the file.
-            primary (str): The primary hash algorithm used to verify the file's integrity.
-            size (int): The size of the file in bytes.
-            file_type (str): The type of the file.
-            extension (str): The file extension.
+            hashes (dict[str, str]): A dictionary of hash algorithms and their corresponding hash values for the file
+            url (str): The URL where the file can be downloaded
+            name (str): The name of the file
+            primary (str): The primary hash algorithm used to verify the file's integrity
+            size (int): The size of the file in bytes
+            file_type (str): The type of the file
+            extension (str): The file extension
 
         """
 
@@ -1140,15 +1140,15 @@ class Project:
             file_type: str,
         ) -> None:
             """
-            Initializes a File object.
+            Initializes a File object
 
             Args:
-                hashes (dict[str, str]): A dictionary of hash algorithms and their corresponding hash values for the file.
-                url (str): The URL where the file can be downloaded.
-                filename (str): The name of the file.
-                primary (str): The primary hash algorithm used to verify the file's integrity.
-                size (int): The size of the file in bytes.
-                file_type (str): The type of the file.
+                hashes (dict[str, str]): A dictionary of hash algorithms and their corresponding hash values for the file
+                url (str): The URL where the file can be downloaded
+                filename (str): The name of the file
+                primary (str): The primary hash algorithm used to verify the file's integrity
+                size (int): The size of the file in bytes
+                file_type (str): The type of the file
             """
             self.hashes = hashes
             self.url = url
@@ -1160,10 +1160,10 @@ class Project:
 
         def is_resourcepack(self) -> bool:
             """
-            Checks if a file is a resourcepack.
+            Checks if a file is a resourcepack
 
             Returns:
-                (bool): If the file is a resourcepack.
+                (bool): If the file is a resourcepack
             """
             if self.file_type is None:
                 return False
@@ -1186,7 +1186,7 @@ class Project:
 
     class License:
         """
-        Represents a license.
+        Represents a license
 
         Attributes:
             id (str): The SPDX license ID of a project
@@ -1197,7 +1197,7 @@ class Project:
 
         def __init__(self, id_: str, name: str, url: str | None = None) -> None:
             """
-            Initializes a License object.
+            Initializes a License object
 
             Args:
                 id_ (str): The SPDX license ID of a project
@@ -1226,7 +1226,7 @@ class Project:
 
     class Donation:
         """
-        Represents a donation.
+        Represents a donation
 
         Attributes:
             id (str): The ID of the donation platform
@@ -1237,12 +1237,12 @@ class Project:
 
         def __init__(self, id_: str, platform: str, url: str) -> None:
             """
-            Initializes a Donation object.
+            Initializes a Donation object
 
             Args:
-                id_ (str): The ID of the donation.
-                platform (str): The platform used for the donation.
-                url (str): The URL to the donation page.
+                id_ (str): The ID of the donation
+                platform (str): The platform used for the donation
+                url (str): The URL to the donation page
             """
             self.id = id_
             self.platform = platform
@@ -1263,12 +1263,12 @@ class Project:
 
     class Dependency:
         """
-        Represents a dependency.
+        Represents a dependency
 
         Attributes:
-            dependency_type (str): The type of the dependency.
-            id (str): The ID of the dependency.
-            dependency_option (str): The option for the dependency.
+            dependency_type (str): The type of the dependency
+            id (str): The ID of the dependency
+            dependency_option (str): The option for the dependency
 
         """
 
@@ -1276,12 +1276,12 @@ class Project:
             self, dependency_type: str, id_: str, dependency_option: str
         ) -> None:
             """
-            Initializes a Dependency object.
+            Initializes a Dependency object
 
             Args:
-                dependency_type (str): The type of the dependency.
-                id_ (str): The ID of the dependency.
-                dependency_option (str): The option for the dependency.
+                dependency_type (str): The type of the dependency
+                id_ (str): The ID of the dependency
+                dependency_option (str): The option for the dependency
             """
             self.dependency_type = dependency_type
             self.id = id_
@@ -1311,19 +1311,19 @@ class Project:
 
         def get_project(self) -> "Project":
             """
-            Gets the project associated with the dependency.
+            Gets the project associated with the dependency
 
             Returns:
-                (Project): The project associated with the dependency.
+                (Project): The project associated with the dependency
             """
             return Project.get(self.id)
 
         def get_version(self) -> "Project.Version":
             """
-            Gets the version associated with the dependency.
+            Gets the version associated with the dependency
 
             Returns:
-                (Project.Version): The version associated with the dependency.
+                (Project.Version): The version associated with the dependency
             """
             if self.dependency_type == "version":
                 return Project.Version.get(self.id)
@@ -1332,46 +1332,46 @@ class Project:
 
         def is_required(self) -> bool:
             """
-            Checks if the dependency is required.
+            Checks if the dependency is required
 
             Returns:
-                (bool): True if the dependency is required, False otherwise.
+                (bool): True if the dependency is required, False otherwise
             """
             return True if self.dependency_option == "required" else False
 
         def is_optional(self) -> bool:
             """
-            Checks if the dependency is optional.
+            Checks if the dependency is optional
 
             Returns:
-                (bool): True if the dependency is optional, False otherwise.
+                (bool): True if the dependency is optional, False otherwise
             """
             return True if self.dependency_option == "optional" else False
 
         def is_incompatible(self) -> bool:
             """
-            Checks if the dependency is incompatible.
+            Checks if the dependency is incompatible
 
             Returns:
-                (bool): True if the dependency is incompatible, False otherwise.
+                (bool): True if the dependency is incompatible, False otherwise
             """
             return True if self.dependency_option == "incompatible" else False
 
     class SearchResult:
         """
-        Represents a search result.
+        Represents a search result
 
         Attributes:
-            model (SearchResultModel): The search result model.
+            model (SearchResultModel): The search result model
 
         """
 
         def __init__(self, search_result_model: "models.SearchResultModel") -> None:
             """
-            Initializes a SearchResult object.
+            Initializes a SearchResult object
 
             Args:
-                search_result_model (SearchResultModel): The search result model or a dictionary representing the search result model.
+                search_result_model (SearchResultModel): The search result model or a dictionary representing the search result model
             """
             self.model = search_result_model
 

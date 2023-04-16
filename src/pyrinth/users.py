@@ -97,18 +97,18 @@ class User:
 
     @staticmethod
     def get(id_: str, auth=None) -> "User":
-        """Gets a user.
+        """Gets a user
 
         Args:
-            id_ (str): The user's ID to find.
-            auth (str, optional): The authorization token to use when creating the user. Defaults to None.
+            id_ (str): The user's ID to find
+            auth (str, optional): The authorization token to use when creating the user. Defaults to None
 
         Raises:
-            NotFoundError: The user was not found.
-            InvalidRequestError: An invalid API call was sent.
+            NotFoundError: The user was not found
+            InvalidRequestError: An invalid API call was sent
 
         Returns:
-            (User): The user that was found.
+            (User): The user that was found
         """
         raw_response = r.get(f"https://api.modrinth.com/v2/user/{id_}", timeout=60)
 
@@ -125,7 +125,7 @@ class User:
 
     def get_date_created(self) -> datetime.datetime:
         """
-        Gets the date of when the user was created.
+        Gets the date of when the user was created
 
         Returns:
             (datetime): The time of when the user was created
@@ -134,7 +134,7 @@ class User:
 
     def get_followed_projects(self) -> list["projects.Project"]:
         """
-        Gets a users followed projects.
+        Gets a users followed projects
 
         Returns:
             (list[Project]): The users followed projects
@@ -166,7 +166,7 @@ class User:
 
     def get_notifications(self) -> list["User.Notification"]:
         """
-        Gets a user's notifications.
+        Gets a user's notifications
 
         Returns:
             (list[User.Notification]): The users notifications
@@ -194,7 +194,7 @@ class User:
 
     def get_amount_of_projects(self) -> int:
         """
-        Gets the amount of projects a user has.
+        Gets the amount of projects a user has
 
         Returns:
             (list[Project]): The users projects
@@ -205,11 +205,11 @@ class User:
 
     def create_project(self, project_model, icon: str | None = None) -> int:
         """
-        Creates a project.
+        Creates a project
 
         Args:
-            project_model (ProjectModel): The model of the project to create.
-            icon (str): The path of the icon to use for the newly created project.
+            project_model (ProjectModel): The model of the project to create
+            icon (str): The path of the icon to use for the newly created project
 
         Returns:
             (int): If the project creation was successful
@@ -238,7 +238,7 @@ class User:
 
     def get_projects(self) -> list["projects.Project"]:
         """
-        Gets a user's projects.
+        Gets a user's projects
 
         Returns:
             (list[Project]): The users projects
@@ -259,7 +259,7 @@ class User:
 
     def follow_project(self, id_: str) -> int:
         """
-        Follow a project.
+        Follow a project
 
         Args:
             id_ (str): The ID of the project to follow
@@ -291,7 +291,7 @@ class User:
 
     def unfollow_project(self, id_: str) -> int:
         """
-        Unfollow a project.
+        Unfollow a project
 
         Args:
             id_ (str): The ID of the project to unfollow
@@ -324,7 +324,7 @@ class User:
     @staticmethod
     def get_from_auth(auth: str) -> "User":
         """
-        Gets a user from authorization token.
+        Gets a user from authorization token
 
         Returns:
             (User): The user that was found using the authorization token
@@ -349,7 +349,7 @@ class User:
     @staticmethod
     def from_id(id_: str) -> "User":
         """
-        Gets a user from ID.
+        Gets a user from ID
 
         Returns:
             (User): The user that was found using the ID
@@ -368,7 +368,7 @@ class User:
     @staticmethod
     def from_ids(ids: list[str]) -> list["User"]:
         """
-        Gets a users from IDs.
+        Gets a users from IDs
 
         Returns:
             (User): The users that were found using the IDs

@@ -13,7 +13,7 @@ class Modrinth:
 
     @staticmethod
     def project_exists(id_: str) -> bool:
-        """Checks if a project exists.
+        """Checks if a project exists
 
         Args:
             id_ (str): The ID or slug of the project
@@ -38,7 +38,7 @@ class Modrinth:
 
     @staticmethod
     def get_random_projects(count: int = 1) -> list["projects.Project"]:
-        """Gets a certain number of random projects.
+        """Gets a certain number of random projects
 
         Args:
             count (int, optional): The number of random projects to return
@@ -47,7 +47,7 @@ class Modrinth:
             InvalidRequestError: Invalid request
 
         Returns:
-            (list[Project]): The projects that were randomly found.
+            (list[Project]): The projects that were randomly found
         """
         raw_response = r.get(
             "https://api.modrinth.com/v2/projects_random",
@@ -60,13 +60,13 @@ class Modrinth:
         return [projects.Project(project) for project in response]
 
     class Statistics:
-        """Modrinth statistics.
+        """Modrinth statistics
 
         Attributes:
-            authors (int, optional): The number of authors on Modrinth.
-            files (int, optional): The number of files on Modrinth.
-            projects (int, optional): The number of projects on Modrinth.
-            versions (int, optional): The number of versions on Modrinth.
+            authors (int, optional): The number of authors on Modrinth
+            files (int, optional): The number of files on Modrinth
+            projects (int, optional): The number of projects on Modrinth
+            versions (int, optional): The number of versions on Modrinth
 
         """
 

@@ -3,33 +3,33 @@ import pyrinth.users as users
 
 class Team:
     """
-    Represents a team.
+    Represents a team
 
     Attributes:
-        members (list[dict]): A list of team members.
-        id (str): The ID of the team.
+        members (list[dict]): A list of team members
+        id (str): The ID of the team
 
     Methods:
-        get_members: Get a list of team members.
-        _from_json: Creates a Team object from a JSON dictionary.
-        get: Get a team by its ID.
-        get_multiple: Get multiple teams by their IDs.
+        get_members: Get a list of team members
+        _from_json: Creates a Team object from a JSON dictionary
+        get: Get a team by its ID
+        get_multiple: Get multiple teams by their IDs
 
     """
 
     def __init__(self):
         """
-        Initializes a Team object.
+        Initializes a Team object
         """
         self.members = None
         self.id = None
 
     def get_members(self) -> list["Team.TeamMember"]:
         """
-        Gets a list of team members.
+        Gets a list of team members
 
         Returns:
-            (list[Project.TeamMember]): A list of team members.
+            (list[Project.TeamMember]): A list of team members
         """
         return [Team.TeamMember._from_json(team_member) for team_member in self.members]
 
@@ -41,16 +41,16 @@ class Team:
         return result
 
     class TeamMember:
-        """Represents a team member of a project.
+        """Represents a team member of a project
 
         Attributes:
-            team_id (str): The ID of the team the member belongs to.
-            user (dict): The user associated with the team member.
-            role (str): The role of the team member within the team.
-            permissions: The permissions of the team member within the team.
-            accepted (bool): Whether the team member has accepted their invitation to join the team.
-            payouts_split: The percentage of payouts that the team member receives.
-            ordering (int): The ordering of the team member within the team.
+            team_id (str): The ID of the team the member belongs to
+            user (dict): The user associated with the team member
+            role (str): The role of the team member within the team
+            permissions: The permissions of the team member within the team
+            accepted (bool): Whether the team member has accepted their invitation to join the team
+            payouts_split: The percentage of payouts that the team member receives
+            ordering (int): The ordering of the team member within the team
 
         """
 
@@ -76,10 +76,10 @@ class Team:
             return f"Team Member"
 
         def get_user(self) -> "users.User":
-            """Gets the user associated with the team member.
+            """Gets the user associated with the team member
 
             Returns:
-                (User): The user associated with the team member.
+                (User): The user associated with the team member
             """
             return users.User._from_json(self.user)
 

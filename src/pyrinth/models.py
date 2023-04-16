@@ -8,7 +8,7 @@ import pyrinth.util as util
 
 
 class ProjectModel:
-    """The model used for the Project class.
+    """The model used for the Project class
 
     Attributes:
         slug (str): The slug of the project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
@@ -62,7 +62,7 @@ class ProjectModel:
         discord_url: str | None = None,
         auth: str | None = None,
     ) -> None:
-        """Initializes a new instance of ProjectModel.
+        """Initializes a new instance of ProjectModel
 
         Args:
             slug (str): The slug of the project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
@@ -160,7 +160,7 @@ class ProjectModel:
 
 
 class SearchResultModel:
-    """The model used for the SearchResult class.
+    """The model used for the SearchResult class
 
     Attributes:
         slug (str): The slug of a project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
@@ -245,7 +245,7 @@ class SearchResultModel:
 
 
 class VersionModel:
-    """The model used for the Version class.
+    """The model used for the Version class
 
     Attributes:
         name (str): The name of this version
@@ -282,7 +282,7 @@ class VersionModel:
         requested_status: literals.requested_version_status_literal | None = None,
     ) -> None:
         """
-        Initializes a new instance of VersionModel.
+        Initializes a new instance of VersionModel
 
         Args:
             name (str): The name of this version
@@ -344,7 +344,7 @@ class VersionModel:
 
 
 class UserModel:
-    """The model used for the User class.
+    """The model used for the User class
 
     Attributes:
         username (str, optional): The user's username
@@ -357,7 +357,7 @@ class UserModel:
         bio (str, optional): A description of the user
         payout_data (UNKNOWN, optional): Various data relating to the user's payouts status (you can only see your own)
         github_id (int, optional): The user's GitHub ID
-        badges (list[str], optional): Any badges applicable to this user.
+        badges (list[str], optional): Any badges applicable to this user
         These are currently unused and undisplayed, and as such are subject to change
         auth (str, optional): Authentication token for the user
     """
