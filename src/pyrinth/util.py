@@ -43,7 +43,7 @@ def list_to_json(lst: list) -> list[dict]:
     for item in lst:
         if not isinstance(item, dict):
             # Convert it to json format
-            result.append(item.to_json())
+            result.append(item._to_json())
         else:
             # It's already in json format
             result.append(item)
@@ -56,7 +56,7 @@ def list_to_object(type_, lst) -> list:
 
     for item in lst:
         if isinstance(item, dict):
-            result.append(type_.from_json(item))
+            result.append(type_._from_json(item))
         else:
             result.append(item)
 

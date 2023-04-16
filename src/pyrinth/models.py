@@ -11,22 +11,37 @@ class ProjectModel:
     """The model used for the Project class.
 
     Attributes:
-        slug (str): The slug of a project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
+        slug (str): The slug of the project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
         title (str): The title or name of the project
         description (str): A short description of the project
         categories (list[str]): A list of categories that the project has
         client_side (str): The client side support of the project
-        server_side (str): The server side support of the project.
+        server_side (str): The server side support of the project
         body (str): A long form description of the project
-        license (Project.License): The license of the project
-        project_type (str): The project type of the project
         additional_categories (list[str]): A list of categories which are searchable but non-primary
         issues_url (str): An optional link to where to submit bugs or issues with the project
         source_url (str): An optional link to the source code of the project
-        wiki_url (str): An optional link to the project's wiki page or other relevant
+        wiki_url (str): An optional link to the project's wiki page or other relevant information
         discord_url (str): An optional invite link to the project's discord
-        donation_urls (list[str], optional): <INSERT>
-        auth (str): Authentication token for the project.
+        donation_urls (list[Project.Donation]): A list of donations for the project
+        project_type (str): The project type
+        downloads (int): The total number of downloads of the project
+        icon_url (str): The URL of the project's icon
+        color (str): The RGB color of the project, automatically generated from the project icon
+        id (str): The ID of the project, encoded as a base62 string
+        team (Team): The ID of the team that has ownership of this project
+        moderator_message: A message that a moderator sent regarding the project
+        published (str): The date the project was published
+        updated (str): The date the project was last updated
+        approved (str): The date of the project's status was set to approved or unlisted
+        followers (int): The total number of users following the project
+        status (str): The status of the project
+        license (Project.License): The license of the project
+        version_ids (list[str]): A list of version IDs of the project (will never be empty unless draft status)
+        game_versions (list[str]): A list of all the game versions supported by the project
+        loaders (str): A list of all the loaders supported by the project
+        gallery (list[Project.GalleryImage]): A list of images that have been uploaded to the project's gallery
+        auth (str): The project's authorization token
     """
 
     def __init__(
@@ -50,21 +65,21 @@ class ProjectModel:
         """Initializes a new instance of ProjectModel.
 
         Args:
-            slug (str): The slug of the project.
-            title (str): The title of the project.
-            description (str): The description of the project.
-            categories (list[str]): The categories of the project.
-            client_side (str): The client side of the project.
-            server_side (str): The server side of the project.
-            body (str): The body of the project.
-            license_ (Project.License): The license of the project.
-            project_type (str): The type of the project.
-            additional_categories (list[str], optional): Additional categories for the project. Defaults to None.
-            issues_url (str, optional): URL for issues related to the project. Defaults to None.
-            source_url (str, optional): URL for the source code of the project. Defaults to None.
-            wiki_url (str, optional): URL for the wiki page of the project. Defaults to None.
-            discord_url (str, optional): URL for Discord server related to this project. Defaults to None.
-            auth (str, optional): Authentication token for this instance. Defaults to None.
+            slug (str): The slug of the project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
+            title (str): The title or name of the project
+            description (str): A short description of the project
+            categories (list[str]): A list of categories that the project has
+            client_side (str): The client side support of the project
+            server_side (str): The server side support of the project
+            body (str): A long form description of the project
+            license_ (Project.License): The license of the project
+            project_type (str): The project type
+            additional_categories (list[str], optional): A list of categories which are searchable but non-primary
+            issues_url (str, optional): An optional link to where to submit bugs or issues with the project
+            source_url (str, optional): An optional link to the source code of the project
+            wiki_url (str, optional): An optional link to the project's wiki page or other relevant information
+            discord_url (str, optional): An optional invite link to the project's discord
+            auth (str, optional): Authentication token for the project
         """
         self.slug = slug
         self.title = title
@@ -148,27 +163,27 @@ class SearchResultModel:
     """The model used for the SearchResult class.
 
     Attributes:
-        slug (str): The slug of the search result.
-        title (str): The title of the search result.
-        description (str): The description of the search result.
-        client_side (str): The client side of the search result.
-        server_side (str): The server side of the search result.
-        project_type (str): The type of the search result.
-        downloads (int): The number of downloads for the search result.
-        project_id (str): The ID of the project associated with the search result.
-        author (str): The author of the search result.
-        versions (list[str]): The versions associated with the search result.
-        follows (int): The number of follows for the search result.
-        date_created (str): The date when the search result was created.
-        date_modified (str): The date when the search result was last modified.
-        license (str): The license associated with the search result.
-        categories (list[str]): The categories associated with the search result.
-        icon_url (str): The URL for the icon associated with the search result.
-        color (str): The color associated with the search result.
-        display_categories (list[str]): The categories to display for the search result.
-        latest_version (str): The latest version associated with the search result.
-        gallery (list[str]): The gallery associated with the search result.
-        featured_gallery (list[str]): The featured gallery associated with the search result.
+        slug (str): The slug of a project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
+        title (str): The title or name of the project
+        description (str): A short description of the project
+        client_side (str): The client side support of the project
+        server_side (str): The server side support of the project
+        project_type (str): The project type
+        downloads (int): The total number of downloads of the project
+        project_id (str): The ID of the project
+        author (str): The username of the project's author
+        versions (list[str]): A list of the minecraft versions supported by the project
+        follows (int): The total number of users following the project
+        date_created (str): The date the project was added to search
+        date_modified (str): The date the project was last modified
+        license (str): The SPDX license ID of the project
+        categories (list[str]): A list of categories that the project has
+        icon_url (str): The URL of the project's icon
+        color (str): The RGB color of the project, automatically generated from the project icon
+        display_categories (list[str]): A list of categories that the project has which are not secondary
+        latest_version (str): The latest version of minecraft that this project supports
+        gallery (list[str]): All gallery images attached to the project
+        featured_gallery (list[str]): The featured gallery image of the project
 
     """
 
@@ -233,17 +248,22 @@ class VersionModel:
     """The model used for the Version class.
 
     Attributes:
-        name (str): The name of the version.
-        version_number (str): The version number of the version.
-        dependencies (list[Project.Dependency]): The dependencies of the version.
-        game_versions (list[str]): The game versions associated with the version.
-        version_type (version_type_literal): The type of the version.
-        loaders (list[str]): The loaders associated with the version.
-        featured (bool): Whether the version is featured.
-        files (list[str]): The file parts associated with the version.
-        changelog (str, optional): The changelog for the version. Defaults to None.
-        status (version_status_literal, optional): The status of the version. Defaults to None.
-        requested_status (requested_version_status_literal, optional): The requested status of the version. Defaults to None.
+        name (str): The name of this version
+        version_number (str): The version number. Ideally will follow semantic versioning
+        changelog (str): The changelog for this version
+        dependencies (list[Project.Dependency]): A list of specific versions of projects that this version depends on
+        game_versions (list[str]): A list of versions of Minecraft that this version supports
+        version_type (str): The release channel for this version
+        loaders (list[str]): The mod loaders that this version supports
+        featured (bool): Whether the version is featured or not
+        status (str): The version's status
+        requested_status (str): The version's requested status
+        files (list[Project.File]): A list of files avaliable for download for this version
+        project_id (str): The ID of the project this version is for
+        id (str): The ID of the version, encoded as base62 string
+        author_id (str): The ID of the author who published this version
+        date_published (str): When the version was published
+        downloads (int): The number of times this version has been downloaded
 
     """
 
@@ -265,17 +285,17 @@ class VersionModel:
         Initializes a new instance of VersionModel.
 
         Args:
-            name (str): The name of the version.
-            version_number (str): The version number of the version.
-            dependencies (list[projects.Project.Dependency]): The dependencies of the version.
-            game_versions (list[str]): The game versions associated with the version.
-            version_type (version_type_literal): The type of the version.
-            loaders (list[str]): The loaders associated with the version.
-            featured (bool): Whether the version is featured.
-            file_parts (list[str]): The file parts associated with the version.
-            changelog (str, optional): The changelog for the version. Defaults to None.
-            status (version_status_literal, optional): The status of the version. Defaults to None.
-            requested_status (requested_version_status_literal, optional): The requested status of the version. Defaults to None.
+            name (str): The name of this version
+            version_number (str): The version number. Ideally will follow semantic versioning
+            dependencies (list[projects.Project.Dependency]): A list of specific versions of projects that this version depends on
+            game_versions (list[str]): A list of versions of Minecraft that this version supports
+            version_type (version_type_literal): The release channel for this version
+            loaders (list[str]): The mod loaders that this version supports
+            featured (bool): Whether the version is featured or not
+            file_parts (list[str]): A list of files avaliable for download for this version
+            changelog (str, optional): The changelog for this version
+            status (version_status_literal, optional): The version's status
+            requested_status (requested_version_status_literal, optional): The version's requested status
         """
         self.name = name
         self.version_number = version_number
@@ -327,19 +347,19 @@ class UserModel:
     """The model used for the User class.
 
     Attributes:
-        username (str, optional): The username of the user.
-        id (str, optional): The ID of the user.
-        avatar_url (str, optional): The URL for the avatar of the user.
-        created (str, optional): The date when the user was created.
-        role (str, optional): The role of the user.
-        name (str, optional): The name of the user.
-        email (str, optional): The email address of the user.
-        bio (str, optional): The bio of the user.
-        payout_data (UNKNOWN, optional): The payout data for the user.
-        github_id (int, optional): The GitHub ID of the user.
-        badges (list[str], optional): The badges associated with the user.
-        auth (str, optional): Authentication information for the user.
-
+        username (str, optional): The user's username
+        id (str, optional): The user's ID
+        avatar_url (str, optional): The user's avatar URL
+        created (str, optional): The time at which the user was created
+        role (str, optional): The user's role
+        name (str, optional): The user's display name
+        email (str, optional): The user's email (only when your own is ever displayed)
+        bio (str, optional): A description of the user
+        payout_data (UNKNOWN, optional): Various data relating to the user's payouts status (you can only see your own)
+        github_id (int, optional): The user's GitHub ID
+        badges (list[str], optional): Any badges applicable to this user.
+        These are currently unused and undisplayed, and as such are subject to change
+        auth (str, optional): Authentication token for the user
     """
 
     def __init__(self) -> None:
