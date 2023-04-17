@@ -82,7 +82,10 @@ class Tag:
             raise exceptions.InvalidRequestError()
 
         response = raw_response.json()
-        return [Tag.DonationPlatform(json.get("short"), json.get("name")) for json in response]
+        return [
+            Tag.DonationPlatform(json.get("short"), json.get("name"))
+            for json in response
+        ]
 
     @staticmethod
     def get_report_types() -> list[str]:

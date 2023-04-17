@@ -1,6 +1,6 @@
 """User projects."""
 
-import datetime
+import datetime as dt
 import json
 import typing
 
@@ -892,7 +892,7 @@ class Project:
             """
             return self.model.featured
 
-        def get_date_published(self) -> datetime.datetime:
+        def get_date_published(self) -> dt.datetime:
             """
             Gets the date of when the version was published.
 
