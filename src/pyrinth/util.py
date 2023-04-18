@@ -42,10 +42,8 @@ def list_to_json(lst: list) -> list[dict]:
 
     for item in lst:
         if not isinstance(item, dict):
-            # Convert it to json format
             result.append(item._to_json())
         else:
-            # It's already in json format
             result.append(item)
 
     return result

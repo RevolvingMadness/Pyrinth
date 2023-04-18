@@ -71,7 +71,7 @@ class Project:
                 )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         response.update({"authorization": auth})
         return Project(response)
 
@@ -95,7 +95,7 @@ class Project:
         )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return [Project(project) for project in response]
 
     def get_latest_version(
@@ -275,7 +275,7 @@ class Project:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
 
         versions = [
             self.Version(models.VersionModel._from_json(version))
@@ -365,7 +365,7 @@ class Project:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return Project.Version(models.VersionModel._from_json(response))
 
     def create_version(self, version_model, auth: str | None = None) -> int:
@@ -780,7 +780,7 @@ class Project:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return [Project(dependency) for dependency in response.get("projects")]
 
     @staticmethod
@@ -825,7 +825,7 @@ class Project:
         raw_response = r.get(
             "https://api.modrinth.com/v2/search", params=params, timeout=60
         )
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return [
             Project.SearchResult(models.SearchResultModel._from_json(project))
             for project in response.get("hits")
@@ -850,7 +850,7 @@ class Project:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
 
         return [
             teams.Team.TeamMember._from_json(team_member) for team_member in response
@@ -879,7 +879,7 @@ class Project:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
 
         return teams.Team._from_json(response)
 
@@ -949,7 +949,7 @@ class Project:
                     )
             if not raw_response.ok:
                 raise exceptions.InvalidRequestError(raw_response.text)
-            response = json.loads(raw_response.content)
+            response = raw_response.json()
             return Project.Version(models.VersionModel._from_json(response))
 
         @staticmethod
@@ -984,7 +984,7 @@ class Project:
                     )
             if not raw_response.ok:
                 raise exceptions.InvalidRequestError(raw_response.text)
-            response = json.loads(raw_response.content)
+            response = raw_response.json()
             if isinstance(response, list):
                 return [
                     Project.Version(models.VersionModel._from_json(version))
