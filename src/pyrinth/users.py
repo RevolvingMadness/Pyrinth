@@ -1,6 +1,6 @@
 """Used for users."""
 
-import datetime
+import datetime as dt
 import json
 
 import requests as r
@@ -123,7 +123,7 @@ class User:
         response.update({"authorization": auth})
         return User(response)
 
-    def get_date_created(self) -> datetime.datetime:
+    def get_date_created(self) -> dt.datetime:
         """
         Gets the date of when the user was created
 

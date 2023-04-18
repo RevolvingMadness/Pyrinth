@@ -1,6 +1,6 @@
 """Utility functions for Pyrinth."""
 
-import datetime
+import datetime as dt
 import json
 import typing
 
@@ -63,7 +63,7 @@ def list_to_object(type_, lst) -> list:
     return result
 
 
-def format_time(time) -> datetime.datetime:
+def format_time(time) -> dt.datetime:
     return dateutil.parser.parser().parse(time)
 
 

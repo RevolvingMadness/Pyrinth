@@ -80,7 +80,7 @@ When you're using the Pyrinth source code, navigate to the `src` directory and c
 
 ## License
 
-This project is distributed under the Apache 2.0 License. See `LICENSE.txt` for more information.
+This project is distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 

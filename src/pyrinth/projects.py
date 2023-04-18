@@ -1,6 +1,6 @@
 """Projects can be mods or modpacks and are created by users"""
 
-import datetime
+import datetime as dt
 import json
 import typing
 
@@ -1101,7 +1101,7 @@ class Project:
             """
             return self.model.featured
 
-        def get_date_published(self) -> "datetime.datetime":
+        def get_date_published(self) -> "dt.datetime":
             """Gets the date when the version was published
 
             Returns:
