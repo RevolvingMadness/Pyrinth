@@ -1,5 +1,3 @@
-"""The main Modrinth class used for anything modrinth related."""
-
 import json
 
 import requests as r
@@ -9,8 +7,6 @@ import pyrinth.projects as projects
 
 
 class Modrinth:
-    """The main Modrinth class used for anything modrinth related."""
-
     @staticmethod
     def project_exists(id_: str) -> bool:
         """Checks if a project exists

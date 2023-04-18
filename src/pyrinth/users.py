@@ -408,3 +408,6 @@ class User:
             self.all_time = all_time
             self.last_month = last_month
             self.payouts = payouts
+
+        def __repr__(self) -> str:
+            return f"PayoutHistory: {self.all_time}"

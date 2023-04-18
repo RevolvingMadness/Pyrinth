@@ -11,13 +11,13 @@ class Team:
 
     Methods:
         get_members: Get a list of team members
-        _from_json: Creates a Team object from a JSON dictionary
+        _from_json: Create a Team object from a JSON dictionary
         get: Get a team by its ID
         get_multiple: Get multiple teams by their IDs
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initializes a Team object
         """
@@ -31,12 +31,12 @@ class Team:
         Returns:
             (list[Project.TeamMember]): A list of team members
         """
-        return [Team.TeamMember._from_json(team_member) for team_member in self.members]
+        return [Team.TeamMember._from_json(team_member) for team_member in self.members]  # type: ignore
 
     @staticmethod
     def _from_json(list_: dict) -> "Team":
         result = Team()
-        result.members = list_
+        result.members = list_  # type: ignore
         result.id = list_[0]["team_id"]
         return result
 
@@ -44,7 +44,7 @@ class Team:
         """Represents a team member of a project
 
         Attributes:
-            team_id (str): The ID of the team the member belongs to
+            team_id (str): The ID of the team member belongs to
             user (dict): The user associated with the team member
             role (str): The role of the team member within the team
             permissions: The permissions of the team member within the team
@@ -84,7 +84,7 @@ class Team:
             return users.User._from_json(self.user)
 
         @staticmethod
-        def _from_json(json_: dict):
+        def _from_json(json_: dict) -> "Team.TeamMember":
             return Team.TeamMember(
                 json_.get("team_id"),  # type: ignore
                 json_.get("user"),  # type: ignore

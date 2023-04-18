@@ -72,7 +72,7 @@ Don't forget to give the project a star! Thanks again!
 5. Open a Pull Request
 
 ## Using Pyrinth Source Code
-When you are using the Pyrinth source code, navigate to the `src` directory and create your main Python file.
+When you're using the Pyrinth source code, navigate to the `src` directory and create your main Python file.
 
 
 
