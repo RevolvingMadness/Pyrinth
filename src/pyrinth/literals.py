@@ -35,3 +35,5 @@ version_type_literal = typing.Literal["release", "beta", "alpha"]
 project_type_literal = typing.Literal["mod", "modpack", "resourcepack", "shader"]
 
 user_role_literal = typing.Literal["admin", "moderator", "developer"]
+
+sha_algorithm_literal = typing.Literal["sha512", "sha1"]

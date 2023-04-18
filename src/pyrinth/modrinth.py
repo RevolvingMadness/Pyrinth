@@ -1,53 +1,53 @@
 """The main Modrinth class used for anything modrinth related."""
 
 import json
-import typing
 
 import requests as r
 
 import pyrinth.exceptions as exceptions
-import pyrinth.literals as literals
-import pyrinth.models as models
 import pyrinth.projects as projects
-import pyrinth.users as users
 
 
 class Modrinth:
     """The main Modrinth class used for anything modrinth related."""
 
     @staticmethod
-    def project_exists(id: str) -> bool:
-        """Checks if a project exists.
+    def project_exists(id_: str) -> bool:
+        """Checks if a project exists
 
         Args:
-            id (str): The project ID to check if it exists.
+            id_ (str): The ID or slug of the project
 
         Raises:
-            InvalidRequestError: An invalid API call was sent.
+            InvalidRequestError: Invalid request
+            NotFoundError: The requested project was not found
 
         Returns:
-            bool: If the project exists.
+            (bool): Whether the project exists
         """
         raw_response = r.get(
-            f"https://api.modrinth.com/v2/project/{id}/check", timeout=60
+            f"https://api.modrinth.com/v2/project/{id_}/check", timeout=60
         )
+        match raw_response.status_code:
+            case 404:
+                raise exceptions.NotFoundError("The requested project was not found")
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
         return bool(response.get("id"))
 
     @staticmethod
     def get_random_projects(count: int = 1) -> list["projects.Project"]:
-        """Gets a certain amount of random projects.
+        """Gets a certain number of random projects
 
         Args:
-            count (int, optional): The amount of projects to find. Defaults to 1.
+            count (int, optional): The number of random projects to return
 
         Raises:
-            InvalidRequestError: An invalid API call was sent.
+            InvalidRequestError: Invalid request
 
         Returns:
-            list[Project]: The projects that were randomly found.
+            (list[Project]): The projects that were randomly found
         """
         raw_response = r.get(
             "https://api.modrinth.com/v2/projects_random",
@@ -55,17 +55,25 @@ class Modrinth:
             timeout=60,
         )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError()
+            raise exceptions.InvalidRequestError(raw_response.text)
         response = json.loads(raw_response.content)
         return [projects.Project(project) for project in response]
 
     class Statistics:
-        """Modrinth statistics."""
+        """Modrinth statistics
+
+        Attributes:
+            authors (int, optional): The number of authors on Modrinth
+            files (int, optional): The number of files on Modrinth
+            projects (int, optional): The number of projects on Modrinth
+            versions (int, optional): The number of versions on Modrinth
+
+        """
 
         def __init__(self) -> None:
             raw_response = r.get("https://api.modrinth.com/v2/statistics", timeout=60)
             response = json.loads(raw_response.content)
-            self.authors = response.get("authors")
-            self.files = response.get("files")
-            self.projects = response.get("projects")
-            self.versions = response.get("versions")
+            self.authors: int = response.get("authors")
+            self.files: int = response.get("files")
+            self.projects: int = response.get("projects")
+            self.versions: int = response.get("versions")

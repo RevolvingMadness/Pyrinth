@@ -1,7 +1,6 @@
 """Contains all models used in Pyrinth."""
 
 import json
-import typing
 
 import pyrinth.literals as literals
 import pyrinth.projects as projects
@@ -9,7 +8,41 @@ import pyrinth.util as util
 
 
 class ProjectModel:
-    """The model used for the Project class."""
+    """The model used for the Project class
+
+    Attributes:
+        slug (str): The slug of the project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
+        title (str): The title or name of the project
+        description (str): A short description of the project
+        categories (list[str]): A list of categories that the project has
+        client_side (str): The client side support of the project
+        server_side (str): The server side support of the project
+        body (str): A long form description of the project
+        additional_categories (list[str]): A list of categories which are searchable but non-primary
+        issues_url (str): An optional link to where to submit bugs or issues with the project
+        source_url (str): An optional link to the source code of the project
+        wiki_url (str): An optional link to the project's wiki page or other relevant information
+        discord_url (str): An optional invite link to the project's discord
+        donation_urls (list[Project.Donation]): A list of donations for the project
+        project_type (str): The project type
+        downloads (int): The total number of downloads of the project
+        icon_url (str): The URL of the project's icon
+        color (str): The RGB color of the project, automatically generated from the project icon
+        id (str): The ID of the project, encoded as a base62 string
+        team (Team): The ID of the team that has ownership of this project
+        moderator_message: A message that a moderator sent regarding the project
+        published (str): The date the project was published
+        updated (str): The date the project was last updated
+        approved (str): The date of the project's status was set to approved or unlisted
+        followers (int): The total number of users following the project
+        status (str): The status of the project
+        license (Project.License): The license of the project
+        version_ids (list[str]): A list of version IDs of the project (will never be empty unless draft status)
+        game_versions (list[str]): A list of all the game versions supported by the project
+        loaders (str): A list of all the loaders supported by the project
+        gallery (list[Project.GalleryImage]): A list of images that have been uploaded to the project's gallery
+        auth (str): The project's authorization token
+    """
 
     def __init__(
         self,
@@ -22,13 +55,32 @@ class ProjectModel:
         body: str,
         license_: "projects.Project.License",
         project_type: str,
-        additional_categories: typing.Optional[list[str]] = None,
-        issues_url: typing.Optional[str] = None,
-        source_url: typing.Optional[str] = None,
-        wiki_url: typing.Optional[str] = None,
-        discord_url: typing.Optional[str] = None,
-        auth=None,
+        additional_categories: list[str] | None = None,
+        issues_url: str | None = None,
+        source_url: str | None = None,
+        wiki_url: str | None = None,
+        discord_url: str | None = None,
+        auth: str | None = None,
     ) -> None:
+        """Initializes a new instance of ProjectModel
+
+        Args:
+            slug (str): The slug of the project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
+            title (str): The title or name of the project
+            description (str): A short description of the project
+            categories (list[str]): A list of categories that the project has
+            client_side (str): The client side support of the project
+            server_side (str): The server side support of the project
+            body (str): A long form description of the project
+            license_ (Project.License): The license of the project
+            project_type (str): The project type
+            additional_categories (list[str], optional): A list of categories which are searchable but non-primary
+            issues_url (str, optional): An optional link to where to submit bugs or issues with the project
+            source_url (str, optional): An optional link to the source code of the project
+            wiki_url (str, optional): An optional link to the project's wiki page or other relevant information
+            discord_url (str, optional): An optional invite link to the project's discord
+            auth (str, optional): Authentication token for the project
+        """
         self.slug = slug
         self.title = title
         self.description = description
@@ -36,19 +88,19 @@ class ProjectModel:
         self.client_side = client_side
         self.server_side = server_side
         self.body = body
-        self.license = license_.to_json()
+        self.license = license_._to_json()
         self.project_type = project_type
         self.additional_categories = additional_categories
         self.issues_url = issues_url
         self.source_url = source_url
         self.wiki_url = wiki_url
         self.discord_url = discord_url
-        self.donation_urls = None
+        self.donation_urls: list[str] | None = None
         self.auth = auth
-        self.id = None
-        self.downloads = None
-        self.icon_url = None
-        self.color = None
+        self.id: str | None = None
+        self.downloads: int | None = None
+        self.icon_url: str | None = None
+        self.color: str | None = None
         self.team = None
         self.moderator_message = None
         self.published = None
@@ -62,9 +114,8 @@ class ProjectModel:
         self.gallery = None
 
     @staticmethod
-    def from_json(json_: dict) -> "ProjectModel":
-        """Utility function."""
-        license_ = projects.Project.License.from_json(json_.get("license"))  # type: ignore
+    def _from_json(json_: dict) -> "ProjectModel":
+        license_ = projects.Project.License._from_json(json_.get("license"))  # type: ignore
 
         result = ProjectModel(
             json_.get("slug"),  # type: ignore
@@ -101,67 +152,66 @@ class ProjectModel:
         result.gallery = json_.get("gallery")
         return result
 
-    def to_json(self) -> dict:
-        """Utility function."""
-        result = {
-            "slug": self.slug,
-            "title": self.title,
-            "description": self.description,
-            "categories": self.categories,
-            "client_side": self.client_side,
-            "server_side": self.server_side,
-            "body": self.body,
-            "license_id": self.license.get("id"),
-            "project_type": self.project_type,
-            "additional_categories": self.additional_categories,
-            "issues_url": self.issues_url,
-            "source_url": self.source_url,
-            "wiki_url": self.wiki_url,
-            "discord_url": self.discord_url,
-            "donation_urls": self.donation_urls,
-            "license_url": self.license.get("url"),
-            "id": self.id,
-            "authorization": self.auth,
-            "is_draft": True,
-            "initial_versions": [],
-        }
-        result = util.remove_null_values(result)
-        return result
+    def _to_json(self) -> dict:
+        return util.remove_null_values(self.__dict__)
 
-    def to_bytes(self) -> bytes:
-        """Utility function."""
-        return json.dumps(self.to_json()).encode()
+    def _to_bytes(self) -> bytes:
+        return json.dumps(self._to_json()).encode()
 
 
 class SearchResultModel:
-    """The model used for the SearchResult class."""
+    """The model used for the SearchResult class
+
+    Attributes:
+        slug (str): The slug of a project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
+        title (str): The title or name of the project
+        description (str): A short description of the project
+        client_side (str): The client side support of the project
+        server_side (str): The server side support of the project
+        project_type (str): The project type
+        downloads (int): The total number of downloads of the project
+        project_id (str): The ID of the project
+        author (str): The username of the project's author
+        versions (list[str]): A list of the minecraft versions supported by the project
+        follows (int): The total number of users following the project
+        date_created (str): The date the project was added to search
+        date_modified (str): The date the project was last modified
+        license (str): The SPDX license ID of the project
+        categories (list[str]): A list of categories that the project has
+        icon_url (str): The URL of the project's icon
+        color (str): The RGB color of the project, automatically generated from the project icon
+        display_categories (list[str]): A list of categories that the project has which are not secondary
+        latest_version (str): The latest version of minecraft that this project supports
+        gallery (list[str]): All gallery images attached to the project
+        featured_gallery (list[str]): The featured gallery image of the project
+
+    """
 
     def __init__(self) -> None:
-        self.slug: typing.Optional[str] = None
-        self.title: typing.Optional[str] = None
-        self.description: typing.Optional[str] = None
-        self.client_side: typing.Optional[str] = None
-        self.server_side: typing.Optional[str] = None
-        self.project_type: typing.Optional[str] = None
-        self.downloads: typing.Optional[int] = None
-        self.project_id: typing.Optional[str] = None
-        self.author = None
-        self.versions: typing.Optional[list[str]] = None
-        self.follows: typing.Optional[int] = None
+        self.slug: str | None = None
+        self.title: str | None = None
+        self.description: str | None = None
+        self.client_side: str | None = None
+        self.server_side: str | None = None
+        self.project_type: str | None = None
+        self.downloads: int | None = None
+        self.project_id: str | None = None
+        self.author: str | None = None
+        self.versions: list[str] | None = None
+        self.follows: int | None = None
         self.date_created = None
         self.date_modified = None
-        self.license: typing.Optional["projects.Project.License"] = None
-        self.categories: typing.Optional[list[str]] = None
-        self.icon_url: typing.Optional[str] = None
-        self.color: typing.Optional[str] = None
-        self.display_categories: typing.Optional[list] = None
-        self.latest_version = None
-        self.gallery = None
-        self.featured_gallery = None
+        self.license: str | None = None
+        self.categories: list[str] | None = None
+        self.icon_url: str | None = None
+        self.color: str | None = None
+        self.display_categories: list[str] | None = None
+        self.latest_version: list[str] | None = None
+        self.gallery: list[str] | None = None
+        self.featured_gallery: list[str] | None = None
 
     @staticmethod
-    def from_json(json_: dict) -> "SearchResultModel":
-        """Utility function."""
+    def _from_json(json_: dict) -> "SearchResultModel":
         result = SearchResultModel()
         result.slug = json_.get("slug")
         result.title = json_.get("title")
@@ -187,41 +237,35 @@ class SearchResultModel:
 
         return result
 
-    def to_json(self) -> dict:
-        """Utility function."""
-        result = {
-            "slug": self.slug,
-            "title": self.title,
-            "description": self.description,
-            "client_side": self.client_side,
-            "server_side": self.server_side,
-            "project_type": self.project_type,
-            "downloads": self.downloads,
-            "project_id": self.project_id,
-            "author": self.author,
-            "versions": self.versions,
-            "follows": self.follows,
-            "date_created": self.date_created,
-            "date_modified": self.date_modified,
-            "license": self.license,
-            "categories": self.categories,
-            "icon_url": self.icon_url,
-            "color": self.color,
-            "display_categories": self.display_categories,
-            "latest_version": self.latest_version,
-            "gallery": self.gallery,
-            "featured_gallery": self.featured_gallery,
-        }
-        result = util.remove_null_values(result)
-        return result
+    def _to_json(self) -> dict:
+        return util.remove_null_values(self.__dict__)
 
-    def to_bytes(self) -> bytes:
-        """Utility function."""
-        return json.dumps(self.to_json()).encode()
+    def _to_bytes(self) -> bytes:
+        return json.dumps(self._to_json()).encode()
 
 
 class VersionModel:
-    """The model used for the Version class."""
+    """The model used for the Version class
+
+    Attributes:
+        name (str): The name of this version
+        version_number (str): The version number. Ideally will follow semantic versioning
+        changelog (str): The changelog for this version
+        dependencies (list[Project.Dependency]): A list of specific versions of projects that this version depends on
+        game_versions (list[str]): A list of versions of Minecraft that this version supports
+        version_type (str): The release channel for this version
+        loaders (list[str]): The mod loaders that this version supports
+        featured (bool): Whether the version is featured or not
+        status (str): The version's status
+        requested_status (str): The version's requested status
+        files (list[Project.File]): A list of files avaliable for download for this version
+        project_id (str): The ID of the project this version is for
+        id (str): The ID of the version, encoded as base62 string
+        author_id (str): The ID of the author who published this version
+        date_published (str): When the version was published
+        downloads (int): The number of times this version has been downloaded
+
+    """
 
     def __init__(
         self,
@@ -233,12 +277,26 @@ class VersionModel:
         loaders: list[str],
         featured: bool,
         file_parts: list[str],
-        changelog: typing.Optional[str] = None,
-        status: typing.Optional[literals.version_status_literal] = None,
-        requested_status: typing.Optional[
-            literals.requested_version_status_literal
-        ] = None,
+        changelog: str | None = None,
+        status: literals.version_status_literal | None = None,
+        requested_status: literals.requested_version_status_literal | None = None,
     ) -> None:
+        """
+        Initializes a new instance of VersionModel
+
+        Args:
+            name (str): The name of this version
+            version_number (str): The version number. Ideally will follow semantic versioning
+            dependencies (list[projects.Project.Dependency]): A list of specific versions of projects that this version depends on
+            game_versions (list[str]): A list of versions of Minecraft that this version supports
+            version_type (version_type_literal): The release channel for this version
+            loaders (list[str]): The mod loaders that this version supports
+            featured (bool): Whether the version is featured or not
+            file_parts (list[str]): A list of files avaliable for download for this version
+            changelog (str, optional): The changelog for this version
+            status (version_status_literal, optional): The version's status
+            requested_status (requested_version_status_literal, optional): The version's requested status
+        """
         self.name = name
         self.version_number = version_number
         self.changelog = changelog
@@ -257,8 +315,7 @@ class VersionModel:
         self.downloads = None
 
     @staticmethod
-    def from_json(json_: dict) -> "VersionModel":
-        """Utility function."""
+    def _from_json(json_: dict) -> "VersionModel":
         result = VersionModel(
             json_.get("name"),  # type: ignore
             json_.get("version_number"),  # type: ignore
@@ -279,54 +336,48 @@ class VersionModel:
         result.downloads = json_.get("downloads")
         return result
 
-    def to_json(self) -> dict:
-        """Utility function."""
-        result = {
-            "name": self.name,
-            "version_number": self.version_number,
-            "changelog": self.changelog,
-            "dependencies": self.dependencies,
-            "game_versions": self.game_versions,
-            "version_type": self.version_type,
-            "loaders": self.loaders,
-            "featured": self.featured,
-            "status": self.status,
-            "requested_status": self.requested_status,
-            "file_parts": self.files,
-            "project_id": self.project_id,
-            "id": self.id,
-            "author_id": self.author_id,
-            "date_published": self.date_published,
-            "downloads": self.downloads,
-        }
-        result = util.remove_null_values(result)
-        return result
+    def _to_json(self) -> dict:
+        return util.remove_null_values(self.__dict__)
 
-    def to_bytes(self) -> bytes:
-        """Utility function."""
-        return json.dumps(self.to_json()).encode()
+    def _to_bytes(self) -> bytes:
+        return json.dumps(self._to_json()).encode()
 
 
 class UserModel:
-    """The model used for the User class."""
+    """The model used for the User class
+
+    Attributes:
+        username (str, optional): The user's username
+        id (str, optional): The user's ID
+        avatar_url (str, optional): The user's avatar URL
+        created (str, optional): The time at which the user was created
+        role (str, optional): The user's role
+        name (str, optional): The user's display name
+        email (str, optional): The user's email (only when your own is ever displayed)
+        bio (str, optional): A description of the user
+        payout_data (UNKNOWN, optional): Various data relating to the user's payouts status (you can only see your own)
+        github_id (int, optional): The user's GitHub ID
+        badges (list[str], optional): Any badges applicable to this user
+        These are currently unused and undisplayed, and as such are subject to change
+        auth (str, optional): Authentication token for the user
+    """
 
     def __init__(self) -> None:
-        self.username: typing.Optional[str] = None
-        self.id: typing.Optional[str] = None
-        self.avatar_url: typing.Optional[str] = None
-        self.created = None
-        self.role: typing.Optional[str] = None
-        self.name: typing.Optional[str] = None
-        self.email: typing.Optional[str] = None
-        self.bio: typing.Optional[str] = None
+        self.username: str | None = None
+        self.id: str | None = None
+        self.avatar_url: str | None = None
+        self.created: str | None = None
+        self.role: str | None = None
+        self.name: str | None = None
+        self.email: str | None = None
+        self.bio: str | None = None
         self.payout_data = None
-        self.github_id: typing.Optional[int] = None
-        self.badges: typing.Optional[list[str]] = None
-        self.auth: typing.Optional[str] = None
+        self.github_id: int | None = None
+        self.badges: list[str] | None = None
+        self.auth: str | None = None
 
     @staticmethod
-    def from_json(json_: dict) -> "UserModel":
-        """Utility function."""
+    def _from_json(json_: dict) -> "UserModel":
         result = UserModel()
         result.username = json_.get("username")
         result.id = json_.get("id")
@@ -343,25 +394,8 @@ class UserModel:
 
         return result
 
-    def to_json(self) -> dict:
-        """Utility function."""
-        result = {
-            "username": self.username,
-            "id": self.id,
-            "avatar_url": self.avatar_url,
-            "created": self.created,
-            "role": self.role,
-            "name": self.name,
-            "email": self.email,
-            "bio": self.bio,
-            "payout_data": self.payout_data,
-            "github_id": self.github_id,
-            "badges": self.badges,
-            "authorization": self.auth,
-        }
-        result = util.remove_null_values(result)
-        return result
+    def _to_json(self) -> dict:
+        return util.remove_null_values(self.__dict__)
 
-    def to_bytes(self) -> bytes:
-        """Utility function."""
-        return json.dumps(self.to_json()).encode()
+    def _to_bytes(self) -> bytes:
+        return json.dumps(self._to_json()).encode()
