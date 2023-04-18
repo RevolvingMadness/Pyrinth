@@ -31,7 +31,7 @@ class Team:
         Returns:
             (list[Project.TeamMember]): A list of team members
         """
-        return [Team.TeamMember._from_json(team_member) for team_member in self.members]
+        return [Team.TeamMember._from_json(team_member) for team_member in self.members]  # type: ignore
 
     @staticmethod
     def _from_json(list_: dict) -> "Team":

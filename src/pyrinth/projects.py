@@ -677,7 +677,7 @@ class Project:
 
         return True
 
-    def delete(self, auth=None) -> bool:
+    def delete(self, auth=None) -> typing.Literal[True]:
         """Deletes the project
 
         Args:
@@ -1269,66 +1269,31 @@ class Project:
             dependency_type (str): The type of the dependency
             id (str): The ID of the dependency
             dependency_option (str): The option for the dependency
-
         """
 
-        def __init__(
-            self, dependency_type: str, id_: str, dependency_option: str
-        ) -> None:
-            """
-            Initializes a Dependency object
-
-            Args:
-                dependency_type (str): The type of the dependency
-                id_ (str): The ID of the dependency
-                dependency_option (str): The option for the dependency
-            """
-            self.dependency_type = dependency_type
-            self.id = id_
-            if dependency_type == "project":
-                self.id = Project.get(self.id).get_id()
-            self.dependency_option = dependency_option
+        def __init__(self) -> None:
+            self.dependency_option: str | None = None
+            self.file_name: str | None = None
+            self.version_id: str | None = None
+            self.project_id: str | None = None
 
         def _to_json(self) -> dict:
-            result = self.__dict__
-            if self.dependency_type == "project":
-                result.update({"project_id": self.id})
-            elif self.dependency_type == "version":
-                result.update({"version_id": self.id})
-            return result
+            return self.__dict__
 
         @staticmethod
         def _from_json(json_: dict) -> "Project.Dependency":
-            dependency_type = "project"
-            id_ = json_.get("project_id")
-            if json_.get("version_id"):
-                dependency_type = "version"
-                id_ = json_.get("version_id")
-
-            result = Project.Dependency(dependency_type, id_, json_.get("dependency_type"))  # type: ignore
-
+            result = Project.Dependency()
+            result.version_id = json_.get("version_id")
+            result.project_id = json_.get("project_id")
+            result.dependency_option = json_.get("dependency_option")
+            result.file_name = json_.get("file_name")
             return result
 
-        def get_project(self) -> "Project":
-            """
-            Gets the project associated with the dependency
-
-            Returns:
-                (Project): The project associated with the dependency
-            """
-            return Project.get(self.id)
-
         def get_version(self) -> "Project.Version":
-            """
-            Gets the version associated with the dependency
-
-            Returns:
-                (Project.Version): The version associated with the dependency
-            """
-            if self.dependency_type == "version":
-                return Project.Version.get(self.id)
-            project = Project.get(self.id)
-            return project.get_latest_version()
+            id_ = self.project_id
+            if self.version_id:
+                id_ = self.version_id
+            return Project.Version.get(id_)  # type: ignore
 
         def is_required(self) -> bool:
             """

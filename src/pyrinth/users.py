@@ -2,7 +2,7 @@
 
 import datetime as dt
 import json
-
+import typing
 import requests as r
 
 import pyrinth.exceptions as exceptions
@@ -49,7 +49,7 @@ class User:
             response["all_time"], response["last_month"], response["payouts"]
         )
 
-    def withdraw_balance(self, amount: int) -> bool:
+    def withdraw_balance(self, amount: int) -> typing.Literal[True]:
         raw_response = r.post(
             f"https://api.modrinth.com/v2/user/{self.model.id}/payouts",
             headers={
@@ -74,7 +74,7 @@ class User:
 
         return True
 
-    def change_avatar(self, file_path) -> bool:
+    def change_avatar(self, file_path) -> typing.Literal[True]:
         raw_response = r.patch(
             f"https://api.modrinth.com/v2/user/{self.model.id}/icon",
             headers={"authorization": self.model.auth},  # type: ignore
