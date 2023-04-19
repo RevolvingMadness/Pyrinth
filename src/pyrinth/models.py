@@ -29,7 +29,7 @@ class ProjectModel:
         icon_url (str): The URL of the project's icon
         color (str): The RGB color of the project, automatically generated from the project icon
         id (str): The ID of the project, encoded as a base62 string
-        team (Team): The ID of the team that has ownership of this project
+        team (str): The ID of the team that has ownership of this project
         moderator_message: A message that a moderator sent regarding the project
         published (str): The date the project was published
         updated (str): The date the project was last updated
@@ -39,7 +39,7 @@ class ProjectModel:
         license (dict): The license of the project
         version_ids (list[str]): A list of version IDs of the project (will never be empty unless draft status)
         game_versions (list[str]): A list of all the game versions supported by the project
-        loaders (str): A list of all the loaders supported by the project
+        loaders (list[str]): A list of all the loaders supported by the project
         gallery (list[dict]): A list of images that have been uploaded to the project's gallery
         auth (str): The project's authorization token
     """
@@ -95,23 +95,23 @@ class ProjectModel:
         self.source_url = source_url
         self.wiki_url = wiki_url
         self.discord_url = discord_url
-        self.donation_urls: list[str] | None = None
+        self.donation_urls: list[dict] | None = None
         self.auth = auth
         self.id: str | None = None
         self.downloads: int | None = None
         self.icon_url: str | None = None
         self.color: str | None = None
-        self.team = None
+        self.team: str | None = None
         self.moderator_message = None
-        self.published = None
-        self.updated = None
-        self.approved = None
-        self.followers = None
-        self.status = None
-        self.version_ids = None
-        self.game_versions = None
-        self.loaders = None
-        self.gallery = None
+        self.published: str | None = None
+        self.updated: str | None = None
+        self.approved: str | None = None
+        self.followers: int | None = None
+        self.status: str | None = None
+        self.version_ids: list[str] | None = None
+        self.game_versions: list[str] | None = None
+        self.loaders: list[str] | None = None
+        self.gallery: list[dict] | None = None
 
     @staticmethod
     def _from_json(json_: dict) -> "ProjectModel":
@@ -287,7 +287,7 @@ class VersionModel:
         Args:
             name (str): The name of this version
             version_number (str): The version number. Ideally will follow semantic versioning
-            dependencies (list[projects.Project.Dependency]): A list of specific versions of projects that this version depends on
+            dependencies (list[Project.Dependency]): A list of specific versions of projects that this version depends on
             game_versions (list[str]): A list of versions of Minecraft that this version supports
             version_type (Literal["release", "beta", "alpha"]): The release channel for this version
             loaders (list[str]): The mod loaders that this version supports
@@ -347,18 +347,18 @@ class UserModel:
     """The model used for the User class
 
     Attributes:
-        username (str, optional): The user's username
-        id (str, optional): The user's ID
-        avatar_url (str, optional): The user's avatar URL
-        created (str, optional): The time at which the user was created
-        role (str, optional): The user's role
-        name (str, optional): The user's display name
-        email (str, optional): The user's email (only when your own is ever displayed)
-        bio (str, optional): A description of the user
+        username (str): The user's username
+        id (str): The user's ID
+        avatar_url (str): The user's avatar URL
+        created (str): The time at which the user was created
+        role (str): The user's role
+        name (str): The user's display name
+        email (str): The user's email (only when your own is ever displayed)
+        bio (str): A description of the user
         payout_data (, optional): Various data relating to the user's payouts status (you can only see your own)
-        github_id (int, optional): The user's GitHub ID
-        badges (list[str], optional): Any badges applicable to this user. These are currently unused and undisplayed, and as such are subject to change
-        auth (str, optional): Authentication token for the user
+        github_id (int): The user's GitHub ID
+        badges (list[str]): Any badges applicable to this user. These are currently unused and undisplayed, and as such are subject to change
+        auth (str): Authentication token for the user
     """
 
     def __init__(self) -> None:

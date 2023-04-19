@@ -19,23 +19,23 @@ class Project:
     """Projects can be mods or modpacks and are created by users
 
     Attributes:
-        model (ProjectModel): The model of the project
+        model (ProjectModel): The project's model
     """
 
     def __init__(self, project_model: "models.ProjectModel") -> None:
         """
         Args:
-            project_model (ProjectModel): The model associated with the project
+            project_model (ProjectModel): The project's model
         """
         if isinstance(project_model, dict):
             project_model = models.ProjectModel._from_json(project_model)
         self.model = project_model
 
     def get_donations(self) -> list["Project.Donation"]:
-        """Gets this project's donations
+        """Gets the project's donations
 
         Returns:
-            (list[Donation]): The donations that this project has
+            (list[Donation]): The project's donations
         """
         return util.list_to_object(Project.Donation, self.model.donation_urls)
 
@@ -67,11 +67,11 @@ class Project:
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
-                    "The requested project was not found or no authorization to see this project"
+                    "The requested project wasn't found or no authorization to see this project"
                 )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         response.update({"authorization": auth})
         return Project(response)
 
@@ -95,7 +95,7 @@ class Project:
         )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return [Project(project) for project in response]
 
     def get_latest_version(
@@ -109,11 +109,11 @@ class Project:
         """Gets this project's latest version
 
         Args:
-            loaders (Optional[list[str]]): The loaders filter. Defaults to None
-            game_versions (Optional[list[str]]): The game versions filter. Defaults to None
-            featured (Optional[bool]): The is featured filter. Defaults to None
-            types (Optional[Literal["release", "beta", "alpha"]]): The types filter. Defaults to None
-            auth (Optional[str]): The authorization token. Defaults to None
+            loaders (list[str], optional): The loaders filter. Defaults to None
+            game_versions (list[str], optional): The game versions filter. Defaults to None
+            featured (bool, optional): The is featured filter. Defaults to None
+            types (Literal["release", "beta", "alpha"], optional): The types filter. Defaults to None
+            auth (str, optional): The authorization token. Defaults to None
 
         Returns:
             (Project.Version): The project's latest version
@@ -136,7 +136,7 @@ class Project:
         """Checks if this project is client side
 
         Returns:
-            (bool): Whether or not this project is client side
+            (bool): Whether this project is client side
         """
         return True if self.model.client_side == "required" else False
 
@@ -144,7 +144,7 @@ class Project:
         """Checks if this project is server side
 
         Returns:
-            (bool): Whether or not this project is server side
+            (bool): Whether this project is server side
         """
         return True if self.model.server_side == "required" else False
 
@@ -191,13 +191,14 @@ class Project:
     def get_specific_version(
         self, semantic_version: str
     ) -> typing.Optional["Project.Version"]:
-        """Gets a specific project version based on the semantic version
+        """Gets a specific version based on the semantic version
 
         Args:
             semantic_version (str): The semantic version to search for
 
         Returns:
-            (Project.Version, optional): The version that was found using the semantic version
+            (Project.Version): The version that was found using the semantic version
+            (None): No version was found with that semantic version
         """
         versions = self.get_versions()
         if versions:
@@ -238,11 +239,15 @@ class Project:
         """Gets project versions based on filters
 
         Args:
-            loaders (Optional[list[str]]): The types of loaders to filter for
-            game_versions (Optional[list[str]]): The game versions to filter for
-            featured (Optional[bool]): Allows to filter for featured or non-featured versions only
-            types (Optional[Literal["release", "beta", "alpha"]]): The type of version
+            loaders (list[str], optional): The types of loaders to filter for
+            game_versions (list[str], optional): The game versions to filter for
+            featured (bool, optional): Allows to filter for featured or non-featured versions only
+            types (Literal["release", "beta", "alpha"], optional): The release type of version
             auth (str, optional): An optional authorization token to use when getting the project versions
+
+        Raises:
+            NotFoundError: The requested project wasn't found or no authorization to see this project
+            InvalidRequestError: Invalid request
 
         Returns:
             (list[Project.Version]): The versions that were found
@@ -264,13 +269,13 @@ class Project:
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
-                    "The requested project was not found or no authorization to see this project"
+                    "The requested project wasn't found or no authorization to see this project"
                 )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
 
         versions = [
             self.Version(models.VersionModel._from_json(version))
@@ -293,15 +298,15 @@ class Project:
         game_versions: list[str] | None = None,
         featured: bool | None = None,
         types: literals.version_type_literal | None = None,
-        auth=None,
+        auth: str | None = None,
     ) -> "Project.Version":
         """Gets the oldest project version
 
         Args:
-            loaders (Optional[list[str]]): The types of loaders to filter for
-            game_versions (Optional[list[str]]): The game versions to filter for
-            featured (Optional[bool]): Allows to filter for featured or non-featured versions only
-            types (Optional[Literal["release", "beta", "alpha"]]): The type of version
+            loaders (list[str], optional): The types of loaders to filter for
+            game_versions (list[str], optional): The game versions to filter for
+            featured (bool, optional): Allows to filter for featured or non-featured versions only
+            types (Literal["release", "beta", "alpha"], optional): The type of version
             auth (str, optional): An optional authorization token to use when getting the project versions
 
         Returns:
@@ -342,6 +347,10 @@ class Project:
         Args:
             id_ (str): The ID of the version
 
+        Raises:
+            NotFoundError: The requested version wasn't found or no authorization to see this version
+            InvalidRequestError: Invalid request
+
         Returns:
             (Project.Version): The version that was found
         """
@@ -350,21 +359,25 @@ class Project:
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
-                    "The requested project was not found or no authorization to see this project"
+                    "The requested version wasn't found or no authorization to see this version"
                 )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return Project.Version(models.VersionModel._from_json(response))
 
-    def create_version(self, version_model, auth=None) -> int:
+    def create_version(self, version_model, auth: str | None = None) -> int:
         """Creates a new version on the project
 
         Args:
-            auth (str): The authorization token to use when creating the version
+            auth (str, optional): The authorization token to use when creating the version
             version_model (VersionModel): The model to use when creating the version
+
+        Raises:
+            NoAuthorizationError: No authorization to create this version
+            InvalidRequestError: Invalid request
 
         Returns:
             (int): Whether creating the version was successful
@@ -394,15 +407,19 @@ class Project:
 
         return True
 
-    def change_icon(self, file_path: str, auth=None) -> int:
+    def change_icon(self, file_path: str, auth: str | None = None) -> bool:
         """Changes the project icon
 
         Args:
             file_path (str): The file path of the image to use for the new project icon
-            auth (str): The authorization token to use when changing the project icon
+            auth (str, optional): The authorization token to use when changing the project icon
+
+        Raises:
+            InvalidParamError: Invalid input for new icon
+            InvalidRequestError: Invalid request
 
         Returns:
-            (int): Whether the project icon change was successful
+            (bool): Whether the project icon change was successful
         """
         raw_response = r.patch(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/icon",
@@ -421,14 +438,19 @@ class Project:
 
         return True
 
-    def delete_icon(self, auth=None) -> int:
+    def delete_icon(self, auth: str | None = None) -> bool:
         """Deletes the project icon
 
         Args:
-            auth (str): The authorization token to use when deleting the project icon
+            auth (str, optional): The authorization token to use when deleting the project icon
+
+        Raises:
+            InvalidParamError: Invalid input
+            NoAuthorizationError: No authorization to edit this project
+            InvalidRequestError: Invalid request
 
         Returns:
-            (int): Whether the project icon deletion was successful
+            (bool): Whether the project icon deletion was successful
         """
         raw_response = r.delete(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/icon",
@@ -450,15 +472,22 @@ class Project:
 
         return True
 
-    def add_gallery_image(self, image: "Project.GalleryImage", auth=None) -> int:
+    def add_gallery_image(
+        self, image: "Project.GalleryImage", auth: str | None = None
+    ) -> bool:
         """Adds a gallery image to the project
 
         Args:
-            auth (str): The authorization token to use when adding the gallery image
             image (Project.GalleryImage): The gallery image to add
+            auth (str, optional): The authorization token to use when adding the gallery image
+
+        Raises:
+            NoAuthorizationError: No authorization to create a gallery image
+            NotFoundError: The requested project wasn't found or no authorization to see this project
+            InvalidRequestError: Invalid request
 
         Returns:
-            (int): If the gallery image addition was successful
+            (bool): If the gallery image addition was successful
         """
         raw_response = r.post(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
@@ -476,7 +505,7 @@ class Project:
 
             case 404:
                 raise exceptions.NotFoundError(
-                    "The requested project was not found or no authorization to see this project"
+                    "The requested project wasn't found or no authorization to see this project"
                 )
 
         if not raw_response.ok:
@@ -491,8 +520,8 @@ class Project:
         title: str | None = None,
         description: str | None = None,
         ordering: int | None = None,
-        auth=None,
-    ) -> int:
+        auth: str | None = None,
+    ) -> bool:
         """Modifies a gallery image
 
         Args:
@@ -501,10 +530,15 @@ class Project:
             title (str, optional): New title of the image
             description (str, optional): New description of the image
             ordering (int, optional): New ordering of the image
-            auth (optional): Authentication token when modifying the gallery image
+            auth (str, optional): Authentication token when modifying the gallery image
+
+        Raises:
+            NoAuthorizationError: No authorization to edit this gallery image
+            NotFoundError: The requested project wasn't found or no authorization to see this project
+            InvalidRequestError: Invalid request
 
         Returns:
-            (int): Whether the gallery image modification was successful
+            (bool): Whether the gallery image modification was successful
         """
         modified_json = {
             "url": url,
@@ -531,7 +565,7 @@ class Project:
 
             case 404:
                 raise exceptions.NotFoundError(
-                    "The requested project was not found or no authorization to see this project"
+                    "The requested project wasn't found or no authorization to see this project"
                 )
 
         if not raw_response.ok:
@@ -539,15 +573,20 @@ class Project:
 
         return True
 
-    def delete_gallery_image(self, url: str, auth=None) -> int:
+    def delete_gallery_image(self, url: str, auth: str | None = None) -> bool:
         """Deletes a gallery image
 
         Args:
             url (str): URL link of the image to delete
-            auth (optional): Authentication token to use when deleting the gallery image
+            auth (str, optional): Authentication token to use when deleting the gallery image
+
+        Raises:
+            InvalidParamError: Invalid URL or project specified
+            NoAuthorizationError: No authorization to delete this gallery image
+            InvalidRequestError: Invalid request
 
         Returns:
-            (int): Whether the gallery image deletion was successful
+            (bool): Whether the gallery image deletion was successful
         """
         if "-raw" in url:
             raise exceptions.InvalidParamError(
@@ -595,8 +634,8 @@ class Project:
         requested_status: literals.requested_project_status_literal | None = None,
         moderation_message: str | None = None,
         moderation_message_body: str | None = None,
-        auth=None,
-    ) -> int:
+        auth: str | None = None,
+    ) -> bool:
         """Modifies the project
 
         Args:
@@ -618,10 +657,16 @@ class Project:
             requested_status (Literal["approved", "archived", "unlisted", "private", "draft"], optional): The requested status when submitting for review or scheduling the project for release
             moderation_message (str, optional): The title of the moderators' message for the project
             moderation_message_body (str, optional): The body of the moderators' message for the project
-            auth (optional): Authentication token to use when modifying the project
+            auth (str, optional): Authentication token to use when modifying the project
+
+        Raises:
+            InvalidParamError: Please specify at least 1 optional argument
+            NoAuthorizationError: No authorization to modify this project
+            NotFoundError: The requested project wasn't found or no authorization to see this project
+            InvalidRequestError: Invalid request
 
         Returns:
-            (int): Whether the project modification was successful
+            (bool): Whether the project modification was successful
         """
         modified_json = {
             "slug": slug,
@@ -648,7 +693,7 @@ class Project:
 
         if not modified_json:
             raise exceptions.InvalidParamError(
-                "Please specify at least 1 optional argument."
+                "Please specify at least 1 optional argument"
             )
 
         raw_response = r.patch(
@@ -669,7 +714,7 @@ class Project:
 
             case 404:
                 raise exceptions.NotFoundError(
-                    "The requested project was not found or no authorization to see this project"
+                    "The requested project wasn't found or no authorization to see this project"
                 )
 
         if not raw_response.ok:
@@ -677,11 +722,16 @@ class Project:
 
         return True
 
-    def delete(self, auth=None) -> typing.Literal[True]:
+    def delete(self, auth: str | None = None) -> typing.Literal[True]:
         """Deletes the project
 
         Args:
-            auth (optional): Authentication token to use when deleting the project
+            auth (str, optional): Authentication token to use when deleting the project
+
+        Raises:
+            NotFoundError: The requested project wasn't found
+            NoAuthorizationError: No authorization to delete this project
+            InvalidRequestError: Invalid request
 
         Returns:
             (bool): Whether the project deletion was successful
@@ -709,6 +759,10 @@ class Project:
     def get_dependencies(self) -> list["Project"]:
         """Gets the dependencies of the project
 
+        Raises:
+            NotFoundError: The requested project wasn't found or no authorization to see this project
+            InvalidRequestError: Invalid request
+
         Returns:
             (list[Project]): The dependencies of the project
         """
@@ -720,13 +774,13 @@ class Project:
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
-                    "The requested project was not found or no authorization to see this project"
+                    "The requested project wasn't found or no authorization to see this project"
                 )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return [Project(dependency) for dependency in response.get("projects")]
 
     @staticmethod
@@ -737,7 +791,7 @@ class Project:
         offset: int = 0,
         limit: int = 10,
         filters: list[str] | None = None,
-    ) -> list["SearchResult"]:
+    ) -> list["Project.SearchResult"]:
         """Searches for projects
 
         Args:
@@ -747,6 +801,10 @@ class Project:
             offset (int, optional): The offset into the search. Skip this number of results
             limit (int, optional): The number of results returned by the search
             filters (list[str], optional): A list of filters relating to the properties of a project. Use filters when there isn't an available facet for your needs. [More information](https://docs.meilisearch.com/reference/features/filtering.html)
+
+        Raises:
+            NotFoundError: The requested project wasn't found or no authorization to see this project
+            InvalidRequestError: Invalid request
 
         Returns:
             (list[Project.SearchResult]): The project search results
@@ -767,9 +825,7 @@ class Project:
         raw_response = r.get(
             "https://api.modrinth.com/v2/search", params=params, timeout=60
         )
-        if not raw_response.ok:
-            raise exceptions.InvalidRequestError(raw_response.text)
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return [
             Project.SearchResult(models.SearchResultModel._from_json(project))
             for project in response.get("hits")
@@ -788,13 +844,13 @@ class Project:
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
-                    "The requested project was not found or no authorization to see this project"
+                    "The requested project wasn't found or no authorization to see this project"
                 )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
 
         return [
             teams.Team.TeamMember._from_json(team_member) for team_member in response
@@ -802,6 +858,10 @@ class Project:
 
     def get_team(self) -> "teams.Team":
         """Gets the project's team
+
+        Raises:
+            NotFoundError: The requested project wasn't found or no authorization to see this project
+            InvalidRequestError: Invalid request
 
         Returns:
             (Team): The project's team
@@ -813,13 +873,13 @@ class Project:
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
-                    "The requested project was not found or no authorization to see this project"
+                    "The requested project wasn't found or no authorization to see this project"
                 )
 
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
 
         return teams.Team._from_json(response)
 
@@ -872,6 +932,10 @@ class Project:
             Args:
                 id_ (str): The ID of the version
 
+            Raises:
+                NotFoundError: The requested version wasn't found or no authorization to see this version
+                InvalidRequestError: Invalid request
+
             Returns:
                 (Project.Version): The version that was found
             """
@@ -881,11 +945,11 @@ class Project:
             match raw_response.status_code:
                 case 404:
                     raise exceptions.NotFoundError(
-                        "The requested version was not found or no authorization to see this version"
+                        "The requested version wasn't found or no authorization to see this version"
                     )
             if not raw_response.ok:
                 raise exceptions.InvalidRequestError(raw_response.text)
-            response = json.loads(raw_response.content)
+            response = raw_response.json()
             return Project.Version(models.VersionModel._from_json(response))
 
         @staticmethod
@@ -901,6 +965,10 @@ class Project:
                 algorithm (Literal["sha512", "sha1"]): The algorithm of the hash
                 multiple (bool): Whether to return multiple results when looking for this hash
 
+            Raises:
+                NotFoundError: The requested version file wasn't found or no authorization to see this version
+                InvalidRequestError: Invalid request
+
             Returns:
                 (Project.Version): The version that was found
             """
@@ -912,11 +980,11 @@ class Project:
             match raw_response.status_code:
                 case 404:
                     raise exceptions.NotFoundError(
-                        "The requested version file was not found or no authorization to see this version"
+                        "The requested version file wasn't found or no authorization to see this version"
                     )
             if not raw_response.ok:
                 raise exceptions.InvalidRequestError(raw_response.text)
-            response = json.loads(raw_response.content)
+            response = raw_response.json()
             if isinstance(response, list):
                 return [
                     Project.Version(models.VersionModel._from_json(version))
@@ -938,6 +1006,11 @@ class Project:
                 algorithm (Literal["sha512", "sha1"]): The algorithm of the hash
                 version_id (bool): Version ID to delete the version from, if multiple files of the same hash exist
                 auth (str): The authorization token to use when deleting the file from its hash
+
+            Raises:
+                NotFoundError: The requested version wasn't found
+                NoAuthorizationError: No authorization to delete this file
+                InvalidRequestError: Invalid request
 
             Returns:
                 (bool): If the file deletion was successful

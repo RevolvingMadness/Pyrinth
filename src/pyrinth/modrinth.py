@@ -1,5 +1,3 @@
-"""The main Modrinth class used for anything modrinth related."""
-
 import json
 
 import requests as r
@@ -9,8 +7,6 @@ import pyrinth.projects as projects
 
 
 class Modrinth:
-    """The main Modrinth class used for anything modrinth related."""
-
     @staticmethod
     def project_exists(id_: str) -> bool:
         """Checks if a project exists
@@ -33,7 +29,7 @@ class Modrinth:
                 raise exceptions.NotFoundError("The requested project was not found")
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return bool(response.get("id"))
 
     @staticmethod
@@ -56,7 +52,7 @@ class Modrinth:
         )
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return [projects.Project(project) for project in response]
 
     class Statistics:
@@ -72,7 +68,7 @@ class Modrinth:
 
         def __init__(self) -> None:
             raw_response = r.get("https://api.modrinth.com/v2/statistics", timeout=60)
-            response = json.loads(raw_response.content)
+            response = raw_response.json()
             self.authors: int = response.get("authors")
             self.files: int = response.get("files")
             self.projects: int = response.get("projects")

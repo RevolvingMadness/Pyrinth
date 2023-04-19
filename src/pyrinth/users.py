@@ -43,7 +43,7 @@ class User:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
 
         return User.PayoutHistory(
             response["all_time"], response["last_month"], response["payouts"]
@@ -158,7 +158,7 @@ class User:
             raise exceptions.InvalidRequestError(raw_response.text)
 
         followed_projects = []
-        projects_ = json.loads(raw_response.content)
+        projects_ = raw_response.json()
         for project in projects_:
             followed_projects.append(projects_.Project(project))
 
@@ -189,7 +189,7 @@ class User:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return [User.Notification(notification) for notification in response]
 
     def get_amount_of_projects(self) -> int:
@@ -254,7 +254,7 @@ class User:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return [projects.Project(project) for project in response]
 
     def follow_project(self, id_: str) -> int:
@@ -382,7 +382,7 @@ class User:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
 
-        response = json.loads(raw_response.content)
+        response = raw_response.json()
         return [User.get(user.get("username")) for user in response]
 
     class Notification:
@@ -408,3 +408,6 @@ class User:
             self.all_time = all_time
             self.last_month = last_month
             self.payouts = payouts
+
+        def __repr__(self) -> str:
+            return f"PayoutHistory: {self.all_time}"
