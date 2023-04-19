@@ -16,7 +16,3 @@ private*
 **/__pycache__
 
 **/*.egg-info
-
-# Ignore MkDocs
-mkdocs.yml
-docs/

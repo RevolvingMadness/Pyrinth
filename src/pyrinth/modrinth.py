@@ -44,7 +44,7 @@ class Modrinth:
             count (int, optional): The number of random projects to return
 
         Raises:
-            InvalidRequestError: Invalid request
+            (src.pyrinth.exceptions.InvalidRequestError): Invalid request
 
         Returns:
             (list[Project]): The projects that were randomly found

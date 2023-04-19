@@ -1,4 +1,4 @@
-"""User projects."""
+"""Projects can be mods or modpacks and are created by users"""
 
 import datetime as dt
 import json
@@ -112,7 +112,7 @@ class Project:
             loaders (Optional[list[str]]): The loaders filter. Defaults to None
             game_versions (Optional[list[str]]): The game versions filter. Defaults to None
             featured (Optional[bool]): The is featured filter. Defaults to None
-            types (Optional[literals.version_type_literal]): The types filter. Defaults to None
+            types (Optional[Literal["release", "beta", "alpha"]]): The types filter. Defaults to None
             auth (Optional[str]): The authorization token. Defaults to None
 
         Returns:
@@ -241,7 +241,7 @@ class Project:
             loaders (Optional[list[str]]): The types of loaders to filter for
             game_versions (Optional[list[str]]): The game versions to filter for
             featured (Optional[bool]): Allows to filter for featured or non-featured versions only
-            types (Optional[version_type_literal]): The type of version
+            types (Optional[Literal["release", "beta", "alpha"]]): The type of version
             auth (str, optional): An optional authorization token to use when getting the project versions
 
         Returns:
@@ -301,7 +301,7 @@ class Project:
             loaders (Optional[list[str]]): The types of loaders to filter for
             game_versions (Optional[list[str]]): The game versions to filter for
             featured (Optional[bool]): Allows to filter for featured or non-featured versions only
-            types (Optional[version_type_literal]): The type of version
+            types (Optional[Literal["release", "beta", "alpha"]]): The type of version
             auth (str, optional): An optional authorization token to use when getting the project versions
 
         Returns:
@@ -614,8 +614,8 @@ class Project:
             discord_url (str, optional): An optional invite link to the project's discord
             license_id (str, optional): The SPDX license ID of a project
             license_url (str, optional): The URL to this license
-            status (literals.project_status_literal, optional): The status of the project
-            requested_status (literals.requested_project_status_literal, optional): The requested status when submitting for review or scheduling the project for release
+            status (Literal["approved", "archived", "rejected", "draft", "unlisted", "processing", "withheld", "scheduled", "private", "unknown"], optional): The status of the project
+            requested_status (Literal["approved", "archived", "unlisted", "private", "draft"], optional): The requested status when submitting for review or scheduling the project for release
             moderation_message (str, optional): The title of the moderators' message for the project
             moderation_message_body (str, optional): The body of the moderators' message for the project
             auth (optional): Authentication token to use when modifying the project
@@ -743,7 +743,7 @@ class Project:
         Args:
             query (str, optional): The query to search for
             facets (list[list[str]], optional): The recommended way of filtering search results. [Learn more about using facets](https://docs.modrinth.com/docs/tutorials/api_search)
-            index (literals.index_literal, optional): The sorting method used for sorting search results
+            index (Literal["relevance", "downloads", "follows", "newest", "updated"], optional): The sorting method used for sorting search results
             offset (int, optional): The offset into the search. Skip this number of results
             limit (int, optional): The number of results returned by the search
             filters (list[str], optional): A list of filters relating to the properties of a project. Use filters when there isn't an available facet for your needs. [More information](https://docs.meilisearch.com/reference/features/filtering.html)
@@ -898,7 +898,7 @@ class Project:
 
             Args:
                 hash_ (str): The hash of the file, considering its byte content, and encoded in hexadecimal
-                algorithm (sha_algorithm_literal): The algorithm of the hash
+                algorithm (Literal["sha512", "sha1"]): The algorithm of the hash
                 multiple (bool): Whether to return multiple results when looking for this hash
 
             Returns:
@@ -930,12 +930,12 @@ class Project:
             hash_: str,
             version_id: str,
             algorithm: literals.sha_algorithm_literal = "sha1",
-        ):
+        ) -> typing.Literal[True]:
             """Deletes a file from its hash
 
             Args:
                 hash_ (str): The hash of the file, considering its byte content, and encoded in hexadecimal
-                algorithm (sha_algorithm_literal): The algorithm of the hash
+                algorithm (Literal["sha512", "sha1"]): The algorithm of the hash
                 version_id (bool): Version ID to delete the version from, if multiple files of the same hash exist
                 auth (str): The authorization token to use when deleting the file from its hash
 

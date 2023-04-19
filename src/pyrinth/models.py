@@ -23,7 +23,7 @@ class ProjectModel:
         source_url (str): An optional link to the source code of the project
         wiki_url (str): An optional link to the project's wiki page or other relevant information
         discord_url (str): An optional invite link to the project's discord
-        donation_urls (list[Project.Donation]): A list of donations for the project
+        donation_urls (list[dict]): A list of donations for the project
         project_type (str): The project type
         downloads (int): The total number of downloads of the project
         icon_url (str): The URL of the project's icon
@@ -36,11 +36,11 @@ class ProjectModel:
         approved (str): The date of the project's status was set to approved or unlisted
         followers (int): The total number of users following the project
         status (str): The status of the project
-        license (Project.License): The license of the project
+        license (dict): The license of the project
         version_ids (list[str]): A list of version IDs of the project (will never be empty unless draft status)
         game_versions (list[str]): A list of all the game versions supported by the project
         loaders (str): A list of all the loaders supported by the project
-        gallery (list[Project.GalleryImage]): A list of images that have been uploaded to the project's gallery
+        gallery (list[dict]): A list of images that have been uploaded to the project's gallery
         auth (str): The project's authorization token
     """
 
@@ -251,14 +251,14 @@ class VersionModel:
         name (str): The name of this version
         version_number (str): The version number. Ideally will follow semantic versioning
         changelog (str): The changelog for this version
-        dependencies (list[Project.Dependency]): A list of specific versions of projects that this version depends on
+        dependencies (list[dict]): A list of specific versions of projects that this version depends on
         game_versions (list[str]): A list of versions of Minecraft that this version supports
         version_type (str): The release channel for this version
         loaders (list[str]): The mod loaders that this version supports
         featured (bool): Whether the version is featured or not
         status (str): The version's status
         requested_status (str): The version's requested status
-        files (list[Project.File]): A list of files avaliable for download for this version
+        files (list[dict]): A list of files avaliable for download for this version
         project_id (str): The ID of the project this version is for
         id (str): The ID of the version, encoded as base62 string
         author_id (str): The ID of the author who published this version
@@ -289,13 +289,13 @@ class VersionModel:
             version_number (str): The version number. Ideally will follow semantic versioning
             dependencies (list[projects.Project.Dependency]): A list of specific versions of projects that this version depends on
             game_versions (list[str]): A list of versions of Minecraft that this version supports
-            version_type (version_type_literal): The release channel for this version
+            version_type (Literal["release", "beta", "alpha"]): The release channel for this version
             loaders (list[str]): The mod loaders that this version supports
             featured (bool): Whether the version is featured or not
             file_parts (list[str]): A list of files avaliable for download for this version
             changelog (str, optional): The changelog for this version
-            status (version_status_literal, optional): The version's status
-            requested_status (requested_version_status_literal, optional): The version's requested status
+            status (Literal["listed", "archived", "draft", "unlisted", "scheduled", "unknown"], optional): The version's status
+            requested_status (Literal["listed", "archived", "draft", "unlisted"], optional): The version's requested status
         """
         self.name = name
         self.version_number = version_number
@@ -355,10 +355,9 @@ class UserModel:
         name (str, optional): The user's display name
         email (str, optional): The user's email (only when your own is ever displayed)
         bio (str, optional): A description of the user
-        payout_data (UNKNOWN, optional): Various data relating to the user's payouts status (you can only see your own)
+        payout_data (, optional): Various data relating to the user's payouts status (you can only see your own)
         github_id (int, optional): The user's GitHub ID
-        badges (list[str], optional): Any badges applicable to this user
-        These are currently unused and undisplayed, and as such are subject to change
+        badges (list[str], optional): Any badges applicable to this user. These are currently unused and undisplayed, and as such are subject to change
         auth (str, optional): Authentication token for the user
     """
 
