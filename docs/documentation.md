@@ -1,9 +1,14 @@
 # Documentation
 
 :::src.pyrinth.exceptions
+    options:
+        show_source: false
 ---
 
 :::src.pyrinth.models
+    options:
+        show_source: false
+
 ---
 
 :::src.pyrinth.modrinth
