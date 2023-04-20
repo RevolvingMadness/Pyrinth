@@ -9,12 +9,6 @@ class Team:
         members (list[dict]): A list of team members
         id (str): The ID of the team
 
-    Methods:
-        get_members: Get a list of team members
-        _from_json: Create a Team object from a JSON dictionary
-        get: Get a team by its ID
-        get_multiple: Get multiple teams by their IDs
-
     """
 
     def __init__(self) -> None:
