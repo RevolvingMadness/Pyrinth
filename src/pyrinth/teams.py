@@ -67,7 +67,7 @@ class Team:
             self.ordering = ordering
 
         def __repr__(self) -> str:
-            return f"Team Member"
+            return "Team Member"
 
         def get_user(self) -> "users.User":
             """Gets the user associated with the team member
