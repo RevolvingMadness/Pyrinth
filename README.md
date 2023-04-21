@@ -154,6 +154,8 @@ Discord Server: Coming Soon!
   - [ ] Report a project, user, or version
   - [x] Various statistics about this Modrinth instance
 
+## Documentation
+You can find the documentation [here](revolvingmadness.github.io/Pyrinth)
 
 
 [contributors-shield]: https://img.shields.io/github/contributors/RevolvingMadness/Pyrinth.svg?style=for-the-badge
