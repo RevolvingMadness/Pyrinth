@@ -117,8 +117,8 @@ Discord Server: Coming Soon!
   - [x] Get multipe versions
   - [ ] Add files to version
 - Version Files
-  - [ ] Get version from hash
-  - [ ] Delete a file from its hash
+  - [x] Get version from hash
+  - [x] Delete a file from its hash
   - [ ] Latest version of a project from a has, loader(s), and game version(s)
   - [ ] Get versions from hashes
   - [ ] Latest versions multiple project from hashes, loader(s), and game version(s)
