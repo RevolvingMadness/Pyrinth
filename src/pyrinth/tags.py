@@ -5,7 +5,8 @@ import pyrinth.exceptions as exceptions
 
 class Tag:
     @staticmethod
-    def get_categories() -> list["Tag.Category"]:
+    @property
+    def categories() -> list["Tag.Category"]:
         """
         Gets a list of tag categories
 
@@ -32,7 +33,8 @@ class Tag:
         ]
 
     @staticmethod
-    def get_loaders() -> list["Tag.Loader"]:
+    @property
+    def loaders() -> list["Tag.Loader"]:
         """
         Gets a list of tag loaders
 
@@ -56,7 +58,8 @@ class Tag:
         ]
 
     @staticmethod
-    def get_game_versions() -> list["Tag.GameVersion"]:
+    @property
+    def game_versions() -> list["Tag.GameVersion"]:
         """
         Gets a list of tag game versions
 
@@ -83,7 +86,8 @@ class Tag:
         ]
 
     @staticmethod
-    def get_licenses() -> list["Tag.License"]:
+    @property
+    def licenses() -> list["Tag.License"]:
         """
         Gets a list of tag licenses
 
@@ -102,7 +106,8 @@ class Tag:
         return [Tag.License(json.get("short"), json.get("name")) for json in response]
 
     @staticmethod
-    def get_donation_platforms() -> list["Tag.DonationPlatform"]:
+    @property
+    def donation_platforms() -> list["Tag.DonationPlatform"]:
         """
         Gets a list of tag donation platforms
 
@@ -126,7 +131,8 @@ class Tag:
         ]
 
     @staticmethod
-    def get_report_types() -> list[str]:
+    @property
+    def report_types() -> list[str]:
         """
         Gets a list of tag report types
 

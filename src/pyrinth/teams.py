@@ -18,7 +18,8 @@ class Team:
         self.members = None
         self.id = None
 
-    def get_members(self) -> list["Team.TeamMember"]:
+    @property
+    def members(self) -> list["Team.TeamMember"]:
         """
         Gets a list of team members
 
@@ -69,7 +70,8 @@ class Team:
         def __repr__(self) -> str:
             return "Team Member"
 
-        def get_user(self) -> "users.User":
+        @property
+        def user(self) -> "users.User":
             """Gets the user associated with the team member
 
             Returns:

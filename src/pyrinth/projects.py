@@ -31,7 +31,8 @@ class Project:
             project_model = models.ProjectModel._from_json(project_model)
         self.model = project_model
 
-    def get_donations(self) -> list["Project.Donation"]:
+    @property
+    def donations(self) -> list["Project.Donation"]:
         """Gets the project's donations
 
         Returns:
@@ -122,7 +123,8 @@ class Project:
 
         return versions[0]
 
-    def get_gallery(self) -> list["Project.GalleryImage"]:
+    @property
+    def gallery(self) -> list["Project.GalleryImage"]:
         """Gets the project's gallery
 
         Returns:
@@ -148,7 +150,8 @@ class Project:
         """
         return True if self.model.server_side == "required" else False
 
-    def get_downloads(self) -> int:
+    @property
+    def downloads(self) -> int:
         """Gets the number of downloads this project has
 
         Returns:
@@ -156,7 +159,8 @@ class Project:
         """
         return self.model.downloads  # type: ignore
 
-    def get_categories(self) -> list[str]:
+    @property
+    def categories(self) -> list[str]:
         """Gets this projects categories
 
         Returns:
@@ -164,7 +168,8 @@ class Project:
         """
         return self.model.categories
 
-    def get_additional_categories(self) -> list[str]:
+    @property
+    def additional_categories(self) -> list[str]:
         """Gets this projects additional categories
 
         Returns:
@@ -172,15 +177,17 @@ class Project:
         """
         return self.model.additional_categories  # type: ignore
 
-    def get_all_categories(self) -> list[str]:
+    @property
+    def all_categories(self) -> list[str]:
         """Gets this projects categories and additional categories
 
         Returns:
             (list[str]): The categories and additional categories associated with this project
         """
-        return self.get_categories() + self.get_additional_categories()
+        return self.categories + self.additional_categories
 
-    def get_license(self) -> "Project.License":
+    @property
+    def license(self) -> "Project.License":
         """Gets this project license
 
         Returns:
@@ -215,15 +222,15 @@ class Project:
             recursive (bool): Whether to download dependencies. Defaults to False
         """
         latest = self.get_latest_version()
-        files = latest.get_files()
+        files = latest.files
         for file in files:
             file_content = r.get(file.url).content
             open(file.name, "wb").write(file_content)
 
         if recursive:
-            dependencies = latest.get_dependencies()
+            dependencies = latest.dependencies
             for dep in dependencies:
-                files = dep.get_version().get_files()
+                files = dep.version.files
                 for file in files:
                     file_content = r.get(file.url).content
                     open(file.name, "wb").write(file_content)
@@ -316,7 +323,8 @@ class Project:
 
         return versions[-1]
 
-    def get_id(self) -> str:
+    @property
+    def id(self) -> str:
         """Gets the ID of the project
 
         Returns:
@@ -324,7 +332,8 @@ class Project:
         """
         return self.model.id  # type: ignore
 
-    def get_slug(self) -> str:
+    @property
+    def slug(self) -> str:
         """Gets the slug of the project
 
         Returns:
@@ -332,7 +341,8 @@ class Project:
         """
         return self.model.slug
 
-    def get_name(self) -> str:
+    @property
+    def name(self) -> str:
         """Gets the name of the project
 
         Returns:
@@ -756,7 +766,8 @@ class Project:
 
         return True
 
-    def get_dependencies(self) -> list["Project"]:
+    @property
+    def dependencies(self) -> list["Project"]:
         """Gets the dependencies of the project
 
         Raises:
@@ -831,7 +842,8 @@ class Project:
             for project in response.get("hits")
         ]
 
-    def get_team_members(self) -> "list[teams.Team.TeamMember]":
+    @property
+    def team_members(self) -> "list[teams.Team.TeamMember]":
         """Gets the team members of the project
 
         Returns:
@@ -856,7 +868,8 @@ class Project:
             teams.Team.TeamMember._from_json(team_member) for team_member in response
         ]
 
-    def get_team(self) -> "teams.Team":
+    @property
+    def team(self) -> "teams.Team":
         """Gets the project's team
 
         Raises:
@@ -906,7 +919,8 @@ class Project:
             """
             self.model = version_model
 
-        def get_type(self) -> str:
+        @property
+        def type(self) -> str:
             """Gets the type of the version
 
             Returns:
@@ -914,7 +928,8 @@ class Project:
             """
             return self.model.version_type
 
-        def get_dependencies(self) -> list["Project.Dependency"]:
+        @property
+        def dependencies(self) -> list["Project.Dependency"]:
             """Gets the dependencies of the version
 
             Returns:
@@ -1034,7 +1049,8 @@ class Project:
                 raise exceptions.InvalidRequestError(raw_response.text)
             return True
 
-        def get_files(self) -> list["Project.File"]:
+        @property
+        def files(self) -> list["Project.File"]:
             """Gets the files associated with the version
 
             Returns:
@@ -1051,40 +1067,42 @@ class Project:
             Args:
                 recursive (bool, optional): Whether to also download the files of the dependencies
             """
-            files = self.get_files()
-            for file in files:
+            for file in self.files:
                 file_content = r.get(file.url).content
                 open(file.name, "wb").write(file_content)
 
             if recursive:
-                dependencies = self.get_dependencies()
+                dependencies = self.dependencies
                 for dep in dependencies:
-                    files = dep.get_version().get_files()
+                    files = dep.version.files
                     for file in files:
                         file_content = r.get(file.url).content
                         open(file.name, "wb").write(file_content)
 
-        def get_project(self) -> "Project":
+        @property
+        def project(self) -> "Project":
             """Gets the project associated with the version
 
             Returns:
                 (Project): The project associated with the version
             """
-            return modrinth.Modrinth.get_project(self.model.project_id)  # type: ignore
+            return Project.get(self.model.project_id)  # type: ignore
 
-        def get_primary_files(self) -> list["Project.File"]:
+        @property
+        def primary_files(self) -> list["Project.File"]:
             """Gets the primary files associated with the version
 
             Returns:
                 (list[Project.File]): The primary files associated with the version
             """
             result = []
-            for file in self.get_files():
+            for file in self.files:
                 if file.primary:
                     result.append(file)
             return result
 
-        def get_author(self) -> "users.User":
+        @property
+        def author(self) -> "users.User":
             """Gets the author of the version
 
             Returns:
@@ -1101,7 +1119,8 @@ class Project:
             """
             return self.model.featured
 
-        def get_date_published(self) -> "dt.datetime":
+        @property
+        def date_published(self) -> "dt.datetime":
             """Gets the date when the version was published
 
             Returns:
@@ -1109,7 +1128,8 @@ class Project:
             """
             return util.format_time(self.model.date_published)
 
-        def get_downloads(self) -> int:
+        @property
+        def downloads(self) -> int:
             """Gets the number of downloads for the version
 
             Returns:
@@ -1117,7 +1137,8 @@ class Project:
             """
             return self.model.downloads  # type: ignore
 
-        def get_name(self) -> str:
+        @property
+        def name(self) -> str:
             """Gets the name of the version
 
             Returns:
@@ -1125,7 +1146,8 @@ class Project:
             """
             return self.model.name
 
-        def get_version_number(self) -> str:
+        @property
+        def version_number(self) -> str:
             """Gets the version number of the version
 
             Returns:
@@ -1362,7 +1384,8 @@ class Project:
             result.file_name = json_.get("file_name")
             return result
 
-        def get_version(self) -> "Project.Version":
+        @property
+        def version(self) -> "Project.Version":
             id_ = self.project_id
             if self.version_id:
                 id_ = self.version_id

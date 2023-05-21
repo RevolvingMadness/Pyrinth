@@ -20,14 +20,16 @@ class User:
     def __repr__(self) -> str:
         return f"User: {self.model.name if self.model.name else self.model.username}"
 
-    def get_auth(self) -> str | None:
+    @property
+    def auth(self) -> str | None:
         return self.model.auth
 
     @staticmethod
     def _from_json(json_: dict) -> "User":
         return User(models.UserModel._from_json(json_))
 
-    def get_payout_history(self) -> "User.PayoutHistory":
+    @property
+    def payout_history(self) -> "User.PayoutHistory":
         raw_response = r.get(
             f"https://api.modrinth.com/v2/user/{self.model.username}/payouts",
             headers={"authorization": self.model.auth},  # type: ignore
@@ -123,7 +125,8 @@ class User:
         response.update({"authorization": auth})
         return User(response)
 
-    def get_date_created(self) -> dt.datetime:
+    @property
+    def date_created(self) -> dt.datetime:
         """
         Gets the date of when the user was created
 
@@ -132,7 +135,8 @@ class User:
         """
         return util.format_time(self.model.created)
 
-    def get_followed_projects(self) -> list["projects.Project"]:
+    @property
+    def followed_projects(self) -> list["projects.Project"]:
         """
         Gets a users followed projects
 
@@ -164,7 +168,8 @@ class User:
 
         return followed_projects
 
-    def get_notifications(self) -> list["User.Notification"]:
+    @property
+    def notifications(self) -> list["User.Notification"]:
         """
         Gets a user's notifications
 
@@ -192,14 +197,15 @@ class User:
         response = raw_response.json()
         return [User.Notification(notification) for notification in response]
 
-    def get_amount_of_projects(self) -> int:
+    @property
+    def amount_of_projects(self) -> int:
         """
         Gets the amount of projects a user has
 
         Returns:
             (list[Project]): The users projects
         """
-        projects_ = self.get_projects()
+        projects_ = self.projects
 
         return len(projects_)
 
@@ -236,7 +242,8 @@ class User:
 
         return True
 
-    def get_projects(self) -> list["projects.Project"]:
+    @property
+    def projects(self) -> list["projects.Project"]:
         """
         Gets a user's projects
 
