@@ -1,5 +1,4 @@
 import requests as r
-
 import pyrinth.exceptions as exceptions
 
 
@@ -17,10 +16,8 @@ class Tag:
             exceptions.InvalidRequestError: If the request to the API fails
         """
         raw_response = r.get("https://api.modrinth.com/v2/tag/category", timeout=60)
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
         return [
             Tag.Category(
@@ -45,10 +42,8 @@ class Tag:
             exceptions.InvalidRequestError: If the request to the API fails
         """
         raw_response = r.get("https://api.modrinth.com/v2/tag/loader", timeout=60)
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
         return [
             Tag.Loader(
@@ -70,10 +65,8 @@ class Tag:
             (InvalidRequestError): If the request to the API fails
         """
         raw_response = r.get("https://api.modrinth.com/v2/tag/game_version", timeout=60)
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
         return [
             Tag.GameVersion(
@@ -98,10 +91,8 @@ class Tag:
             exceptions.InvalidRequestError: If the request to the API fails
         """
         raw_response = r.get("https://api.modrinth.com/v2/tag/license", timeout=60)
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
         return [Tag.License(json.get("short"), json.get("name")) for json in response]
 
@@ -120,10 +111,8 @@ class Tag:
         raw_response = r.get(
             "https://api.modrinth.com/v2/tag/donation_platform", timeout=60
         )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
         return [
             Tag.DonationPlatform(json.get("short"), json.get("name"))
@@ -143,10 +132,8 @@ class Tag:
             exceptions.InvalidRequestError: If the request to the API fails
         """
         raw_response = r.get("https://api.modrinth.com/v2/tag/report_type", timeout=60)
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
         return response
 

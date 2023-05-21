@@ -34,7 +34,24 @@ class ProjectModel:
     game_versions: Incomplete
     loaders: Incomplete
     gallery: Incomplete
-    def __init__(self, slug: str, title: str, description: str, categories: list[str], client_side: str, server_side: str, body: str, license_: projects.Project.License, project_type: str, additional_categories: list[str] | None = ..., issues_url: str | None = ..., source_url: str | None = ..., wiki_url: str | None = ..., discord_url: str | None = ..., auth: str | None = ...) -> None: ...
+    def __init__(
+        self,
+        slug: str,
+        title: str,
+        description: str,
+        categories: list[str],
+        client_side: str,
+        server_side: str,
+        body: str,
+        license_: projects.Project.License,
+        project_type: str,
+        additional_categories: list[str] | None = ...,
+        issues_url: str | None = ...,
+        source_url: str | None = ...,
+        wiki_url: str | None = ...,
+        discord_url: str | None = ...,
+        auth: str | None = ...,
+    ) -> None: ...
 
 class SearchResultModel:
     slug: Incomplete
@@ -77,7 +94,20 @@ class VersionModel:
     author_id: Incomplete
     date_published: Incomplete
     downloads: Incomplete
-    def __init__(self, name: str, version_number: str, dependencies: list['projects.Project.Dependency'], game_versions: list[str], version_type: literals.version_type_literal, loaders: list[str], featured: bool, file_parts: list[str], changelog: str | None = ..., status: literals.version_status_literal | None = ..., requested_status: literals.requested_version_status_literal | None = ...) -> None: ...
+    def __init__(
+        self,
+        name: str,
+        version_number: str,
+        dependencies: list["projects.Project.Dependency"],
+        game_versions: list[str],
+        version_type: literals.version_type_literal,
+        loaders: list[str],
+        featured: bool,
+        file_parts: list[str],
+        changelog: str | None = ...,
+        status: literals.version_status_literal | None = ...,
+        requested_status: literals.requested_version_status_literal | None = ...,
+    ) -> None: ...
 
 class UserModel:
     username: Incomplete

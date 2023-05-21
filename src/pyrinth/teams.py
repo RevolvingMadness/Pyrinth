@@ -11,13 +11,6 @@ class Team:
 
     """
 
-    def __init__(self) -> None:
-        """
-        Initializes a Team object
-        """
-        self.members = None
-        self.id = None
-
     @property
     def members(self) -> list["Team.TeamMember"]:
         """
@@ -26,13 +19,15 @@ class Team:
         Returns:
             (list[Project.TeamMember]): A list of team members
         """
-        return [Team.TeamMember._from_json(team_member) for team_member in self.members]  # type: ignore
+        return [
+            Team.TeamMember._from_json(team_member) for team_member in self.members_
+        ]
 
     @staticmethod
     def _from_json(list_: dict) -> "Team":
         result = Team()
-        result.members = list_  # type: ignore
-        result.id = list_[0]["team_id"]
+        result.members_ = list_
+        result.id_ = list_[0]["team_id"]
         return result
 
     class TeamMember:
@@ -60,7 +55,7 @@ class Team:
             ordering: bool,
         ) -> None:
             self.team_id = team_id
-            self.user = user
+            self.user_ = user
             self.role = role
             self.permissions = permissions
             self.accepted = accepted
@@ -77,16 +72,16 @@ class Team:
             Returns:
                 (User): The user associated with the team member
             """
-            return users.User._from_json(self.user)
+            return users.User._from_json(self.user_)
 
         @staticmethod
         def _from_json(json_: dict) -> "Team.TeamMember":
             return Team.TeamMember(
-                json_.get("team_id"),  # type: ignore
-                json_.get("user"),  # type: ignore
-                json_.get("role"),  # type: ignore
+                json_.get("team_id"),
+                json_.get("user"),
+                json_.get("role"),
                 json_.get("permissions"),
-                json_.get("accepted"),  # type: ignore
+                json_.get("accepted"),
                 json_.get("payouts_split"),
-                json_.get("ordering"),  # type: ignore
+                json_.get("ordering"),
             )

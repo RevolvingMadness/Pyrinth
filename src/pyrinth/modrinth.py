@@ -1,7 +1,5 @@
 import json
-
 import requests as r
-
 import pyrinth.exceptions as exceptions
 import pyrinth.projects as projects
 

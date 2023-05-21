@@ -1,7 +1,5 @@
 """Contains all models used in Pyrinth."""
-
 import json
-
 import pyrinth.literals as literals
 import pyrinth.projects as projects
 import pyrinth.util as util
@@ -115,23 +113,22 @@ class ProjectModel:
 
     @staticmethod
     def _from_json(json_: dict) -> "ProjectModel":
-        license_ = projects.Project.License._from_json(json_.get("license"))  # type: ignore
-
+        license_ = projects.Project.License._from_json(json_.get("license"))
         result = ProjectModel(
-            json_.get("slug"),  # type: ignore
-            json_.get("title"),  # type: ignore
-            json_.get("description"),  # type: ignore
-            json_.get("categories"),  # type: ignore
-            json_.get("client_side"),  # type: ignore
-            json_.get("server_side"),  # type: ignore
-            json_.get("body"),  # type: ignore
+            json_.get("slug"),
+            json_.get("title"),
+            json_.get("description"),
+            json_.get("categories"),
+            json_.get("client_side"),
+            json_.get("server_side"),
+            json_.get("body"),
             license_,
-            json_.get("project_type"),  # type: ignore
-            json_.get("additional_categories"),  # type: ignore
-            json_.get("issues_url"),  # type: ignore
-            json_.get("source_url"),  # type: ignore
-            json_.get("wiki_url"),  # type: ignore
-            json_.get("discord_url"),  # type: ignore
+            json_.get("project_type"),
+            json_.get("additional_categories"),
+            json_.get("issues_url"),
+            json_.get("source_url"),
+            json_.get("wiki_url"),
+            json_.get("discord_url"),
             json_.get("authorization"),
         )
         result.id = json_.get("id")
@@ -234,7 +231,6 @@ class SearchResultModel:
         result.latest_version = json_.get("latest_version")
         result.gallery = json_.get("gallery")
         result.featured_gallery = json_.get("featured_gallery")
-
         return result
 
     def _to_json(self) -> dict:
@@ -317,17 +313,17 @@ class VersionModel:
     @staticmethod
     def _from_json(json_: dict) -> "VersionModel":
         result = VersionModel(
-            json_.get("name"),  # type: ignore
-            json_.get("version_number"),  # type: ignore
-            json_.get("dependencies"),  # type: ignore
-            json_.get("game_versions"),  # type: ignore
-            json_.get("version_type"),  # type: ignore
-            json_.get("loaders"),  # type: ignore
-            json_.get("featured"),  # type: ignore
-            json_.get("files"),  # type: ignore
-            json_.get("changelog"),  # type: ignore
-            json_.get("status"),  # type: ignore
-            json_.get("requested_status"),  # type: ignore
+            json_.get("name"),
+            json_.get("version_number"),
+            json_.get("dependencies"),
+            json_.get("game_versions"),
+            json_.get("version_type"),
+            json_.get("loaders"),
+            json_.get("featured"),
+            json_.get("files"),
+            json_.get("changelog"),
+            json_.get("status"),
+            json_.get("requested_status"),
         )
         result.project_id = json_.get("project_id")
         result.id = json_.get("id")
@@ -390,7 +386,6 @@ class UserModel:
         result.github_id = json_.get("github_id")
         result.badges = json_.get("badges")
         result.auth = json_.get("authorization", "")
-
         return result
 
     def _to_json(self) -> dict:

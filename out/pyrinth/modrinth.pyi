@@ -5,7 +5,8 @@ class Modrinth:
     @staticmethod
     def project_exists(id_: str) -> bool: ...
     @staticmethod
-    def get_random_projects(count: int = ...) -> list['projects.Project']: ...
+    def get_random_projects(count: int = ...) -> list["projects.Project"]: ...
+
     class Statistics:
         authors: Incomplete
         files: Incomplete
