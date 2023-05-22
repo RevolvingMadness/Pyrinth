@@ -1004,7 +1004,7 @@ class Project:
             Args:
                 hash_ (str): The hash of the file, considering its byte content, and encoded in hexadecimal
                 algorithm (Literal["sha512", "sha1"]): The algorithm of the hash
-                version_id (bool): Version ID to delete the version from, if multiple files of the same hash exist
+                version_id (bool): Version ID to delete the version from if multiple files of the same hash exist
                 auth (str): The authorization token to use when deleting the file from its hash
 
             Raises:
@@ -1339,8 +1339,9 @@ class Project:
         Represents a dependency
 
         Attributes:
-            dependency_type (str): The type of the dependency
-            id (str): The ID of the dependency
+            file_name (str): The name of the dependency
+            version_id (str): The ID of the dependency's version
+            project_id (str): The ID of the dependency's project
             dependency_option (str): The option for the dependency
         """
 

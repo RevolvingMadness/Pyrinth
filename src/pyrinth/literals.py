@@ -1,4 +1,4 @@
-"Contains literals for Pyrinth"
+"""Contains literals for Pyrinth"""
 import typing
 
 index_literal = typing.Literal["relevance", "downloads", "follows", "newest", "updated"]
