@@ -1,5 +1,4 @@
 import requests as r
-
 import pyrinth.exceptions as exceptions
 import pyrinth.projects as projects
 
@@ -28,7 +27,7 @@ class Modrinth:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
         response = raw_response.json()
-        return response.get("id")
+        return response.get("id", False)
 
     @staticmethod
     def get_random_projects(count: int = 1) -> list["projects.Project"]:

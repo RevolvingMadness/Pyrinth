@@ -1,11 +1,8 @@
 """Utility functions for Pyrinth."""
-
 import datetime as dt
 import json
 import typing
-
 import dateutil.parser
-
 import pyrinth.projects as projects
 
 
@@ -18,7 +15,6 @@ def remove_null_values(json_: dict) -> dict:
     for key, value in json_.items():
         if value is not None:
             result.update({key: value})
-
     return result
 
 
@@ -39,25 +35,21 @@ def remove_file_path(file) -> str:
 
 def list_to_json(lst: list) -> list[dict]:
     result = []
-
     for item in lst:
         if not isinstance(item, dict):
             result.append(item._to_json())
         else:
             result.append(item)
-
     return result
 
 
 def list_to_object(type_, lst) -> list:
     result = []
-
     for item in lst:
         if isinstance(item, dict):
             result.append(type_._from_json(item))
         else:
             result.append(item)
-
     return result
 
 

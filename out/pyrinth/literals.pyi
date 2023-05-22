@@ -1,0 +1,12 @@
+from _typeshed import Incomplete
+
+index_literal: Incomplete
+side_literal: Incomplete
+version_status_literal: Incomplete
+requested_version_status_literal: Incomplete
+project_status_literal: Incomplete
+requested_project_status_literal: Incomplete
+version_type_literal: Incomplete
+project_type_literal: Incomplete
+user_role_literal: Incomplete
+sha_algorithm_literal: Incomplete

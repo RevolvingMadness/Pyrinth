@@ -1,18 +1,15 @@
 """Projects can be mods or modpacks and are created by users"""
-
 import datetime as dt
 import json
 import typing
-
 import requests as r
-
 import pyrinth.exceptions as exceptions
 import pyrinth.literals as literals
 import pyrinth.models as models
 import pyrinth.modrinth as modrinth
+import pyrinth.teams as teams
 import pyrinth.users as users
 import pyrinth.util as util
-import pyrinth.teams as teams
 
 
 class Project:
@@ -31,7 +28,8 @@ class Project:
             project_model = models.ProjectModel._from_json(project_model)
         self.model = project_model
 
-    def get_donations(self) -> list["Project.Donation"]:
+    @property
+    def donations(self) -> list["Project.Donation"]:
         """Gets the project's donations
 
         Returns:
@@ -42,10 +40,10 @@ class Project:
     def _get_auth(self, auth: str | None) -> str:
         if auth:
             return auth
-        return self.model.auth  # type: ignore
+        return self.model.auth
 
     @staticmethod
-    def get(id_: str, auth: object = None) -> "Project":
+    def get(id_: str, authorization: str = None) -> "Project":
         """Gets a project based on an ID
 
         Args:
@@ -61,7 +59,7 @@ class Project:
         """
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{id_}",
-            headers={"authorization": auth},  # type: ignore
+            headers={"authorization": authorization},
             timeout=60,
         )
         match raw_response.status_code:
@@ -72,7 +70,7 @@ class Project:
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
         response = raw_response.json()
-        response.update({"authorization": auth})
+        response.update({"authorization": authorization})
         return Project(response)
 
     @staticmethod
@@ -119,17 +117,16 @@ class Project:
             (Project.Version): The project's latest version
         """
         versions = self.get_versions(loaders, game_versions, featured, types, auth)
-
         return versions[0]
 
-    def get_gallery(self) -> list["Project.GalleryImage"]:
+    @property
+    def gallery(self) -> list["Project.GalleryImage"]:
         """Gets the project's gallery
 
         Returns:
             (list[Project.GalleryImage]): The project's gallery images
         """
         result = util.list_to_object(Project.GalleryImage, self.model.gallery)
-
         return result
 
     def is_client_side(self) -> bool:
@@ -148,15 +145,17 @@ class Project:
         """
         return True if self.model.server_side == "required" else False
 
-    def get_downloads(self) -> int:
+    @property
+    def downloads(self) -> int:
         """Gets the number of downloads this project has
 
         Returns:
             (int): The number of downloads for this project
         """
-        return self.model.downloads  # type: ignore
+        return self.model.downloads
 
-    def get_categories(self) -> list[str]:
+    @property
+    def categories(self) -> list[str]:
         """Gets this projects categories
 
         Returns:
@@ -164,23 +163,26 @@ class Project:
         """
         return self.model.categories
 
-    def get_additional_categories(self) -> list[str]:
+    @property
+    def additional_categories(self) -> list[str]:
         """Gets this projects additional categories
 
         Returns:
             (list[str]): The additional categories associated with this project
         """
-        return self.model.additional_categories  # type: ignore
+        return self.model.additional_categories
 
-    def get_all_categories(self) -> list[str]:
+    @property
+    def all_categories(self) -> list[str]:
         """Gets this projects categories and additional categories
 
         Returns:
             (list[str]): The categories and additional categories associated with this project
         """
-        return self.get_categories() + self.get_additional_categories()
+        return self.categories + self.additional_categories
 
-    def get_license(self) -> "Project.License":
+    @property
+    def license(self) -> "Project.License":
         """Gets this project license
 
         Returns:
@@ -205,7 +207,6 @@ class Project:
             for version in versions:
                 if version.model.version_number == semantic_version:
                     return version
-
         return None
 
     def download(self, recursive: bool = False) -> None:
@@ -215,15 +216,14 @@ class Project:
             recursive (bool): Whether to download dependencies. Defaults to False
         """
         latest = self.get_latest_version()
-        files = latest.get_files()
+        files = latest.files
         for file in files:
             file_content = r.get(file.url).content
             open(file.name, "wb").write(file_content)
-
         if recursive:
-            dependencies = latest.get_dependencies()
+            dependencies = latest.dependencies
             for dep in dependencies:
-                files = dep.get_version().get_files()
+                files = dep.version.files
                 for file in files:
                     file_content = r.get(file.url).content
                     open(file.name, "wb").write(file_content)
@@ -257,7 +257,6 @@ class Project:
             "game_versions": game_versions,
             "featured": featured,
         }
-
         filters = util.remove_null_values(filters)
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/version",
@@ -265,31 +264,24 @@ class Project:
             headers={"authorization": self._get_auth(auth)},
             timeout=60,
         )
-
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
                     "The requested project wasn't found or no authorization to see this project"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
-
         versions = [
             self.Version(models.VersionModel._from_json(version))
             for version in response
         ]
-
         if not types:
             return versions
-
         result = []
         for version in versions:
             if version.model.version_type in types:
                 result.append(version)
-
         return result
 
     def get_oldest_version(
@@ -313,18 +305,19 @@ class Project:
             (Project.Version): The version that was found
         """
         versions = self.get_versions(loaders, game_versions, featured, types, auth)
-
         return versions[-1]
 
-    def get_id(self) -> str:
+    @property
+    def id(self) -> str:
         """Gets the ID of the project
 
         Returns:
             (str): The ID of the project
         """
-        return self.model.id  # type: ignore
+        return self.model.id
 
-    def get_slug(self) -> str:
+    @property
+    def slug(self) -> str:
         """Gets the slug of the project
 
         Returns:
@@ -332,7 +325,8 @@ class Project:
         """
         return self.model.slug
 
-    def get_name(self) -> str:
+    @property
+    def name(self) -> str:
         """Gets the name of the project
 
         Returns:
@@ -355,16 +349,13 @@ class Project:
             (Project.Version): The version that was found
         """
         raw_response = r.get(f"https://api.modrinth.com/v2/version/{id_}", timeout=60)
-
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
                     "The requested version wasn't found or no authorization to see this version"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
         return Project.Version(models.VersionModel._from_json(response))
 
@@ -383,28 +374,22 @@ class Project:
             (int): Whether creating the version was successful
         """
         version_model.project_id = self.model.id
-
         files = {"data": version_model.to_bytes()}
-
         for file in version_model.files:
             files.update({util.remove_file_path(file): open(file, "rb").read()})
-
         raw_response = r.post(
             "https://api.modrinth.com/v2/version",
             headers={"authorization": self._get_auth(auth)},
             files=files,
             timeout=60,
         )
-
         match raw_response.status_code:
             case 401:
                 raise exceptions.NoAuthorizationError(
                     "No authorization to create this version"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         return True
 
     def change_icon(self, file_path: str, auth: str | None = None) -> bool:
@@ -428,14 +413,11 @@ class Project:
             data=open(file_path, "rb"),
             timeout=60,
         )
-
         match raw_response.status_code:
             case 400:
                 raise exceptions.InvalidParamError("Invalid input for new icon")
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         return True
 
     def delete_icon(self, auth: str | None = None) -> bool:
@@ -457,19 +439,15 @@ class Project:
             headers={"authorization": self._get_auth(auth)},
             timeout=60,
         )
-
         match raw_response.status_code:
             case 400:
                 raise exceptions.InvalidParamError("Invalid input")
-
             case 401:
                 raise exceptions.NoAuthorizationError(
                     "No authorization to edit this project"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         return True
 
     def add_gallery_image(
@@ -496,21 +474,17 @@ class Project:
             data=open(image.file_path, "rb"),
             timeout=60,
         )
-
         match raw_response.status_code:
             case 401:
                 raise exceptions.NoAuthorizationError(
                     "No authorization to create a gallery image"
                 )
-
             case 404:
                 raise exceptions.NotFoundError(
                     "The requested project wasn't found or no authorization to see this project"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         return True
 
     def modify_gallery_image(
@@ -547,30 +521,24 @@ class Project:
             "description": description,
             "ordering": ordering,
         }
-
         modified_json = util.remove_null_values(modified_json)
-
         raw_response = r.patch(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
             params=modified_json,
             headers={"authorization": self._get_auth(auth)},
             timeout=60,
         )
-
         match raw_response.status_code:
             case 401:
                 raise exceptions.NoAuthorizationError(
                     "No authorization to edit this gallery image"
                 )
-
             case 404:
                 raise exceptions.NotFoundError(
                     "The requested project wasn't found or no authorization to see this project"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         return True
 
     def delete_gallery_image(self, url: str, auth: str | None = None) -> bool:
@@ -592,26 +560,21 @@ class Project:
             raise exceptions.InvalidParamError(
                 "Please use cdn.modrinth.com instead of cdn-raw.modrinth.com"
             )
-
         raw_response = r.delete(
             f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
             headers={"authorization": self._get_auth(auth)},
             params={"url": url},
             timeout=60,
         )
-
         match raw_response.status_code:
             case 400:
                 raise exceptions.InvalidParamError("Invalid URL or project specified")
-
             case 401:
                 raise exceptions.NoAuthorizationError(
                     "No authorization to delete this gallery image"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         return True
 
     def modify(
@@ -688,14 +651,11 @@ class Project:
             "moderation_message": moderation_message,
             "moderation_message_body": moderation_message_body,
         }
-
         modified_json = util.remove_null_values(modified_json)
-
         if not modified_json:
             raise exceptions.InvalidParamError(
                 "Please specify at least 1 optional argument"
             )
-
         raw_response = r.patch(
             f"https://api.modrinth.com/v2/project/{self.model.slug}",
             data=json.dumps(modified_json),
@@ -705,21 +665,17 @@ class Project:
             },
             timeout=60,
         )
-
         match raw_response.status_code:
             case 401:
                 raise exceptions.NoAuthorizationError(
                     "No authorization to edit this project"
                 )
-
             case 404:
                 raise exceptions.NotFoundError(
                     "The requested project wasn't found or no authorization to see this project"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         return True
 
     def delete(self, auth: str | None = None) -> typing.Literal[True]:
@@ -741,22 +697,19 @@ class Project:
             headers={"authorization": self._get_auth(auth)},
             timeout=60,
         )
-
         match raw_response.status_code:
             case 400:
                 raise exceptions.NotFoundError("The requested project was not found")
-
             case 401:
                 raise exceptions.NoAuthorizationError(
                     "No authorization to delete this project"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         return True
 
-    def get_dependencies(self) -> list["Project"]:
+    @property
+    def dependencies(self) -> list["Project"]:
         """Gets the dependencies of the project
 
         Raises:
@@ -770,16 +723,13 @@ class Project:
             f"https://api.modrinth.com/v2/project/{self.model.slug}/dependencies",
             timeout=60,
         )
-
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
                     "The requested project wasn't found or no authorization to see this project"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
         return [Project(dependency) for dependency in response.get("projects")]
 
@@ -831,7 +781,8 @@ class Project:
             for project in response.get("hits")
         ]
 
-    def get_team_members(self) -> "list[teams.Team.TeamMember]":
+    @property
+    def team_members(self) -> "list[teams.Team.TeamMember]":
         """Gets the team members of the project
 
         Returns:
@@ -840,23 +791,20 @@ class Project:
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
         )
-
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
                     "The requested project wasn't found or no authorization to see this project"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
-
         return [
             teams.Team.TeamMember._from_json(team_member) for team_member in response
         ]
 
-    def get_team(self) -> "teams.Team":
+    @property
+    def team(self) -> "teams.Team":
         """Gets the project's team
 
         Raises:
@@ -869,18 +817,14 @@ class Project:
         raw_response = r.get(
             f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
         )
-
         match raw_response.status_code:
             case 404:
                 raise exceptions.NotFoundError(
                     "The requested project wasn't found or no authorization to see this project"
                 )
-
         if not raw_response.ok:
             raise exceptions.InvalidRequestError(raw_response.text)
-
         response = raw_response.json()
-
         return teams.Team._from_json(response)
 
     def __repr__(self) -> str:
@@ -906,7 +850,8 @@ class Project:
             """
             self.model = version_model
 
-        def get_type(self) -> str:
+        @property
+        def type(self) -> str:
             """Gets the type of the version
 
             Returns:
@@ -914,7 +859,8 @@ class Project:
             """
             return self.model.version_type
 
-        def get_dependencies(self) -> list["Project.Dependency"]:
+        @property
+        def dependencies(self) -> list["Project.Dependency"]:
             """Gets the dependencies of the version
 
             Returns:
@@ -1034,7 +980,8 @@ class Project:
                 raise exceptions.InvalidRequestError(raw_response.text)
             return True
 
-        def get_files(self) -> list["Project.File"]:
+        @property
+        def files(self) -> list["Project.File"]:
             """Gets the files associated with the version
 
             Returns:
@@ -1042,7 +989,7 @@ class Project:
             """
             result = []
             for file in self.model.files:
-                result.append(Project.File._from_json(file))  # type: ignore
+                result.append(Project.File._from_json(file))
             return result
 
         def download(self, recursive: bool = False) -> None:
@@ -1051,46 +998,47 @@ class Project:
             Args:
                 recursive (bool, optional): Whether to also download the files of the dependencies
             """
-            files = self.get_files()
-            for file in files:
+            for file in self.files:
                 file_content = r.get(file.url).content
                 open(file.name, "wb").write(file_content)
-
             if recursive:
-                dependencies = self.get_dependencies()
+                dependencies = self.dependencies
                 for dep in dependencies:
-                    files = dep.get_version().get_files()
+                    files = dep.version.files
                     for file in files:
                         file_content = r.get(file.url).content
                         open(file.name, "wb").write(file_content)
 
-        def get_project(self) -> "Project":
+        @property
+        def project(self) -> "Project":
             """Gets the project associated with the version
 
             Returns:
                 (Project): The project associated with the version
             """
-            return modrinth.Modrinth.get_project(self.model.project_id)  # type: ignore
+            return Project.get(self.model.project_id)
 
-        def get_primary_files(self) -> list["Project.File"]:
+        @property
+        def primary_files(self) -> list["Project.File"]:
             """Gets the primary files associated with the version
 
             Returns:
                 (list[Project.File]): The primary files associated with the version
             """
             result = []
-            for file in self.get_files():
+            for file in self.files:
                 if file.primary:
                     result.append(file)
             return result
 
-        def get_author(self) -> "users.User":
+        @property
+        def author(self) -> "users.User":
             """Gets the author of the version
 
             Returns:
                 (User): The author of the version
             """
-            user = users.User.get(self.model.author_id)  # type: ignore
+            user = users.User.get(self.model.author_id)
             return user
 
         def is_featured(self) -> bool:
@@ -1101,7 +1049,8 @@ class Project:
             """
             return self.model.featured
 
-        def get_date_published(self) -> "dt.datetime":
+        @property
+        def date_published(self) -> "dt.datetime":
             """Gets the date when the version was published
 
             Returns:
@@ -1109,15 +1058,17 @@ class Project:
             """
             return util.format_time(self.model.date_published)
 
-        def get_downloads(self) -> int:
+        @property
+        def downloads(self) -> int:
             """Gets the number of downloads for the version
 
             Returns:
                 (int): The number of downloads of the version
             """
-            return self.model.downloads  # type: ignore
+            return self.model.downloads
 
-        def get_name(self) -> str:
+        @property
+        def name(self) -> str:
             """Gets the name of the version
 
             Returns:
@@ -1125,7 +1076,8 @@ class Project:
             """
             return self.model.name
 
-        def get_version_number(self) -> str:
+        @property
+        def version_number(self) -> str:
             """Gets the version number of the version
 
             Returns:
@@ -1178,11 +1130,11 @@ class Project:
         @staticmethod
         def _from_json(json_: dict) -> "Project.GalleryImage":
             return Project.GalleryImage(
-                json_.get("url"),  # type: ignore
-                json_.get("featured"),  # type: ignore
-                json_.get("title"),  # type: ignore
-                json_.get("description"),  # type: ignore
-                json_.get("ordering"),  # type: ignore
+                json_.get("url"),
+                json_.get("featured"),
+                json_.get("title"),
+                json_.get("description"),
+                json_.get("ordering"),
             )
 
         def _to_json(self) -> dict:
@@ -1245,12 +1197,12 @@ class Project:
         @staticmethod
         def _from_json(json_: dict) -> "Project.File":
             result = Project.File(
-                json_.get("hashes"),  # type: ignore
-                json_.get("url"),  # type: ignore
-                json_.get("filename"),  # type: ignore
-                json_.get("primary"),  # type: ignore
-                json_.get("size"),  # type: ignore
-                json_.get("file_type"),  # type: ignore
+                json_.get("hashes"),
+                json_.get("url"),
+                json_.get("filename"),
+                json_.get("primary"),
+                json_.get("size"),
+                json_.get("file_type"),
             )
             return result
 
@@ -1277,25 +1229,22 @@ class Project:
                 name (str): The long name of a license
                 url (str): The URL to this license
             """
-            self.id = id_
+            self.id_ = id_
             self.name = name
             self.url = url
 
         @staticmethod
         def _from_json(json_: dict) -> "Project.License":
             result = Project.License(
-                json_.get("id"),  # type: ignore
-                json_.get("name"),  # type: ignore
-                json_.get("url"),  # type: ignore
+                json_.get("id"), json_.get("name"), json_.get("url")
             )
-
             return result
 
         def _to_json(self) -> dict:
             return self.__dict__
 
         def __repr__(self) -> str:
-            return f"License: {self.name if self.name else self.id}"
+            return f"License: {(self.name if self.name else self.id_)}"
 
     class Donation:
         """
@@ -1317,18 +1266,15 @@ class Project:
                 platform (str): The platform used for the donation
                 url (str): The URL to the donation page
             """
-            self.id = id_
+            self.id_ = id_
             self.platform = platform
             self.url = url
 
         @staticmethod
         def _from_json(json_: dict) -> "Project.Donation":
             result = Project.Donation(
-                json_.get("id"),  # type: ignore
-                json_.get("platform"),  # type: ignore
-                json_.get("url"),  # type: ignore
+                json_.get("id"), json_.get("platform"), json_.get("url")
             )
-
             return result
 
         def __repr__(self) -> str:
@@ -1363,11 +1309,12 @@ class Project:
             result.file_name = json_.get("file_name")
             return result
 
-        def get_version(self) -> "Project.Version":
+        @property
+        def version(self) -> "Project.Version":
             id_ = self.project_id
             if self.version_id:
                 id_ = self.version_id
-            return Project.Version.get(id_)  # type: ignore
+            return Project.Version.get(id_)
 
         def is_required(self) -> bool:
             """
