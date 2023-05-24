@@ -1,7 +1,7 @@
-import pyrinth.users as users
+import pyrinth.users as _users
 
 
-class Team:
+class _Team:
     """
     Represents a team
 
@@ -11,8 +11,11 @@ class Team:
 
     """
 
+    members_: dict
+    id_: str
+
     @property
-    def members(self) -> list["Team.TeamMember"]:
+    def members(self) -> list["_Team._TeamMember"]:
         """
         Gets a list of team members
 
@@ -20,17 +23,17 @@ class Team:
             (list[Project.TeamMember]): A list of team members
         """
         return [
-            Team.TeamMember._from_json(team_member) for team_member in self.members_
+            _Team._TeamMember._from_json(team_member) for team_member in self.members_
         ]
 
     @staticmethod
-    def _from_json(list_: dict) -> "Team":
-        result = Team()
-        result.members_ = list_
-        result.id_ = list_[0]["team_id"]
+    def _from_json(team_json: dict) -> "_Team":
+        result = _Team()
+        result.members_ = team_json
+        result.id_ = team_json[0]["team_id"]
         return result
 
-    class TeamMember:
+    class _TeamMember:
         """Represents a team member of a project
 
         Attributes:
@@ -44,44 +47,34 @@ class Team:
 
         """
 
-        def __init__(
-            self,
-            team_id: str,
-            user: dict,
-            role: str,
-            permissions,
-            accepted: bool,
-            payouts_split,
-            ordering: bool,
-        ) -> None:
-            self.team_id = team_id
-            self.user_ = user
-            self.role = role
-            self.permissions = permissions
-            self.accepted = accepted
-            self.payouts_split = payouts_split
-            self.ordering = ordering
+        team_id: str
+        _user: dict
+        role: str
+        permissions: object
+        accepted: bool
+        payouts_split: object
+        ordering: int
 
         def __repr__(self) -> str:
             return "Team Member"
 
         @property
-        def user(self) -> "users.User":
+        def user(self) -> "_users._User":
             """Gets the user associated with the team member
 
             Returns:
                 (User): The user associated with the team member
             """
-            return users.User._from_json(self.user_)
+            return _users._User._from_json(self._user)
 
         @staticmethod
-        def _from_json(json_: dict) -> "Team.TeamMember":
-            return Team.TeamMember(
-                json_.get("team_id"),
-                json_.get("user"),
-                json_.get("role"),
-                json_.get("permissions"),
-                json_.get("accepted"),
-                json_.get("payouts_split"),
-                json_.get("ordering"),
-            )
+        def _from_json(team_member_json: dict) -> "_Team._TeamMember":
+            result = _Team._TeamMember()
+            result.team_id = team_member_json.get("team_id", ...)
+            result._user = team_member_json.get("user", ...)
+            result.role = team_member_json.get("role", ...)
+            result.permissions = team_member_json.get("permissions")
+            result.accepted = team_member_json.get("accepted", ...)
+            result.payouts_split = team_member_json.get("payouts_split")
+            result.ordering = team_member_json.get("ordering", ...)
+            return result

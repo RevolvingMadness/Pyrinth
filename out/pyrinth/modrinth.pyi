@@ -1,15 +1,22 @@
-import pyrinth.projects as projects
-from _typeshed import Incomplete
+import pyrinth.projects as _projects
 
 class Modrinth:
     @staticmethod
     def project_exists(id_: str) -> bool: ...
     @staticmethod
-    def get_random_projects(count: int = ...) -> list["projects.Project"]: ...
-
-    class Statistics:
-        authors: Incomplete
-        files: Incomplete
-        projects: Incomplete
-        versions: Incomplete
-        def __init__(self) -> None: ...
+    def get_random_projects(count: int = ...) -> list['_projects.Project']: ...
+    @property
+    def statistics(self) -> Modrinth._Statistics: ...
+    class _Statistics:
+        @classmethod
+        @property
+        def authors(self) -> None: ...
+        @classmethod
+        @property
+        def files(self) -> None: ...
+        @classmethod
+        @property
+        def projects(self) -> None: ...
+        @classmethod
+        @property
+        def versions(self) -> None: ...

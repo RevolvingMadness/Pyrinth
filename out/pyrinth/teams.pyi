@@ -1,28 +1,16 @@
-import pyrinth.users as users
-from _typeshed import Incomplete
+import pyrinth.users as _users
 
-class Team:
-    id: Incomplete
-    def __init__(self) -> None: ...
+class _Team:
+    members_: dict
+    id_: str
     @property
-    def members(self) -> list["Team.TeamMember"]: ...
-
-    class TeamMember:
-        team_id: Incomplete
-        role: Incomplete
-        permissions: Incomplete
-        accepted: Incomplete
-        payouts_split: Incomplete
-        ordering: Incomplete
-        def __init__(
-            self,
-            team_id: str,
-            user: dict,
-            role: str,
-            permissions,
-            accepted: bool,
-            payouts_split,
-            ordering: bool,
-        ) -> None: ...
+    def members(self) -> list['_Team._TeamMember']: ...
+    class _TeamMember:
+        team_id: str
+        role: str
+        permissions: object
+        accepted: bool
+        payouts_split: object
+        ordering: int
         @property
-        def user(self) -> users.User: ...
+        def user(self) -> _users._User: ...

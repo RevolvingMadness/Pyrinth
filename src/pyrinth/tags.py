@@ -1,11 +1,11 @@
-import requests as r
-import pyrinth.exceptions as exceptions
+import requests as _requests
+import pyrinth.exceptions as _exceptions
 
 
 class Tag:
-    @staticmethod
+    @classmethod  # type: ignore
     @property
-    def categories() -> list["Tag.Category"]:
+    def categories(self) -> list["Tag._Category"]:
         """
         Gets a list of tag categories
 
@@ -15,12 +15,14 @@ class Tag:
         Raises:
             exceptions.InvalidRequestError: If the request to the API fails
         """
-        raw_response = r.get("https://api.modrinth.com/v2/tag/category", timeout=60)
+        raw_response = _requests.get(
+            "https://api.modrinth.com/v2/tag/category", timeout=60
+        )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError(raw_response.text)
+            raise _exceptions.InvalidRequestError(raw_response.text)
         response = raw_response.json()
         return [
-            Tag.Category(
+            Tag._Category(
                 json.get("icon"),
                 json.get("name"),
                 json.get("project_type"),
@@ -29,9 +31,9 @@ class Tag:
             for json in response
         ]
 
-    @staticmethod
+    @classmethod  # type: ignore
     @property
-    def loaders() -> list["Tag.Loader"]:
+    def loaders(self) -> list["Tag._Loaders"]:
         """
         Gets a list of tag loaders
 
@@ -41,20 +43,22 @@ class Tag:
         Raises:
             exceptions.InvalidRequestError: If the request to the API fails
         """
-        raw_response = r.get("https://api.modrinth.com/v2/tag/loader", timeout=60)
+        raw_response = _requests.get(
+            "https://api.modrinth.com/v2/tag/loader", timeout=60
+        )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError(raw_response.text)
+            raise _exceptions.InvalidRequestError(raw_response.text)
         response = raw_response.json()
         return [
-            Tag.Loader(
+            Tag._Loaders(
                 json.get("icon"), json.get("name"), json.get("supported_project_types")
             )
             for json in response
         ]
 
-    @staticmethod
+    @classmethod  # type: ignore
     @property
-    def game_versions() -> list["Tag.GameVersion"]:
+    def game_versions(self) -> list["Tag._GameVersion"]:
         """
         Gets a list of tag game versions
 
@@ -64,12 +68,14 @@ class Tag:
         Raises:
             (InvalidRequestError): If the request to the API fails
         """
-        raw_response = r.get("https://api.modrinth.com/v2/tag/game_version", timeout=60)
+        raw_response = _requests.get(
+            "https://api.modrinth.com/v2/tag/game_version", timeout=60
+        )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError(raw_response.text)
+            raise _exceptions.InvalidRequestError(raw_response.text)
         response = raw_response.json()
         return [
-            Tag.GameVersion(
+            Tag._GameVersion(
                 json.get("version"),
                 json.get("version_type"),
                 json.get("date"),
@@ -78,9 +84,9 @@ class Tag:
             for json in response
         ]
 
-    @staticmethod
+    @classmethod  # type: ignore
     @property
-    def licenses() -> list["Tag.License"]:
+    def licenses(self) -> list["Tag._License"]:
         """
         Gets a list of tag licenses
 
@@ -90,15 +96,17 @@ class Tag:
         Raises:
             exceptions.InvalidRequestError: If the request to the API fails
         """
-        raw_response = r.get("https://api.modrinth.com/v2/tag/license", timeout=60)
+        raw_response = _requests.get(
+            "https://api.modrinth.com/v2/tag/license", timeout=60
+        )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError(raw_response.text)
+            raise _exceptions.InvalidRequestError(raw_response.text)
         response = raw_response.json()
-        return [Tag.License(json.get("short"), json.get("name")) for json in response]
+        return [Tag._License(json.get("short"), json.get("name")) for json in response]
 
-    @staticmethod
+    @classmethod  # type: ignore
     @property
-    def donation_platforms() -> list["Tag.DonationPlatform"]:
+    def donation_platforms(self) -> list["Tag._DonationPlatform"]:
         """
         Gets a list of tag donation platforms
 
@@ -108,20 +116,20 @@ class Tag:
         Raises:
             exceptions.InvalidRequestError: If the request to the API fails
         """
-        raw_response = r.get(
+        raw_response = _requests.get(
             "https://api.modrinth.com/v2/tag/donation_platform", timeout=60
         )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError(raw_response.text)
+            raise _exceptions.InvalidRequestError(raw_response.text)
         response = raw_response.json()
         return [
-            Tag.DonationPlatform(json.get("short"), json.get("name"))
+            Tag._DonationPlatform(json.get("short"), json.get("name"))
             for json in response
         ]
 
-    @staticmethod
+    @classmethod  # type: ignore
     @property
-    def report_types() -> list[str]:
+    def report_types(self) -> list[str]:
         """
         Gets a list of tag report types
 
@@ -131,13 +139,15 @@ class Tag:
         Raises:
             exceptions.InvalidRequestError: If the request to the API fails
         """
-        raw_response = r.get("https://api.modrinth.com/v2/tag/report_type", timeout=60)
+        raw_response = _requests.get(
+            "https://api.modrinth.com/v2/tag/report_type", timeout=60
+        )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError(raw_response.text)
+            raise _exceptions.InvalidRequestError(raw_response.text)
         response = raw_response.json()
         return response
 
-    class Category:
+    class _Category:
         """
         Represents a tag category
 
@@ -169,7 +179,7 @@ class Tag:
         def __repr__(self) -> str:
             return f"Category: {self.name}"
 
-    class Loader:
+    class _Loaders:
         """
         Represents a tag loader
 
@@ -198,7 +208,7 @@ class Tag:
         def __repr__(self) -> str:
             return f"Loader: {self.name}"
 
-    class GameVersion:
+    class _GameVersion:
         """
         Represents a tag game version
 
@@ -230,7 +240,7 @@ class Tag:
         def __repr__(self) -> str:
             return f"Game Version: {self.version}"
 
-    class License:
+    class _License:
         """
         Represents a tag license
 
@@ -254,7 +264,7 @@ class Tag:
         def __repr__(self) -> str:
             return f"License: {self.name}"
 
-    class DonationPlatform:
+    class _DonationPlatform:
         """
         Represents a tag donation platform
 

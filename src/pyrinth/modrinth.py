@@ -1,6 +1,6 @@
-import requests as r
-import pyrinth.exceptions as exceptions
-import pyrinth.projects as projects
+import requests as _requests
+import pyrinth.exceptions as _exceptions
+import pyrinth.projects as _projects
 
 
 class Modrinth:
@@ -18,19 +18,19 @@ class Modrinth:
         Returns:
             (bool): Whether the project exists
         """
-        raw_response = r.get(
+        raw_response = _requests.get(
             f"https://api.modrinth.com/v2/project/{id_}/check", timeout=60
         )
         match raw_response.status_code:
             case 404:
-                raise exceptions.NotFoundError("The requested project was not found")
+                raise _exceptions.NotFoundError("The requested project was not found")
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError(raw_response.text)
+            raise _exceptions.InvalidRequestError(raw_response.text)
         response = raw_response.json()
         return response.get("id", False)
 
     @staticmethod
-    def get_random_projects(count: int = 1) -> list["projects.Project"]:
+    def get_random_projects(count: int = 1) -> list["_projects.Project"]:
         """Gets a certain number of random projects
 
         Args:
@@ -42,17 +42,21 @@ class Modrinth:
         Returns:
             (list[Project]): The projects that were randomly found
         """
-        raw_response = r.get(
+        raw_response = _requests.get(
             "https://api.modrinth.com/v2/projects_random",
             params={"count": count},
             timeout=60,
         )
         if not raw_response.ok:
-            raise exceptions.InvalidRequestError(raw_response.text)
+            raise _exceptions.InvalidRequestError(raw_response.text)
         response = raw_response.json()
-        return [projects.Project(project) for project in response]
+        return [_projects.Project(project) for project in response]
 
-    class Statistics:
+    @property
+    def statistics(self) -> "Modrinth._Statistics":
+        return Modrinth._Statistics()
+
+    class _Statistics:
         """Modrinth statistics
 
         Attributes:
@@ -63,10 +67,38 @@ class Modrinth:
 
         """
 
-        def __init__(self) -> None:
-            raw_response = r.get("https://api.modrinth.com/v2/statistics", timeout=60)
-            response = raw_response.json()
-            self.authors: int = response.get("authors")
-            self.files: int = response.get("files")
-            self.projects: int = response.get("projects")
-            self.versions: int = response.get("versions")
+        @classmethod
+        @property
+        def authors(self) -> None:
+            raw_response = _requests.get(
+                "https://api.modrinth.com/v2/statistics", timeout=60
+            )
+            response: dict = raw_response.json()
+            return response.get("authors")
+
+        @classmethod
+        @property
+        def files(self) -> None:
+            raw_response = _requests.get(
+                "https://api.modrinth.com/v2/statistics", timeout=60
+            )
+            response: dict = raw_response.json()
+            return response.get("files")
+
+        @classmethod
+        @property
+        def projects(self) -> None:
+            raw_response = _requests.get(
+                "https://api.modrinth.com/v2/statistics", timeout=60
+            )
+            response: dict = raw_response.json()
+            return response.get("projects")
+
+        @classmethod
+        @property
+        def versions(self) -> None:
+            raw_response = _requests.get(
+                "https://api.modrinth.com/v2/statistics", timeout=60
+            )
+            response: dict = raw_response.json()
+            return response.get("versions")

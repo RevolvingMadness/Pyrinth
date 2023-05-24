@@ -1,5 +1,5 @@
-import pyrinth.literals as literals
-import pyrinth.projects as projects
+import pyrinth.literals as _literals
+import pyrinth.projects as _projects
 from _typeshed import Incomplete
 
 class ProjectModel:
@@ -17,9 +17,9 @@ class ProjectModel:
     source_url: Incomplete
     wiki_url: Incomplete
     discord_url: Incomplete
-    donation_urls: Incomplete
     auth: Incomplete
-    id: Incomplete
+    donation_urls: Incomplete
+    id_: Incomplete
     downloads: Incomplete
     icon_url: Incomplete
     color: Incomplete
@@ -34,48 +34,30 @@ class ProjectModel:
     game_versions: Incomplete
     loaders: Incomplete
     gallery: Incomplete
-    def __init__(
-        self,
-        slug: str,
-        title: str,
-        description: str,
-        categories: list[str],
-        client_side: str,
-        server_side: str,
-        body: str,
-        license_: projects.Project.License,
-        project_type: str,
-        additional_categories: list[str] | None = ...,
-        issues_url: str | None = ...,
-        source_url: str | None = ...,
-        wiki_url: str | None = ...,
-        discord_url: str | None = ...,
-        auth: str | None = ...,
-    ) -> None: ...
+    def __init__(self, slug: str, title: str, description: str, categories: list[str], client_side: str, server_side: str, body: str, license_: _projects.Project.License, project_type: str, additional_categories: list[str] | None = ..., issues_url: str | None = ..., source_url: str | None = ..., wiki_url: str | None = ..., discord_url: str | None = ..., auth: str = ...) -> None: ...
 
-class SearchResultModel:
-    slug: Incomplete
-    title: Incomplete
-    description: Incomplete
-    client_side: Incomplete
-    server_side: Incomplete
-    project_type: Incomplete
-    downloads: Incomplete
-    project_id: Incomplete
-    author: Incomplete
-    versions: Incomplete
-    follows: Incomplete
-    date_created: Incomplete
-    date_modified: Incomplete
-    license: Incomplete
-    categories: Incomplete
-    icon_url: Incomplete
-    color: Incomplete
-    display_categories: Incomplete
-    latest_version: Incomplete
-    gallery: Incomplete
-    featured_gallery: Incomplete
-    def __init__(self) -> None: ...
+class _SearchResultModel:
+    slug: str
+    title: str
+    description: str
+    client_side: str
+    server_side: str
+    project_type: str
+    downloads: int
+    project_id: str
+    author: str
+    versions: list[str]
+    follows: int
+    date_created: object
+    date_modified: object
+    license: str
+    categories: list[str]
+    icon_url: str
+    color: str
+    display_categories: list[str]
+    latest_version: list[str]
+    gallery: list[str]
+    featured_gallery: list[str]
 
 class VersionModel:
     name: Incomplete
@@ -94,32 +76,18 @@ class VersionModel:
     author_id: Incomplete
     date_published: Incomplete
     downloads: Incomplete
-    def __init__(
-        self,
-        name: str,
-        version_number: str,
-        dependencies: list["projects.Project.Dependency"],
-        game_versions: list[str],
-        version_type: literals.version_type_literal,
-        loaders: list[str],
-        featured: bool,
-        file_parts: list[str],
-        changelog: str | None = ...,
-        status: literals.version_status_literal | None = ...,
-        requested_status: literals.requested_version_status_literal | None = ...,
-    ) -> None: ...
+    def __init__(self, name: str, version_number: str, dependencies: list['_projects.Project._Dependency'], game_versions: list[str], version_type: _literals.version_type_literal, loaders: list[str], featured: bool, file_parts: list[dict], changelog: str | None = ..., status: _literals.version_status_literal | None = ..., requested_status: _literals.requested_version_status_literal | None = ...) -> None: ...
 
-class UserModel:
-    username: Incomplete
-    id: Incomplete
-    avatar_url: Incomplete
-    created: Incomplete
-    role: Incomplete
-    name: Incomplete
-    email: Incomplete
-    bio: Incomplete
-    payout_data: Incomplete
-    github_id: Incomplete
-    badges: Incomplete
-    auth: Incomplete
-    def __init__(self) -> None: ...
+class _UserModel:
+    username: str
+    id: str
+    avatar_url: str
+    created: str
+    role: str
+    name: str
+    email: str
+    bio: str
+    payout_data: dict
+    github_id: int
+    badges: list[str]
+    auth: str

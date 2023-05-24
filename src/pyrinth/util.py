@@ -3,7 +3,7 @@ import datetime as dt
 import json
 import typing
 import dateutil.parser
-import pyrinth.projects as projects
+import pyrinth.projects as _projects
 
 
 def to_sentence_case(sentence) -> typing.Any:
@@ -19,7 +19,7 @@ def remove_null_values(json_: dict) -> dict:
 
 
 def to_image_from_json(json_: dict) -> list:
-    return [projects.Project.GalleryImage._from_json(image) for image in json_]
+    return [_projects.Project.GalleryImage._from_json(image) for image in json_]
 
 
 def json_to_query_params(json_: dict) -> str:
