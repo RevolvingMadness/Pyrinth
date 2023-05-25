@@ -3,7 +3,7 @@ import pyrinth.users as _users
 
 class _Team:
     """
-    Represents a team
+    Represents a team.
 
     Attributes:
         members (list[dict]): A list of team members
@@ -16,12 +16,6 @@ class _Team:
 
     @property
     def members(self) -> list["_Team._TeamMember"]:
-        """
-        Gets a list of team members
-
-        Returns:
-            (list[Project.TeamMember]): A list of team members
-        """
         return [
             _Team._TeamMember._from_json(team_member) for team_member in self.members_
         ]
@@ -34,7 +28,7 @@ class _Team:
         return result
 
     class _TeamMember:
-        """Represents a team member of a project
+        """Represents a team member of a project.
 
         Attributes:
             team_id (str): The ID of the team member belongs to
@@ -59,13 +53,8 @@ class _Team:
             return "Team Member"
 
         @property
-        def user(self) -> "_users._User":
-            """Gets the user associated with the team member
-
-            Returns:
-                (User): The user associated with the team member
-            """
-            return _users._User._from_json(self._user)
+        def user(self) -> "_users.User":
+            return _users.User._from_json(self._user)
 
         @staticmethod
         def _from_json(team_member_json: dict) -> "_Team._TeamMember":

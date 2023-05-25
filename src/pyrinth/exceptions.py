@@ -2,28 +2,23 @@
 
 
 class NotFoundError(Exception):
-    """Used when a 404 occurs."""
 
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+    """Used when something isn't found."""
 
 
 class InvalidRequestError(Exception):
-    """Used when a 400 occurs."""
+
+    """Used when an invalid request is sent."""
 
     def __init__(self, reason) -> None:
         super().__init__(f"Invalid Request. Reason: {reason}")
 
 
 class NoAuthorizationError(Exception):
-    """Used when a 401 occurs."""
 
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+    """Used when a user isn't authorized."""
 
 
 class InvalidParamError(Exception):
-    """Used when a 400 occurs."""
 
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+    """Used when a parameter is invalid."""

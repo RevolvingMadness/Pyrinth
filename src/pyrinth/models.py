@@ -1,15 +1,16 @@
 """Contains all models used in Pyrinth."""
 import json as _json
+
 import pyrinth.literals as _literals
 import pyrinth.projects as _projects
 import pyrinth.util as _util
 
 
 class ProjectModel:
-    """The model used for the Project class
+    r"""The model used for the Project class.
 
     Attributes:
-        slug (str): The slug of the project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
+        slug (str): The slug of the project, used for vanity URLs. Regex: ^[\w!@$()`.+,"\-']{3,64}$
         title (str): The title or name of the project
         description (str): A short description of the project
         categories (list[str]): A list of categories that the project has
@@ -60,25 +61,6 @@ class ProjectModel:
         discord_url: str | None = None,
         auth: str = "",
     ) -> None:
-        """Initializes a new instance of ProjectModel
-
-        Args:
-            slug (str): The slug of the project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
-            title (str): The title or name of the project
-            description (str): A short description of the project
-            categories (list[str]): A list of categories that the project has
-            client_side (str): The client side support of the project
-            server_side (str): The server side support of the project
-            body (str): A long form description of the project
-            license_ (Project.License): The license of the project
-            project_type (str): The project type
-            additional_categories (list[str], optional): A list of categories which are searchable but non-primary
-            issues_url (str, optional): An optional link to where to submit bugs or issues with the project
-            source_url (str, optional): An optional link to the source code of the project
-            wiki_url (str, optional): An optional link to the project's wiki page or other relevant information
-            discord_url (str, optional): An optional invite link to the project's discord
-            auth (str, optional): Authentication token for the project
-        """
         self.slug = slug
         self.title = title
         self.description = description
@@ -88,16 +70,14 @@ class ProjectModel:
         self.body = body
         self.license = license_._to_json()
         self.project_type = project_type
-        self.additional_categories = (
-            [] if additional_categories is None else additional_categories
-        )
+        self.additional_categories = additional_categories
         self.issues_url = issues_url
         self.source_url = source_url
         self.wiki_url = wiki_url
         self.discord_url = discord_url
         self.auth = auth
         self.donation_urls: list[dict]
-        self.id_: str
+        self.id: str
         self.downloads: int
         self.icon_url: str
         self.color: str
@@ -108,14 +88,14 @@ class ProjectModel:
         self.approved: str
         self.followers: int
         self.status: str
-        self.version_ids: list[str]
+        self.versions: list[str]
         self.game_versions: list[str]
         self.loaders: list[str]
         self.gallery: list[dict]
 
     @staticmethod
     def _from_json(project_model_json: dict) -> "ProjectModel":
-        license_ = _projects.Project.License._from_json(
+        license = _projects.Project.License._from_json(
             project_model_json.get("license", ...)
         )
         result = ProjectModel(
@@ -126,7 +106,7 @@ class ProjectModel:
             project_model_json.get("client_side", ...),
             project_model_json.get("server_side", ...),
             project_model_json.get("body", ...),
-            license_,
+            license,
             project_model_json.get("project_type", ...),
             project_model_json.get("additional_categories"),
             project_model_json.get("issues_url"),
@@ -135,7 +115,7 @@ class ProjectModel:
             project_model_json.get("discord_url"),
             project_model_json.get("authorization", ...),
         )
-        result.id_ = project_model_json.get("id", ...)
+        result.id = project_model_json.get("id", ...)
         result.downloads = project_model_json.get("downloads", ...)
         result.donation_urls = project_model_json.get("donation_urls", ...)
         result.icon_url = project_model_json.get("icon_url", ...)
@@ -147,7 +127,7 @@ class ProjectModel:
         result.approved = project_model_json.get("approved", ...)
         result.followers = project_model_json.get("followers", ...)
         result.status = project_model_json.get("status", ...)
-        result.version_ids = project_model_json.get("versions", ...)
+        result.versions = project_model_json.get("versions", ...)
         result.game_versions = project_model_json.get("game_versions", ...)
         result.loaders = project_model_json.get("loaders", ...)
         result.gallery = project_model_json.get("gallery", ...)
@@ -161,10 +141,10 @@ class ProjectModel:
 
 
 class _SearchResultModel:
-    """The model used for the SearchResult class
+    r"""The model used for the SearchResult class.
 
     Attributes:
-        slug (str): The slug of a project, used for vanity URLs. Regex: ^[\\w!@$()`.+,"\\-']{3,64}$
+        slug (str): The slug of a project, used for vanity URLs. Regex: ^[\w!@$()`.+,"\-']{3,64}$
         title (str): The title or name of the project
         description (str): A short description of the project
         client_side (str): The client side support of the project
@@ -213,27 +193,27 @@ class _SearchResultModel:
     @staticmethod
     def _from_json(search_result_json: dict) -> "_SearchResultModel":
         result = _SearchResultModel()
-        result.slug = search_result_json.get("slug")
-        result.title = search_result_json.get("title")
-        result.description = search_result_json.get("description")
-        result.client_side = search_result_json.get("client_side")
-        result.server_side = search_result_json.get("server_side")
-        result.project_type = search_result_json.get("project_type")
-        result.downloads = search_result_json.get("downloads")
-        result.project_id = search_result_json.get("project_id")
-        result.author = search_result_json.get("author")
-        result.versions = search_result_json.get("versions")
-        result.follows = search_result_json.get("follows")
+        result.slug = search_result_json.get("slug", ...)
+        result.title = search_result_json.get("title", ...)
+        result.description = search_result_json.get("description", ...)
+        result.client_side = search_result_json.get("client_side", ...)
+        result.server_side = search_result_json.get("server_side", ...)
+        result.project_type = search_result_json.get("project_type", ...)
+        result.downloads = search_result_json.get("downloads", ...)
+        result.project_id = search_result_json.get("project_id", ...)
+        result.author = search_result_json.get("author", ...)
+        result.versions = search_result_json.get("versions", ...)
+        result.follows = search_result_json.get("follows", ...)
         result.date_created = search_result_json.get("date_created")
         result.date_modified = search_result_json.get("date_modified")
-        result.license = search_result_json.get("license")
-        result.categories = search_result_json.get("categories")
-        result.icon_url = search_result_json.get("icon_url")
-        result.color = search_result_json.get("color")
-        result.display_categories = search_result_json.get("display_categories")
-        result.latest_version = search_result_json.get("latest_version")
-        result.gallery = search_result_json.get("gallery")
-        result.featured_gallery = search_result_json.get("featured_gallery")
+        result.license = search_result_json.get("license", ...)
+        result.categories = search_result_json.get("categories", ...)
+        result.icon_url = search_result_json.get("icon_url", ...)
+        result.color = search_result_json.get("color", ...)
+        result.display_categories = search_result_json.get("display_categories", ...)
+        result.latest_version = search_result_json.get("latest_version", ...)
+        result.gallery = search_result_json.get("gallery", ...)
+        result.featured_gallery = search_result_json.get("featured_gallery", ...)
         return result
 
     def _to_json(self) -> dict:
@@ -244,7 +224,7 @@ class _SearchResultModel:
 
 
 class VersionModel:
-    """The model used for the Version class
+    """The model used for the Version class.
 
     Attributes:
         name (str): The name of this version
@@ -275,27 +255,11 @@ class VersionModel:
         version_type: _literals.version_type_literal,
         loaders: list[str],
         featured: bool,
-        file_parts: list[dict],
+        file_parts: list[str],
         changelog: str | None = None,
         status: _literals.version_status_literal | None = None,
         requested_status: _literals.requested_version_status_literal | None = None,
     ) -> None:
-        """
-        Initializes a new instance of VersionModel
-
-        Args:
-            name (str): The name of this version
-            version_number (str): The version number. Ideally will follow semantic versioning
-            dependencies (list[Project.Dependency]): A list of specific versions of projects that this version depends on
-            game_versions (list[str]): A list of versions of Minecraft that this version supports
-            version_type (Literal["release", "beta", "alpha"]): The release channel for this version
-            loaders (list[str]): The mod loaders that this version supports
-            featured (bool): Whether the version is featured or not
-            file_parts (list[str]): A list of files avaliable for download for this version
-            changelog (str, optional): The changelog for this version
-            status (Literal["listed", "archived", "draft", "unlisted", "scheduled", "unknown"], optional): The version's status
-            requested_status (Literal["listed", "archived", "draft", "unlisted"], optional): The version's requested status
-        """
         self.name = name
         self.version_number = version_number
         self.changelog = changelog
@@ -306,7 +270,7 @@ class VersionModel:
         self.featured = featured
         self.status = status
         self.requested_status = requested_status
-        self.files = file_parts
+        self.file_parts = file_parts
         self.project_id: str
         self.id: str
         self.author_id: str
@@ -343,7 +307,7 @@ class VersionModel:
 
 
 class _UserModel:
-    """The model used for the User class
+    """The model used for the User class.
 
     Attributes:
         username (str): The user's username
@@ -374,20 +338,20 @@ class _UserModel:
     auth: str
 
     @staticmethod
-    def _from_json(json_: dict) -> "_UserModel":
+    def _from_json(user_json: dict) -> "_UserModel":
         result = _UserModel()
-        result.username = json_.get("username", ...)
-        result.id = json_.get("id", ...)
-        result.avatar_url = json_.get("avatar_url", ...)
-        result.created = json_.get("created", ...)
-        result.role = json_.get("role", ...)
-        result.name = json_.get("name", ...)
-        result.email = json_.get("email", ...)
-        result.bio = json_.get("bio", ...)
-        result.payout_data = json_.get("payout_data", ...)
-        result.github_id = json_.get("github_id", ...)
-        result.badges = json_.get("badges", ...)
-        result.auth = json_.get("authorization", "")
+        result.username = user_json.get("username", ...)
+        result.id = user_json.get("id", ...)
+        result.avatar_url = user_json.get("avatar_url", ...)
+        result.created = user_json.get("created", ...)
+        result.role = user_json.get("role", ...)
+        result.name = user_json.get("name", ...)
+        result.email = user_json.get("email", ...)
+        result.bio = user_json.get("bio", ...)
+        result.payout_data = user_json.get("payout_data", ...)
+        result.github_id = user_json.get("github_id", ...)
+        result.badges = user_json.get("badges", ...)
+        result.auth = user_json.get("authorization", "")
         return result
 
     def _to_json(self) -> dict:
