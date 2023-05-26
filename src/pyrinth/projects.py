@@ -35,12 +35,12 @@ class Project:
         return self.project_model.auth
 
     @staticmethod
-    def get(id_: str, authorization: str = "") -> Project:
+    def get(id: str, authorization: str = "") -> Project:
         """Get a project by ID or slug.
 
         Args:
-            id_ (str): The ID or slug of the project
-            auth (str, optional): An optional authorization token when getting the project
+            id (str): The ID or slug of the project
+            authorization (str, optional): An optional authorization token when getting the project
 
         Raises:
             NotFoundError: The requested project wasn't found or no authorization to see this project
@@ -50,7 +50,7 @@ class Project:
             (Project): The project that was found
         """
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/project/{id_}",
+            f"https://api.modrinth.com/v2/project/{id}",
             headers={"authorization": authorization},
             timeout=60,
         )
@@ -96,7 +96,7 @@ class Project:
         loaders: list[_literals.loader_literal] | None = None,
         game_versions: list[_literals.game_version_literal] | None = None,
         featured: bool | None = None,
-        types: _literals.version_type_literal | None = None,
+        type: _literals.version_type_literal | None = None,
         auth: str | None = None,
     ) -> Project.Version | None:
         """Get the projects latest version.
@@ -105,13 +105,13 @@ class Project:
             loaders (list[str], optional): The loaders filter. Defaults to None
             game_versions (list[str], optional): The game versions filter. Defaults to None
             featured (bool, optional): The is featured filter. Defaults to None
-            types (Literal["release", "beta", "alpha"], optional): The types filter. Defaults to None
+            type (Literal["release", "beta", "alpha"], optional): The types filter. Defaults to None
             auth (str, optional): The authorization token. Defaults to None
 
         Returns:
             (Project.Version): The project's latest version
         """
-        versions = self.get_versions(loaders, game_versions, featured, types, auth)
+        versions = self.get_versions(loaders, game_versions, featured, type, auth)
         if len(versions) == 0:
             return None
         return versions[0]
@@ -128,6 +128,7 @@ class Project:
     def body(self) -> str:
         return self.project_model.body
 
+    @property
     def is_client_side(self) -> bool:
         """Check if this project is client side.
 
@@ -136,6 +137,7 @@ class Project:
         """
         return True if self.project_model.client_side == "required" else False
 
+    @property
     def is_server_side(self) -> bool:
         """Check if this project is server side.
 
@@ -276,7 +278,7 @@ class Project:
             loaders (list[str], optional): The types of loaders to filter for
             game_versions (list[str], optional): The game versions to filter for
             featured (bool, optional): Allows to filter for featured or non-featured versions only
-            types (Literal["release", "beta", "alpha"], optional): The type of version
+            type (Literal["release", "beta", "alpha"], optional): The type of version
             auth (str, optional): An optional authorization token to use when getting the project versions
 
         Returns:
@@ -316,11 +318,11 @@ class Project:
         return self.project_model.title
 
     @staticmethod
-    def get_version(id_: str) -> Project.Version:
+    def get_version(id: str) -> Project.Version:
         """Get a version by ID.
 
         Args:
-            id_ (str): The ID of the version
+            id (str): The ID of the version
 
         Raises:
             NotFoundError: The requested version wasn't found or no authorization to see this version
@@ -330,7 +332,7 @@ class Project:
             (Project.Version): The version that was found
         """
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/version/{id_}", timeout=60
+            f"https://api.modrinth.com/v2/version/{id}", timeout=60
         )
         match raw_response.status_code:
             case 404:
@@ -828,11 +830,11 @@ class Project:
             ]
 
         @staticmethod
-        def get(id_: str) -> Project.Version:
+        def get(id: str) -> Project.Version:
             """Get a version by ID.
 
             Args:
-                id_ (str): The ID of the version
+                id (str): The ID of the version
 
             Raises:
                 NotFoundError: The requested version wasn't found or no authorization to see this version
@@ -842,7 +844,7 @@ class Project:
                 (Project.Version): The version that was found
             """
             raw_response = _requests.get(
-                f"https://api.modrinth.com/v2/version/{id_}", timeout=60
+                f"https://api.modrinth.com/v2/version/{id}", timeout=60
             )
             match raw_response.status_code:
                 case 404:
@@ -856,14 +858,14 @@ class Project:
 
         @staticmethod
         def get_from_hash(
-            hash_: str,
+            hash: str,
             algorithm: _literals.sha_algorithm_literal = "sha1",
             multiple: bool = False,
         ) -> Project.Version | list[Project.Version]:
             """Get a version by hash.
 
             Args:
-                hash_ (str): The hash of the file, considering its byte content, and encoded in hexadecimal
+                hash (str): The hash of the file, considering its byte content, and encoded in hexadecimal
                 algorithm (Literal["sha512", "sha1"]): The algorithm of the hash
                 multiple (bool): Whether to return multiple results when looking for this hash
 
@@ -875,7 +877,7 @@ class Project:
                 (Project.Version): The version that was found
             """
             raw_response = _requests.get(
-                f"https://api.modrinth.com/v2/version_file/{hash_}",
+                f"https://api.modrinth.com/v2/version_file/{hash}",
                 params={"algorithm": algorithm, "multiple": str(multiple).lower()},
                 timeout=60,
             )
@@ -897,14 +899,14 @@ class Project:
         @staticmethod
         def delete_file_from_hash(
             auth: str,
-            hash_: str,
+            hash: str,
             version_id: str,
             algorithm: _literals.sha_algorithm_literal = "sha1",
         ) -> bool:
             """Delete a file from its hash.
 
             Args:
-                hash_ (str): The hash of the file, considering its byte content, and encoded in hexadecimal
+                hash (str): The hash of the file, considering its byte content, and encoded in hexadecimal
                 algorithm (Literal["sha512", "sha1"]): The algorithm of the hash
                 version_id (bool): Version ID to delete the version from if multiple files of the same hash exist
                 auth (str): The authorization token to use when deleting the file from its hash
@@ -918,7 +920,7 @@ class Project:
                 (bool): If the file deletion was successful
             """
             raw_response = _requests.delete(
-                f"https://api.modrinth.com/v2/version_file/{hash_}",
+                f"https://api.modrinth.com/v2/version_file/{hash}",
                 params={"algorithm": algorithm, "version_id": version_id},
                 headers={"authorization": auth},
                 timeout=60,
@@ -974,6 +976,7 @@ class Project:
             user = _users.User.get(self.version_model.author_id)
             return user
 
+        @property
         def is_featured(self) -> bool:
             """Check if the version is featured.
 
@@ -1031,13 +1034,13 @@ class Project:
             self.ordering = ordering
 
         @staticmethod
-        def _from_json(json_: dict) -> Project.GalleryImage:
+        def _from_json(gallery_image_json: dict) -> Project.GalleryImage:
             return Project.GalleryImage(
-                json_.get("url", ...),
-                json_.get("featured", ...),
-                json_.get("title", ...),
-                json_.get("description", ...),
-                json_.get("ordering", ...),
+                gallery_image_json.get("url", ...),
+                gallery_image_json.get("featured", ...),
+                gallery_image_json.get("title", ...),
+                gallery_image_json.get("description", ...),
+                gallery_image_json.get("ordering", ...),
             )
 
         def _to_json(self) -> dict:
@@ -1052,6 +1055,7 @@ class Project:
         file_type: str
         extension: str
 
+        @property
         def is_resourcepack(self) -> bool:
             """
             Check if a file is a resourcepack.
@@ -1064,14 +1068,14 @@ class Project:
             return True
 
         @staticmethod
-        def _from_json(json_: dict) -> Project._File:
+        def _from_json(file_json: dict) -> Project._File:
             result = Project._File()
-            result.hashes = json_.get("hashes", ...)
-            result.url = json_.get("url", ...)
-            result.name = json_.get("filename", ...)
-            result.primary = json_.get("primary", ...)
-            result.size = json_.get("size", ...)
-            result.file_type = json_.get("file_type", ...)
+            result.hashes = file_json.get("hashes", ...)
+            result.url = file_json.get("url", ...)
+            result.name = file_json.get("filename", ...)
+            result.primary = file_json.get("primary", ...)
+            result.size = file_json.get("size", ...)
+            result.file_type = file_json.get("file_type", ...)
             result.extension = result.name.split(".")[-1]
             return result
 
@@ -1090,7 +1094,7 @@ class Project:
 
         """
 
-        id_: str
+        id: str
         name: str
         url: str | None = None
 
@@ -1105,7 +1109,7 @@ class Project:
             return self.__dict__
 
         def __repr__(self) -> str:
-            return f"License: {(self.name if self.name else self.id_)}"
+            return f"License: {(self.name if self.name else self.id)}"
 
     @dataclasses.dataclass
     class Donation:
@@ -1113,13 +1117,13 @@ class Project:
         Represents a donation.
 
         Attributes:
-            id_ (str): The ID of the donation platform
+            id (str): The ID of the donation platform
             platform (str): The donation platform this link is to
             url (str): The URL of the donation platform and user
 
         """
 
-        id_: str
+        id: str
         platform: str
         url: str
 
@@ -1142,12 +1146,12 @@ class Project:
             return self.__dict__
 
         @staticmethod
-        def _from_json(json_: dict) -> Project.Dependency:
+        def _from_json(dependency_json: dict) -> Project.Dependency:
             result = Project.Dependency(
-                json_["version_id"],
-                json_["project_id"],
-                json_["dependency_type"],
-                json_["file_name"],
+                dependency_json["version_id"],
+                dependency_json["project_id"],
+                dependency_json["dependency_type"],
+                dependency_json["file_name"],
             )
             return result
 
@@ -1158,6 +1162,7 @@ class Project:
                 id = self.version_id
             return Project.Version.get(id)  # type: ignore
 
+        @property
         def is_required(self) -> bool:
             """
             Check if the dependency is required.
@@ -1167,6 +1172,7 @@ class Project:
             """
             return True if self.dependency_type == "required" else False
 
+        @property
         def is_optional(self) -> bool:
             """
             Check if the dependency is optional.
@@ -1176,6 +1182,7 @@ class Project:
             """
             return True if self.dependency_type == "optional" else False
 
+        @property
         def is_incompatible(self) -> bool:
             """
             Check if the dependency is incompatible.

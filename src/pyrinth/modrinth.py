@@ -9,11 +9,11 @@ import pyrinth.projects as _projects
 
 class Modrinth:
     @staticmethod
-    def project_exists(id_: str) -> bool:
+    def project_exists(id: str) -> bool:
         """Check if a project exists.
 
         Args:
-            id_ (str): The ID or slug of the project
+            id (str): The ID or slug of the project
 
         Raises:
             InvalidRequestError: Invalid request
@@ -23,7 +23,7 @@ class Modrinth:
             (bool): Whether the project exists
         """
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/project/{id_}/check", timeout=60
+            f"https://api.modrinth.com/v2/project/{id}/check", timeout=60
         )
         match raw_response.status_code:
             case 404:

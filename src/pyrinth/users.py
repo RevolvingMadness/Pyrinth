@@ -26,8 +26,8 @@ class User:
         return self.user_model.auth
 
     @staticmethod
-    def _from_json(json_: dict) -> User:
-        return User(_models._UserModel._from_json(json_))
+    def _from_json(user_json: dict) -> User:
+        return User(_models._UserModel._from_json(user_json))
 
     @property
     def payout_history(self) -> _PayoutHistory:
@@ -87,11 +87,11 @@ class User:
         return True
 
     @staticmethod
-    def get(id_: str, auth=None) -> User:
+    def get(id: str, auth=None) -> User:
         """Get a user.
 
         Args:
-            id_ (str): The user's ID to find
+            id (str): The user's ID to find
             auth (str, optional): The authorization token to use when creating the user. Defaults to None
 
         Raises:
@@ -102,7 +102,7 @@ class User:
             (User): The user that was found
         """
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/user/{id_}", timeout=60
+            f"https://api.modrinth.com/v2/user/{id}", timeout=60
         )
         match raw_response.status_code:
             case 404:
@@ -208,18 +208,18 @@ class User:
             for project_json in response
         ]
 
-    def follow_project(self, id_: str) -> int:
+    def follow_project(self, id: str) -> int:
         """
         Follow a project.
 
         Args:
-            id_ (str): The ID of the project to follow
+            id (str): The ID of the project to follow
 
         Returns:
             (int): If the project follow was successful
         """
         raw_response = _requests.post(
-            f"https://api.modrinth.com/v2/project/{id_}/follow",
+            f"https://api.modrinth.com/v2/project/{id}/follow",
             headers={"authorization": self.user_model.auth},
             timeout=60,
         )
@@ -236,18 +236,18 @@ class User:
             raise _exceptions.InvalidRequestError(raw_response.text)
         return True
 
-    def unfollow_project(self, id_: str) -> int:
+    def unfollow_project(self, id: str) -> int:
         """
         Unfollow a project.
 
         Args:
-            id_ (str): The ID of the project to unfollow
+            id (str): The ID of the project to unfollow
 
         Returns:
             (int): If the project unfollow was successful
         """
         raw_response = _requests.delete(
-            f"https://api.modrinth.com/v2/project/{id_}/follow",
+            f"https://api.modrinth.com/v2/project/{id}/follow",
             headers={"authorization": self.user_model.auth},
             timeout=60,
         )
@@ -287,7 +287,7 @@ class User:
         return User._from_json(response)
 
     @staticmethod
-    def from_id(id_: str) -> User:
+    def from_id(id: str) -> User:
         """
         Get a user from ID.
 
@@ -296,7 +296,7 @@ class User:
 
         """
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/user/{id_}", timeout=60
+            f"https://api.modrinth.com/v2/user/{id}", timeout=60
         )
         match raw_response.status_code:
             case 404:
@@ -327,7 +327,7 @@ class User:
     class _Notification:
         """Used for the user's notifications."""
 
-        id_: str
+        id: str
         user_id: str
         type: str
         title: str
@@ -344,7 +344,7 @@ class User:
         @staticmethod
         def _from_json(notification_json: dict) -> User._Notification:
             result = User._Notification()
-            result.id_ = notification_json.get("id", ...)
+            result.id = notification_json.get("id", ...)
             result.user_id = notification_json.get("user_id", ...)
             result.type = notification_json.get("type", ...)
             result.title = notification_json.get("title", ...)

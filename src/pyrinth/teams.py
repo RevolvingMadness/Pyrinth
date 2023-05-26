@@ -4,20 +4,20 @@ import pyrinth.users as _users
 
 
 class _Team:
-    members_: dict
-    id_: str
+    _members: dict
+    id: str
 
     @property
     def members(self) -> list[_TeamMember]:
         return [
-            _Team._TeamMember._from_json(team_member) for team_member in self.members_
+            _Team._TeamMember._from_json(team_member) for team_member in self._members
         ]
 
     @staticmethod
     def _from_json(team_json: dict) -> _Team:
         result = _Team()
-        result.members_ = team_json
-        result.id_ = team_json[0]["team_id"]
+        result._members = team_json
+        result.id = team_json[0]["team_id"]
         return result
 
     class _TeamMember:

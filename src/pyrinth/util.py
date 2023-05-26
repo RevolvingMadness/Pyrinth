@@ -1,33 +1,33 @@
 """Utility functions for Pyrinth."""
-import datetime as dt
-import json
-import typing
+import datetime as _datetime
+import json as _json
+import typing as _typing
 
-import dateutil.parser
+import dateutil.parser as _parser
 
 import pyrinth.projects as _projects
 
 
-def to_sentence_case(sentence) -> typing.Any:
+def to_sentence_case(sentence: str) -> _typing.Any:
     return sentence.title().replace("-", " ").replace("_", " ")
 
 
-def remove_null_values(json_: dict) -> dict:
+def remove_null_values(json: dict) -> dict:
     result = {}
-    for key, value in json_.items():
+    for key, value in json.items():
         if value is not None:
             result.update({key: value})
     return result
 
 
-def to_image_from_json(json_: dict) -> list:
-    return [_projects.Project.GalleryImage._from_json(image) for image in json_]
+def to_image_from_json(json: dict) -> list:
+    return [_projects.Project.GalleryImage._from_json(image) for image in json]
 
 
-def json_to_query_params(json_: dict) -> str:
+def json_to_query_params(json: dict) -> str:
     result = ""
-    for key, value in json_.items():
-        result += f"{key}={json.dumps(value)}&"
+    for key, value in json.items():
+        result += f"{key}={_json.dumps(value)}&"
     return result
 
 
@@ -55,9 +55,9 @@ def list_to_object(type_, lst) -> list:
     return result
 
 
-def format_time(time) -> dt.datetime:
-    return dateutil.parser.parser().parse(time)
+def format_time(time) -> _datetime.datetime:
+    return _parser.parser().parse(time)
 
 
 def args_to_dict(**kwargs) -> str:
-    return json.dumps(kwargs)
+    return _json.dumps(kwargs)

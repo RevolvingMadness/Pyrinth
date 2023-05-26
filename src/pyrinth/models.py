@@ -37,7 +37,7 @@ class ProjectModel(_Model):
         downloads (int): The total number of downloads of the project
         icon_url (str): The URL of the project's icon
         color (str): The RGB color of the project, automatically generated from the project icon
-        id_ (str): The ID of the project, encoded as a base62 string
+        id (str): The ID of the project, encoded as a base62 string
         team (str): The ID of the team that has ownership of this project
         moderator_message: A message that a moderator sent regarding the project
         published (str): The date the project was published
