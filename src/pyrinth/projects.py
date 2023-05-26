@@ -1,9 +1,9 @@
 """Project can be mods or modpacks and are created by users."""
+from __future__ import annotations
+
 import dataclasses
 import datetime as _datetime
 import json as _json
-import typing as _typing
-from typing import Any
 
 import requests as _requests
 
@@ -22,11 +22,11 @@ class Project:
         model (ProjectModel): The project's model
     """
 
-    def __init__(self, project_model: "_models.ProjectModel") -> None:
+    def __init__(self, project_model: _models.ProjectModel) -> None:
         self.project_model = project_model
 
     @property
-    def donations(self) -> list["Project.Donation"]:
+    def donations(self) -> list[Project.Donation]:
         return _util.list_to_object(Project.Donation, self.project_model.donation_urls)
 
     def _get_auth(self, auth: str | None) -> str:
@@ -35,7 +35,7 @@ class Project:
         return self.project_model.auth
 
     @staticmethod
-    def get(id_: str, authorization: str = "") -> "Project":
+    def get(id_: str, authorization: str = "") -> Project:
         """Get a project by ID or slug.
 
         Args:
@@ -66,7 +66,7 @@ class Project:
         return Project(_models.ProjectModel._from_json(response))
 
     @staticmethod
-    def get_multiple(ids: list[str]) -> list["Project"]:
+    def get_multiple(ids: list[str]) -> list[Project]:
         """Get multiple projects.
 
         Args:
@@ -93,12 +93,12 @@ class Project:
 
     def get_latest_version(
         self,
-        loaders: list[str] | None = None,
-        game_versions: list[str] | None = None,
+        loaders: list[_literals.loader_literal] | None = None,
+        game_versions: list[_literals.game_version_literal] | None = None,
         featured: bool | None = None,
         types: _literals.version_type_literal | None = None,
         auth: str | None = None,
-    ) -> "Project.Version":
+    ) -> Project.Version | None:
         """Get the projects latest version.
 
         Args:
@@ -112,10 +112,12 @@ class Project:
             (Project.Version): The project's latest version
         """
         versions = self.get_versions(loaders, game_versions, featured, types, auth)
+        if len(versions) == 0:
+            return None
         return versions[0]
 
     @property
-    def gallery(self) -> list["Project.GalleryImage"]:
+    def gallery(self) -> list[Project.GalleryImage]:
         return _util.list_to_object(Project.GalleryImage, self.project_model.gallery)
 
     @property
@@ -162,12 +164,10 @@ class Project:
         return self.categories + self.additional_categories
 
     @property
-    def license(self) -> "Project.License":
+    def license(self) -> Project.License:
         return Project.License._from_json(self.project_model.license)
 
-    def get_specific_version(
-        self, semantic_version: str
-    ) -> _typing.Optional["Project.Version"]:
+    def get_specific_version(self, semantic_version: str) -> Project.Version | None:
         """Get a specific version based on the semantic version.
 
         Args:
@@ -184,13 +184,15 @@ class Project:
                     return version
         return None
 
-    def download(self, recursive: bool = False) -> None:
+    def download(self, recursive: bool = False) -> int:
         """Download the project.
 
         Args:
             recursive (bool): Whether to download dependencies. Defaults to False
         """
         latest = self.get_latest_version()
+        if latest is None:
+            return 0
         files = latest.files
         for file in files:
             file_content = _requests.get(file.url, timeout=60).content
@@ -202,15 +204,16 @@ class Project:
                 for file in files:
                     file_content = _requests.get(file.url, timeout=60).content
                     open(file.name, "wb").write(file_content)
+        return 1
 
     def get_versions(
         self,
-        loaders: list[str] | None = None,
-        game_versions: list[str] | None = None,
+        loaders: list[_literals.loader_literal] | None = None,
+        game_versions: list[_literals.game_version_literal] | None = None,
         featured: bool | None = None,
         types: _literals.version_type_literal | None = None,
         auth: str | None = None,
-    ) -> list["Project.Version"]:
+    ) -> list[Project.Version]:
         """Get project versions based on filters.
 
         Args:
@@ -261,12 +264,12 @@ class Project:
 
     def get_oldest_version(
         self,
-        loaders: list[str] | None = None,
-        game_versions: list[str] | None = None,
+        loaders: list[_literals.loader_literal] | None = None,
+        game_versions: list[_literals.game_version_literal] | None = None,
         featured: bool | None = None,
-        types: _literals.version_type_literal | None = None,
+        type: _literals.version_type_literal | None = None,
         auth: str | None = None,
-    ) -> "Project.Version":
+    ) -> Project.Version | None:
         """Get the oldest project version.
 
         Args:
@@ -279,7 +282,9 @@ class Project:
         Returns:
             (Project.Version): The version that was found
         """
-        versions = self.get_versions(loaders, game_versions, featured, types, auth)
+        versions = self.get_versions(loaders, game_versions, featured, type, auth)
+        if len(versions) == 0:
+            return None
         return versions[-1]
 
     @property
@@ -311,7 +316,7 @@ class Project:
         return self.project_model.title
 
     @staticmethod
-    def get_version(id_: str) -> "Project.Version":
+    def get_version(id_: str) -> Project.Version:
         """Get a version by ID.
 
         Args:
@@ -338,7 +343,7 @@ class Project:
         return Project.Version(_models.VersionModel._from_json(response))
 
     def create_version(
-        self, version_model: "_models.VersionModel", auth: str | None = None
+        self, version_model: _models.VersionModel, auth: str | None = None
     ) -> int:
         """Create a new version on the project.
 
@@ -435,7 +440,7 @@ class Project:
         return True
 
     def add_gallery_image(
-        self, image: "Project.GalleryImage", auth: str | None = None
+        self, image: Project.GalleryImage, auth: str | None = None
     ) -> bool:
         """Add a gallery image to the project.
 
@@ -666,7 +671,7 @@ class Project:
     def followers(self) -> int:
         return self.project_model.followers
 
-    def delete(self, auth: str | None = None) -> _typing.Literal[True]:
+    def delete(self, auth: str | None = None) -> bool:
         """Delete the project.
 
         Args:
@@ -697,7 +702,7 @@ class Project:
         return True
 
     @property
-    def dependencies(self) -> list["Project"]:
+    def dependencies(self) -> list[Project]:
         raw_response = _requests.get(
             f"https://api.modrinth.com/v2/project/{self.project_model.slug}/dependencies",
             timeout=60,
@@ -723,7 +728,7 @@ class Project:
         offset: int = 0,
         limit: int = 10,
         filters: list[str] | None = None,
-    ) -> list["Project._SearchResult"]:
+    ) -> list[Project._SearchResult]:
         """Search for projects.
 
         Args:
@@ -764,7 +769,7 @@ class Project:
         ]
 
     @property
-    def team_members(self) -> "list[_teams._Team._TeamMember]":
+    def team_members(self) -> list[_teams._Team._TeamMember]:
         raw_response = _requests.get(
             f"https://api.modrinth.com/v2/project/{self.project_model.id}/members",
             timeout=60,
@@ -782,7 +787,7 @@ class Project:
         ]
 
     @property
-    def team(self) -> "_teams._Team":
+    def team(self) -> _teams._Team:
         raw_response = _requests.get(
             f"https://api.modrinth.com/v2/project/{self.project_model.id}/members",
             timeout=60,
@@ -808,7 +813,7 @@ class Project:
 
         """
 
-        def __init__(self, version_model: "_models.VersionModel") -> None:
+        def __init__(self, version_model: _models.VersionModel) -> None:
             self.version_model = version_model
 
         @property
@@ -816,14 +821,14 @@ class Project:
             return self.version_model.version_type
 
         @property
-        def dependencies(self) -> list["Project._Dependency"]:
+        def dependencies(self) -> list[Project.Dependency]:
             return [
-                Project._Dependency._from_json(dependency_json)
+                Project.Dependency._from_json(dependency_json)  # type: ignore
                 for dependency_json in self.version_model.dependencies
             ]
 
         @staticmethod
-        def get(id_: str) -> "Project.Version":
+        def get(id_: str) -> Project.Version:
             """Get a version by ID.
 
             Args:
@@ -854,7 +859,7 @@ class Project:
             hash_: str,
             algorithm: _literals.sha_algorithm_literal = "sha1",
             multiple: bool = False,
-        ) -> _typing.Union["Project.Version", list["Project.Version"]]:
+        ) -> Project.Version | list[Project.Version]:
             """Get a version by hash.
 
             Args:
@@ -895,7 +900,7 @@ class Project:
             hash_: str,
             version_id: str,
             algorithm: _literals.sha_algorithm_literal = "sha1",
-        ) -> _typing.Literal[True]:
+        ) -> bool:
             """Delete a file from its hash.
 
             Args:
@@ -932,7 +937,7 @@ class Project:
             return True
 
         @property
-        def files(self) -> list["Project._File"]:
+        def files(self) -> list[Project._File]:
             return [Project._File._from_json(file) for file in self.version_model.file_parts]  # type: ignore
 
         def download(self, recursive: bool = False) -> None:
@@ -953,11 +958,11 @@ class Project:
                         open(file.name, "wb").write(file_content)
 
         @property
-        def project(self) -> "Project":
+        def project(self) -> Project:
             return Project.get(self.version_model.project_id)
 
         @property
-        def primary_files(self) -> list["Project._File"]:
+        def primary_files(self) -> list[Project._File]:
             result = []
             for file in self.files:
                 if file.primary:
@@ -965,7 +970,7 @@ class Project:
             return result
 
         @property
-        def author(self) -> "_users.User":
+        def author(self) -> _users.User:
             user = _users.User.get(self.version_model.author_id)
             return user
 
@@ -978,7 +983,7 @@ class Project:
             return self.version_model.featured
 
         @property
-        def date_published(self) -> "_datetime.datetime":
+        def date_published(self) -> _datetime.datetime:
             return _util.format_time(self.version_model.date_published)
 
         @property
@@ -1026,7 +1031,7 @@ class Project:
             self.ordering = ordering
 
         @staticmethod
-        def _from_json(json_: dict) -> "Project.GalleryImage":
+        def _from_json(json_: dict) -> Project.GalleryImage:
             return Project.GalleryImage(
                 json_.get("url", ...),
                 json_.get("featured", ...),
@@ -1059,7 +1064,7 @@ class Project:
             return True
 
         @staticmethod
-        def _from_json(json_: dict) -> "Project._File":
+        def _from_json(json_: dict) -> Project._File:
             result = Project._File()
             result.hashes = json_.get("hashes", ...)
             result.url = json_.get("url", ...)
@@ -1090,7 +1095,7 @@ class Project:
         url: str | None = None
 
         @staticmethod
-        def _from_json(license_json: dict) -> "Project.License":
+        def _from_json(license_json: dict) -> Project.License:
             result = Project.License(
                 license_json["id"], license_json["name"], license_json["url"]
             )
@@ -1119,37 +1124,39 @@ class Project:
         url: str
 
         @staticmethod
-        def _from_json(donation_json: dict) -> "Project.Donation":
+        def _from_json(donation_json: dict) -> Project.Donation:
             result = Project.Donation._from_json(donation_json)
             return result
 
         def __repr__(self) -> str:
             return f"Donation: {self.platform}"
 
-    class _Dependency:
-        dependency_option: str
-        file_name: str
-        version_id: str
-        project_id: str
+    @dataclasses.dataclass
+    class Dependency:
+        dependency_type: _literals.dependency_type_literal
+        version_id: str | None = None
+        project_id: str | None = None
+        file_name: str | None = None
 
         def _to_json(self) -> dict:
             return self.__dict__
 
         @staticmethod
-        def _from_json(json_: dict) -> "Project._Dependency":
-            result = Project._Dependency()
-            result.version_id = json_.get("version_id", ...)
-            result.project_id = json_.get("project_id", ...)
-            result.dependency_option = json_.get("dependency_option", ...)
-            result.file_name = json_.get("file_name", ...)
+        def _from_json(json_: dict) -> Project.Dependency:
+            result = Project.Dependency(
+                json_["version_id"],
+                json_["project_id"],
+                json_["dependency_type"],
+                json_["file_name"],
+            )
             return result
 
         @property
-        def version(self) -> "Project.Version":
-            id_ = self.project_id
+        def version(self) -> Project.Version:
+            id = self.project_id
             if self.version_id:
-                id_ = self.version_id
-            return Project.Version.get(id_)
+                id = self.version_id
+            return Project.Version.get(id)  # type: ignore
 
         def is_required(self) -> bool:
             """
@@ -1158,7 +1165,7 @@ class Project:
             Returns:
                 (bool): True if the dependency is required, False otherwise
             """
-            return True if self.dependency_option == "required" else False
+            return True if self.dependency_type == "required" else False
 
         def is_optional(self) -> bool:
             """
@@ -1167,7 +1174,7 @@ class Project:
             Returns:
                 (bool): True if the dependency is optional, False otherwise
             """
-            return True if self.dependency_option == "optional" else False
+            return True if self.dependency_type == "optional" else False
 
         def is_incompatible(self) -> bool:
             """
@@ -1176,11 +1183,14 @@ class Project:
             Returns:
                 (bool): True if the dependency is incompatible, False otherwise
             """
-            return True if self.dependency_option == "incompatible" else False
+            return True if self.dependency_type == "incompatible" else False
+
+        def __repr__(self) -> str:
+            return f"Dependency"
 
     @dataclasses.dataclass
     class _SearchResult:
-        search_result_model: "_models._SearchResultModel"
+        search_result_model: _models._SearchResultModel
 
         def __repr__(self) -> str:
             return f"Search Result: {self.search_result_model.title}"

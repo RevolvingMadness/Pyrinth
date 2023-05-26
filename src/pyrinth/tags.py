@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import dataclasses
 
 import requests as _requests
@@ -8,7 +10,7 @@ import pyrinth.exceptions as _exceptions
 class Tag:
     @classmethod  # type: ignore
     @property
-    def categories(cls) -> list["Tag._Category"]:
+    def categories(cls) -> list[Tag._Category]:
         raw_response = _requests.get(
             "https://api.modrinth.com/v2/tag/category", timeout=60
         )
@@ -27,7 +29,7 @@ class Tag:
 
     @classmethod  # type: ignore
     @property
-    def loaders(cls) -> list["Tag._Loaders"]:
+    def loaders(cls) -> list[Tag._Loaders]:
         raw_response = _requests.get(
             "https://api.modrinth.com/v2/tag/loader", timeout=60
         )
@@ -45,7 +47,7 @@ class Tag:
 
     @classmethod  # type: ignore
     @property
-    def game_versions(cls) -> list["Tag._GameVersion"]:
+    def game_versions(cls) -> list[_GameVersion]:
         raw_response = _requests.get(
             "https://api.modrinth.com/v2/tag/game_version", timeout=60
         )
@@ -64,7 +66,7 @@ class Tag:
 
     @classmethod  # type: ignore
     @property
-    def licenses(cls) -> list["Tag._License"]:
+    def licenses(cls) -> list[_License]:
         raw_response = _requests.get(
             "https://api.modrinth.com/v2/tag/license", timeout=60
         )
@@ -78,7 +80,7 @@ class Tag:
 
     @classmethod  # type: ignore
     @property
-    def donation_platforms(cls) -> list["Tag._DonationPlatform"]:
+    def donation_platforms(cls) -> list[Tag._DonationPlatform]:
         raw_response = _requests.get(
             "https://api.modrinth.com/v2/tag/donation_platform", timeout=60
         )

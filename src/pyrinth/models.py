@@ -1,4 +1,6 @@
 """Contains all models used in Pyrinth."""
+from __future__ import annotations
+
 import json as _json
 
 import pyrinth.literals as _literals
@@ -60,7 +62,7 @@ class ProjectModel(_Model):
         client_side: str,
         server_side: str,
         body: str,
-        license: "_projects.Project.License",
+        license: _projects.Project.License,
         project_type: str,
         additional_categories: list[str] | None = None,
         issues_url: str | None = None,
@@ -97,12 +99,12 @@ class ProjectModel(_Model):
         self.followers: int
         self.status: str
         self.versions: list[str]
-        self.game_versions: list[str]
-        self.loaders: list[str]
+        self.game_versions: list[_literals.game_version_literal]
+        self.loaders: list[_literals.loader_literal]
         self.gallery: list[dict]
 
     @staticmethod
-    def _from_json(project_model_json: dict) -> "ProjectModel":
+    def _from_json(project_model_json: dict) -> ProjectModel:
         license = _projects.Project.License._from_json(
             project_model_json.get("license", ...)
         )
@@ -166,7 +168,7 @@ class _SearchResultModel(_Model):
     featured_gallery: list[str]
 
     @staticmethod
-    def _from_json(search_result_json: dict) -> "_SearchResultModel":
+    def _from_json(search_result_json: dict) -> _SearchResultModel:
         result = _SearchResultModel()
         result.slug = search_result_json.get("slug", ...)
         result.title = search_result_json.get("title", ...)
@@ -219,10 +221,10 @@ class VersionModel(_Model):
         self,
         name: str,
         version_number: str,
-        dependencies: list["_projects.Project._Dependency"],
-        game_versions: list[str],
+        dependencies: list[_projects.Project.Dependency],
+        game_versions: list[_literals.game_version_literal],
         version_type: _literals.version_type_literal,
-        loaders: list[str],
+        loaders: list[_literals.loader_literal],
         featured: bool,
         file_parts: list[str],
         changelog: str | None = None,
@@ -247,7 +249,7 @@ class VersionModel(_Model):
         self.downloads: int
 
     @staticmethod
-    def _from_json(version_json: dict) -> "VersionModel":
+    def _from_json(version_json: dict) -> VersionModel:
         result = VersionModel(
             version_json.get("name", ...),
             version_json.get("version_number", ...),
@@ -284,7 +286,7 @@ class _UserModel(_Model):
     auth: str
 
     @staticmethod
-    def _from_json(user_json: dict) -> "_UserModel":
+    def _from_json(user_json: dict) -> _UserModel:
         result = _UserModel()
         result.username = user_json.get("username", ...)
         result.id = user_json.get("id", ...)

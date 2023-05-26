@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import requests as _requests
 
 import pyrinth.exceptions as _exceptions
@@ -32,7 +34,7 @@ class Modrinth:
         return response.get("id", False)
 
     @staticmethod
-    def get_random_projects(count: int = 1) -> list["_projects.Project"]:
+    def get_random_projects(count: int = 1) -> list[_projects.Project]:
         """Get a certain number of random projects.
 
         Args:
@@ -58,7 +60,7 @@ class Modrinth:
         ]
 
     @property
-    def statistics(self) -> "Modrinth._Statistics":
+    def statistics(self) -> Modrinth._Statistics:
         return Modrinth._Statistics()
 
     class _Statistics:

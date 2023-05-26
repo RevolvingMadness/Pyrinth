@@ -1,4 +1,6 @@
 """Used for users."""
+from __future__ import annotations
+
 import dataclasses
 import datetime as _datetime
 import json as _json
@@ -13,7 +15,7 @@ import pyrinth.util as _util
 
 
 class User:
-    def __init__(self, user_model: "_models._UserModel") -> None:
+    def __init__(self, user_model: _models._UserModel) -> None:
         self.user_model = user_model
 
     def __repr__(self) -> str:
@@ -24,11 +26,11 @@ class User:
         return self.user_model.auth
 
     @staticmethod
-    def _from_json(json_: dict) -> "User":
+    def _from_json(json_: dict) -> User:
         return User(_models._UserModel._from_json(json_))
 
     @property
-    def payout_history(self) -> "User._PayoutHistory":
+    def payout_history(self) -> _PayoutHistory:
         raw_response = _requests.get(
             f"https://api.modrinth.com/v2/user/{self.user_model.username}/payouts",
             headers={"authorization": self.user_model.auth},
@@ -85,7 +87,7 @@ class User:
         return True
 
     @staticmethod
-    def get(id_: str, auth=None) -> "User":
+    def get(id_: str, auth=None) -> User:
         """Get a user.
 
         Args:
@@ -116,7 +118,7 @@ class User:
         return _util.format_time(self.user_model.created)
 
     @property
-    def followed_projects(self) -> list["_projects.Project"]:
+    def followed_projects(self) -> list[_projects.Project]:
         raw_response = _requests.get(
             f"https://api.modrinth.com/v2/user/{self.user_model.username}/follows",
             headers={"authorization": self.user_model.auth},
@@ -138,7 +140,7 @@ class User:
         ]
 
     @property
-    def notifications(self) -> list["User._Notification"]:
+    def notifications(self) -> list[_Notification]:
         raw_response = _requests.get(
             f"https://api.modrinth.com/v2/user/{self.user_model.username}/notifications",
             headers={"authorization": self.user_model.auth},
@@ -159,7 +161,7 @@ class User:
         ]
 
     def create_project(
-        self, project_model: "_models.ProjectModel", icon: str | None = None
+        self, project_model: _models.ProjectModel, icon: str | None = None
     ) -> int:
         """
         Create a project.
@@ -190,7 +192,7 @@ class User:
         return True
 
     @property
-    def projects(self) -> list["_projects.Project"]:
+    def projects(self) -> list[_projects.Project]:
         raw_response = _requests.get(
             f"https://api.modrinth.com/v2/user/{self.user_model.id}/projects",
             timeout=60,
@@ -263,7 +265,7 @@ class User:
         return True
 
     @staticmethod
-    def get_from_auth(auth: str) -> "User":
+    def get_from_auth(auth: str) -> User:
         """
         Get a user from authorization token.
 
@@ -285,7 +287,7 @@ class User:
         return User._from_json(response)
 
     @staticmethod
-    def from_id(id_: str) -> "User":
+    def from_id(id_: str) -> User:
         """
         Get a user from ID.
 
@@ -304,7 +306,7 @@ class User:
         return User._from_json(raw_response.json())
 
     @staticmethod
-    def from_ids(ids: list[str]) -> list["User"]:
+    def from_ids(ids: list[str]) -> list[User]:
         """
         Get a users from IDs.
 
@@ -340,7 +342,7 @@ class User:
             return f"Notification: {self.text}"
 
         @staticmethod
-        def _from_json(notification_json: dict) -> "User._Notification":
+        def _from_json(notification_json: dict) -> User._Notification:
             result = User._Notification()
             result.id_ = notification_json.get("id", ...)
             result.user_id = notification_json.get("user_id", ...)

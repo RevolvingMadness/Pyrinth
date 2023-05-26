@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pyrinth.users as _users
 
 
@@ -6,13 +8,13 @@ class _Team:
     id_: str
 
     @property
-    def members(self) -> list["_Team._TeamMember"]:
+    def members(self) -> list[_TeamMember]:
         return [
             _Team._TeamMember._from_json(team_member) for team_member in self.members_
         ]
 
     @staticmethod
-    def _from_json(team_json: dict) -> "_Team":
+    def _from_json(team_json: dict) -> _Team:
         result = _Team()
         result.members_ = team_json
         result.id_ = team_json[0]["team_id"]
@@ -31,11 +33,11 @@ class _Team:
             return "Team Member"
 
         @property
-        def user(self) -> "_users.User":
+        def user(self) -> _users.User:
             return _users.User._from_json(self._user)
 
         @staticmethod
-        def _from_json(team_member_json: dict) -> "_Team._TeamMember":
+        def _from_json(team_member_json: dict) -> _Team._TeamMember:
             result = _Team._TeamMember()
             result.team_id = team_member_json.get("team_id", ...)
             result._user = team_member_json.get("user", ...)
