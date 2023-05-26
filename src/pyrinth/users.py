@@ -14,14 +14,14 @@ import pyrinth.util as _util
 
 class User:
     def __init__(self, user_model: "_models._UserModel") -> None:
-        self.model = user_model
+        self.user_model = user_model
 
     def __repr__(self) -> str:
-        return f"User: {(self.model.name if self.model.name else self.model.username)}"
+        return f"User: {(self.user_model.name if self.user_model.name else self.user_model.username)}"
 
     @property
     def auth(self) -> str:
-        return self.model.auth
+        return self.user_model.auth
 
     @staticmethod
     def _from_json(json_: dict) -> "User":
@@ -30,8 +30,8 @@ class User:
     @property
     def payout_history(self) -> "User._PayoutHistory":
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/user/{self.model.username}/payouts",
-            headers={"authorization": self.model.auth},
+            f"https://api.modrinth.com/v2/user/{self.user_model.username}/payouts",
+            headers={"authorization": self.user_model.auth},
             timeout=60,
         )
         match raw_response.status_code:
@@ -48,10 +48,10 @@ class User:
 
     def withdraw_balance(self, amount: int) -> _typing.Literal[True]:
         raw_response = _requests.post(
-            f"https://api.modrinth.com/v2/user/{self.model.id}/payouts",
+            f"https://api.modrinth.com/v2/user/{self.user_model.id}/payouts",
             headers={
                 "content-type": "application/json",
-                "authorization": self.model.auth,
+                "authorization": self.user_model.auth,
             },
             json={"amount": amount},
             timeout=60,
@@ -69,8 +69,8 @@ class User:
 
     def change_avatar(self, file_path) -> _typing.Literal[True]:
         raw_response = _requests.patch(
-            f"https://api.modrinth.com/v2/user/{self.model.id}/icon",
-            headers={"authorization": self.model.auth},
+            f"https://api.modrinth.com/v2/user/{self.user_model.id}/icon",
+            headers={"authorization": self.user_model.auth},
             params={"ext": file_path.split(".")[-1]},
             data=open(file_path, "rb"),
             timeout=60,
@@ -113,13 +113,13 @@ class User:
 
     @property
     def date_created(self) -> _datetime.datetime:
-        return _util.format_time(self.model.created)
+        return _util.format_time(self.user_model.created)
 
     @property
     def followed_projects(self) -> list["_projects.Project"]:
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/user/{self.model.username}/follows",
-            headers={"authorization": self.model.auth},
+            f"https://api.modrinth.com/v2/user/{self.user_model.username}/follows",
+            headers={"authorization": self.user_model.auth},
             timeout=60,
         )
         match raw_response.status_code:
@@ -140,8 +140,8 @@ class User:
     @property
     def notifications(self) -> list["User._Notification"]:
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/user/{self.model.username}/notifications",
-            headers={"authorization": self.model.auth},
+            f"https://api.modrinth.com/v2/user/{self.user_model.username}/notifications",
+            headers={"authorization": self.user_model.auth},
             timeout=60,
         )
         match raw_response.status_code:
@@ -177,7 +177,7 @@ class User:
         raw_response = _requests.post(
             "https://api.modrinth.com/v2/project",
             files=files,
-            headers={"authorization": self.model.auth},
+            headers={"authorization": self.user_model.auth},
             timeout=60,
         )
         match raw_response.status_code:
@@ -192,7 +192,8 @@ class User:
     @property
     def projects(self) -> list["_projects.Project"]:
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/user/{self.model.id}/projects", timeout=60
+            f"https://api.modrinth.com/v2/user/{self.user_model.id}/projects",
+            timeout=60,
         )
         match raw_response.status_code:
             case 404:
@@ -217,7 +218,7 @@ class User:
         """
         raw_response = _requests.post(
             f"https://api.modrinth.com/v2/project/{id_}/follow",
-            headers={"authorization": self.model.auth},
+            headers={"authorization": self.user_model.auth},
             timeout=60,
         )
         match raw_response.status_code:
@@ -245,7 +246,7 @@ class User:
         """
         raw_response = _requests.delete(
             f"https://api.modrinth.com/v2/project/{id_}/follow",
-            headers={"authorization": self.model.auth},
+            headers={"authorization": self.user_model.auth},
             timeout=60,
         )
         match raw_response.status_code:

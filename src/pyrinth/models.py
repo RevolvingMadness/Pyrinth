@@ -6,7 +6,15 @@ import pyrinth.projects as _projects
 import pyrinth.util as _util
 
 
-class ProjectModel:
+class _Model:
+    def _to_json(self) -> dict:
+        return _util.remove_null_values(self.__dict__)
+
+    def _to_bytes(self) -> bytes:
+        return _json.dumps(self._to_json()).encode()
+
+
+class ProjectModel(_Model):
     r"""The model used for the Project class.
 
     Attributes:
@@ -133,41 +141,8 @@ class ProjectModel:
         result.gallery = project_model_json.get("gallery", ...)
         return result
 
-    def _to_json(self) -> dict:
-        return _util.remove_null_values(self.__dict__)
 
-    def _to_bytes(self) -> bytes:
-        return _json.dumps(self._to_json()).encode()
-
-
-class _SearchResultModel:
-    r"""The model used for the SearchResult class.
-
-    Attributes:
-        slug (str): The slug of a project, used for vanity URLs. Regex: ^[\w!@$()`.+,"\-']{3,64}$
-        title (str): The title or name of the project
-        description (str): A short description of the project
-        client_side (str): The client side support of the project
-        server_side (str): The server side support of the project
-        project_type (str): The project type
-        downloads (int): The total number of downloads of the project
-        project_id (str): The ID of the project
-        author (str): The username of the project's author
-        versions (list[str]): A list of the minecraft versions supported by the project
-        follows (int): The total number of users following the project
-        date_created (str): The date the project was added to search
-        date_modified (str): The date the project was last modified
-        license (str): The SPDX license ID of the project
-        categories (list[str]): A list of categories that the project has
-        icon_url (str): The URL of the project's icon
-        color (str): The RGB color of the project, automatically generated from the project icon
-        display_categories (list[str]): A list of categories that the project has which are not secondary
-        latest_version (str): The latest version of minecraft that this project supports
-        gallery (list[str]): All gallery images attached to the project
-        featured_gallery (list[str]): The featured gallery image of the project
-
-    """
-
+class _SearchResultModel(_Model):
     slug: str
     title: str
     description: str
@@ -216,14 +191,8 @@ class _SearchResultModel:
         result.featured_gallery = search_result_json.get("featured_gallery", ...)
         return result
 
-    def _to_json(self) -> dict:
-        return _util.remove_null_values(self.__dict__)
 
-    def _to_bytes(self) -> bytes:
-        return _json.dumps(self._to_json()).encode()
-
-
-class VersionModel:
+class VersionModel(_Model):
     """The model used for the Version class.
 
     Attributes:
@@ -299,14 +268,8 @@ class VersionModel:
         result.downloads = version_json.get("downloads", ...)
         return result
 
-    def _to_json(self) -> dict:
-        return _util.remove_null_values(self.__dict__)
 
-    def _to_bytes(self) -> bytes:
-        return _json.dumps(self._to_json()).encode()
-
-
-class _UserModel:
+class _UserModel(_Model):
     """The model used for the User class.
 
     Attributes:
@@ -353,9 +316,3 @@ class _UserModel:
         result.badges = user_json.get("badges", ...)
         result.auth = user_json.get("authorization", "")
         return result
-
-    def _to_json(self) -> dict:
-        return _util.remove_null_values(self.__dict__)
-
-    def _to_bytes(self) -> bytes:
-        return _json.dumps(self._to_json()).encode()

@@ -3,6 +3,7 @@ import dataclasses
 import datetime as _datetime
 import json as _json
 import typing as _typing
+from typing import Any
 
 import requests as _requests
 
@@ -22,16 +23,16 @@ class Project:
     """
 
     def __init__(self, project_model: "_models.ProjectModel") -> None:
-        self.model = project_model
+        self.project_model = project_model
 
     @property
     def donations(self) -> list["Project.Donation"]:
-        return _util.list_to_object(Project.Donation, self.model.donation_urls)
+        return _util.list_to_object(Project.Donation, self.project_model.donation_urls)
 
     def _get_auth(self, auth: str | None) -> str:
         if auth:
             return auth
-        return self.model.auth
+        return self.project_model.auth
 
     @staticmethod
     def get(id_: str, authorization: str = "") -> "Project":
@@ -115,8 +116,15 @@ class Project:
 
     @property
     def gallery(self) -> list["Project.GalleryImage"]:
-        result = _util.list_to_object(Project.GalleryImage, self.model.gallery)
-        return result
+        return _util.list_to_object(Project.GalleryImage, self.project_model.gallery)
+
+    @property
+    def description(self) -> str:
+        return self.project_model.description
+
+    @property
+    def body(self) -> str:
+        return self.project_model.body
 
     def is_client_side(self) -> bool:
         """Check if this project is client side.
@@ -124,7 +132,7 @@ class Project:
         Returns:
             (bool): Whether this project is client side
         """
-        return True if self.model.client_side == "required" else False
+        return True if self.project_model.client_side == "required" else False
 
     def is_server_side(self) -> bool:
         """Check if this project is server side.
@@ -132,19 +140,19 @@ class Project:
         Returns:
             (bool): Whether this project is server side
         """
-        return True if self.model.server_side == "required" else False
+        return True if self.project_model.server_side == "required" else False
 
     @property
     def downloads(self) -> int:
-        return self.model.downloads
+        return self.project_model.downloads
 
     @property
     def categories(self) -> list[str]:
-        return self.model.categories
+        return self.project_model.categories
 
     @property
     def additional_categories(self) -> list[str] | None:
-        return self.model.additional_categories
+        return self.project_model.additional_categories
 
     @property
     def all_categories(self) -> list[str]:
@@ -155,7 +163,7 @@ class Project:
 
     @property
     def license(self) -> "Project.License":
-        return Project.License._from_json(self.model.license)
+        return Project.License._from_json(self.project_model.license)
 
     def get_specific_version(
         self, semantic_version: str
@@ -172,7 +180,7 @@ class Project:
         versions = self.get_versions()
         if versions:
             for version in versions:
-                if version.model.version_number == semantic_version:
+                if version.version_model.version_number == semantic_version:
                     return version
         return None
 
@@ -226,7 +234,7 @@ class Project:
         }
         filters = _util.remove_null_values(filters)
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/project/{self.model.slug}/version",
+            f"https://api.modrinth.com/v2/project/{self.project_model.slug}/version",
             params=_util.json_to_query_params(filters),
             headers={"authorization": self._get_auth(auth)},
             timeout=60,
@@ -247,7 +255,7 @@ class Project:
             return versions
         result = []
         for version in versions:
-            if version.model.version_type in types:
+            if version.version_model.version_type in types:
                 result.append(version)
         return result
 
@@ -276,15 +284,31 @@ class Project:
 
     @property
     def id(self) -> str:
-        return self.model.id
+        return self.project_model.id
+
+    @property
+    def issues_url(self) -> str | None:
+        return self.project_model.issues_url
+
+    @property
+    def source_url(self) -> str | None:
+        return self.project_model.source_url
+
+    @property
+    def wiki_url(self) -> str | None:
+        return self.project_model.wiki_url
+
+    @property
+    def discord_url(self) -> str | None:
+        return self.project_model.discord_url
 
     @property
     def slug(self) -> str:
-        return self.model.slug
+        return self.project_model.slug
 
     @property
     def name(self) -> str:
-        return self.model.title
+        return self.project_model.title
 
     @staticmethod
     def get_version(id_: str) -> "Project.Version":
@@ -367,7 +391,7 @@ class Project:
             (bool): Whether the project icon change was successful
         """
         raw_response = _requests.patch(
-            f"https://api.modrinth.com/v2/project/{self.model.slug}/icon",
+            f"https://api.modrinth.com/v2/project/{self.project_model.slug}/icon",
             params={"ext": file_path.split(".")[-1]},
             headers={"authorization": self._get_auth(auth)},
             data=open(file_path, "rb"),
@@ -395,7 +419,7 @@ class Project:
             (bool): Whether the project icon deletion was successful
         """
         raw_response = _requests.delete(
-            f"https://api.modrinth.com/v2/project/{self.model.slug}/icon",
+            f"https://api.modrinth.com/v2/project/{self.project_model.slug}/icon",
             headers={"authorization": self._get_auth(auth)},
             timeout=60,
         )
@@ -428,7 +452,7 @@ class Project:
             (bool): If the gallery image addition was successful
         """
         raw_response = _requests.post(
-            f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
+            f"https://api.modrinth.com/v2/project/{self.project_model.slug}/gallery",
             headers={"authorization": self._get_auth(auth)},
             params=image._to_json(),
             data=open(image.file_path, "rb"),
@@ -483,7 +507,7 @@ class Project:
         }
         modified_json = _util.remove_null_values(modified_json)
         raw_response = _requests.patch(
-            f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
+            f"https://api.modrinth.com/v2/project/{self.project_model.slug}/gallery",
             params=modified_json,
             headers={"authorization": self._get_auth(auth)},
             timeout=60,
@@ -521,7 +545,7 @@ class Project:
                 "Please use cdn.modrinth.com instead of cdn-raw.modrinth.com"
             )
         raw_response = _requests.delete(
-            f"https://api.modrinth.com/v2/project/{self.model.slug}/gallery",
+            f"https://api.modrinth.com/v2/project/{self.project_model.slug}/gallery",
             headers={"authorization": self._get_auth(auth)},
             params={"url": url},
             timeout=60,
@@ -617,7 +641,7 @@ class Project:
                 "Please specify at least 1 optional argument"
             )
         raw_response = _requests.patch(
-            f"https://api.modrinth.com/v2/project/{self.model.slug}",
+            f"https://api.modrinth.com/v2/project/{self.project_model.slug}",
             data=_json.dumps(modified_json),
             headers={
                 "Content-Type": "application/json",
@@ -638,6 +662,10 @@ class Project:
             raise _exceptions.InvalidRequestError(raw_response.text)
         return True
 
+    @property
+    def followers(self) -> int:
+        return self.project_model.followers
+
     def delete(self, auth: str | None = None) -> _typing.Literal[True]:
         """Delete the project.
 
@@ -653,7 +681,7 @@ class Project:
             (bool): Whether the project deletion was successful
         """
         raw_response = _requests.delete(
-            f"https://api.modrinth.com/v2/project/{self.model.slug}",
+            f"https://api.modrinth.com/v2/project/{self.project_model.slug}",
             headers={"authorization": self._get_auth(auth)},
             timeout=60,
         )
@@ -671,7 +699,7 @@ class Project:
     @property
     def dependencies(self) -> list["Project"]:
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/project/{self.model.slug}/dependencies",
+            f"https://api.modrinth.com/v2/project/{self.project_model.slug}/dependencies",
             timeout=60,
         )
         match raw_response.status_code:
@@ -738,7 +766,8 @@ class Project:
     @property
     def team_members(self) -> "list[_teams._Team._TeamMember]":
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
+            f"https://api.modrinth.com/v2/project/{self.project_model.id}/members",
+            timeout=60,
         )
         match raw_response.status_code:
             case 404:
@@ -755,7 +784,8 @@ class Project:
     @property
     def team(self) -> "_teams._Team":
         raw_response = _requests.get(
-            f"https://api.modrinth.com/v2/project/{self.model.id}/members", timeout=60
+            f"https://api.modrinth.com/v2/project/{self.project_model.id}/members",
+            timeout=60,
         )
         match raw_response.status_code:
             case 404:
@@ -773,7 +803,7 @@ class Project:
         Returns:
             (str): A string representation of the Project instance
         """
-        return f"Project: {self.model.title}"
+        return f"Project: {self.project_model.title}"
 
     class Version:
         """Versions contain download links to files with additional metadata.
@@ -784,17 +814,17 @@ class Project:
         """
 
         def __init__(self, version_model: "_models.VersionModel") -> None:
-            self.model = version_model
+            self.version_model = version_model
 
         @property
         def type(self) -> str:
-            return self.model.version_type
+            return self.version_model.version_type
 
         @property
         def dependencies(self) -> list["Project._Dependency"]:
             return [
                 Project._Dependency._from_json(dependency_json)
-                for dependency_json in self.model.dependencies
+                for dependency_json in self.version_model.dependencies
             ]
 
         @staticmethod
@@ -908,7 +938,7 @@ class Project:
 
         @property
         def files(self) -> list["Project._File"]:
-            return [Project._File._from_json(file) for file in self.model.file_parts]  # type: ignore
+            return [Project._File._from_json(file) for file in self.version_model.file_parts]  # type: ignore
 
         def download(self, recursive: bool = False) -> None:
             """Download the files associated with the version.
@@ -929,7 +959,7 @@ class Project:
 
         @property
         def project(self) -> "Project":
-            return Project.get(self.model.project_id)
+            return Project.get(self.version_model.project_id)
 
         @property
         def primary_files(self) -> list["Project._File"]:
@@ -941,7 +971,7 @@ class Project:
 
         @property
         def author(self) -> "_users.User":
-            user = _users.User.get(self.model.author_id)
+            user = _users.User.get(self.version_model.author_id)
             return user
 
         def is_featured(self) -> bool:
@@ -950,26 +980,26 @@ class Project:
             Returns:
                 (bool): Whether the version is featured
             """
-            return self.model.featured
+            return self.version_model.featured
 
         @property
         def date_published(self) -> "_datetime.datetime":
-            return _util.format_time(self.model.date_published)
+            return _util.format_time(self.version_model.date_published)
 
         @property
         def downloads(self) -> int:
-            return self.model.downloads
+            return self.version_model.downloads
 
         @property
         def name(self) -> str:
-            return self.model.name
+            return self.version_model.name
 
         @property
         def version_number(self) -> str:
-            return self.model.version_number
+            return self.version_model.version_number
 
         def __repr__(self) -> str:
-            return f"Version: {self.model.name}"
+            return f"Version: {self.version_model.name}"
 
     class GalleryImage:
         """
