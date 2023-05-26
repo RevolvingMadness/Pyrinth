@@ -798,11 +798,6 @@ class Project:
         return _teams._Team._from_json(response)
 
     def __repr__(self) -> str:
-        """Return a string representation of the Project instance.
-
-        Returns:
-            (str): A string representation of the Project instance
-        """
         return f"Project: {self.project_model.title}"
 
     class Version:
@@ -1044,20 +1039,6 @@ class Project:
             return _util.remove_null_values(self.__dict__)
 
     class _File:
-        """
-        Represents a file with various attributes and methods.
-
-        Attributes:
-            hashes (dict[str, str]): A dictionary of hash algorithms and their corresponding hash values for the file
-            url (str): The URL where the file can be downloaded
-            name (str): The name of the file
-            primary (str): The primary hash algorithm used to verify the file's integrity
-            size (int): The size of the file in bytes
-            file_type (str): The type of the file
-            extension (str): The file extension
-
-        """
-
         hashes: dict
         url: str
         name: str
@@ -1146,16 +1127,6 @@ class Project:
             return f"Donation: {self.platform}"
 
     class _Dependency:
-        """
-        Represents a dependency.
-
-        Attributes:
-            file_name (str): The name of the dependency
-            version_id (str): The ID of the dependency's version
-            project_id (str): The ID of the dependency's project
-            dependency_option (str): The option for the dependency
-        """
-
         dependency_option: str
         file_name: str
         version_id: str

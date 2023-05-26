@@ -2,15 +2,6 @@ import pyrinth.users as _users
 
 
 class _Team:
-    """
-    Represents a team.
-
-    Attributes:
-        members (list[dict]): A list of team members
-        id (str): The ID of the team
-
-    """
-
     members_: dict
     id_: str
 
@@ -28,19 +19,6 @@ class _Team:
         return result
 
     class _TeamMember:
-        """Represents a team member of a project.
-
-        Attributes:
-            team_id (str): The ID of the team member belongs to
-            user (dict): The user associated with the team member
-            role (str): The role of the team member within the team
-            permissions: The permissions of the team member within the team
-            accepted (bool): Whether the team member has accepted their invitation to join the team
-            payouts_split: The percentage of payouts that the team member receives
-            ordering (int): The ordering of the team member within the team
-
-        """
-
         team_id: str
         _user: dict
         role: str

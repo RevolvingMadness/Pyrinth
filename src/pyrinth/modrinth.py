@@ -62,16 +62,6 @@ class Modrinth:
         return Modrinth._Statistics()
 
     class _Statistics:
-        """Statistics about modrinth.
-
-        Attributes:
-            authors (int, optional): The number of authors on Modrinth
-            files (int, optional): The number of files on Modrinth
-            projects (int, optional): The number of projects on Modrinth
-            versions (int, optional): The number of versions on Modrinth
-
-        """
-
         @classmethod  # type: ignore
         @property
         def authors(cls) -> int:

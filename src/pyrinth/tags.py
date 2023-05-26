@@ -103,17 +103,6 @@ class Tag:
 
     @dataclasses.dataclass
     class _Category:
-        """
-        Represents a tag category.
-
-        Attributes:
-            icon (str): The icon for the category
-            name (str): The name of the category
-            project_type (str): The project type for the category
-            header (str): The header for the category
-
-        """
-
         icon: str
         name: str
         project_type: str
@@ -124,16 +113,6 @@ class Tag:
 
     @dataclasses.dataclass
     class _Loaders:
-        """
-        Represents a tag loader.
-
-        Attributes:
-            icon (str): The icon for the loader
-            name (str): The name of the loader
-            supported_project_types (list[str]): A list of supported project types for the loader
-
-        """
-
         icon: str
         name: str
         supported_project_types: list
@@ -143,17 +122,6 @@ class Tag:
 
     @dataclasses.dataclass
     class _GameVersion:
-        """
-        Represents a tag game version.
-
-        Attributes:
-            version (str): The version of the game
-            version_type (str): The type of the version
-            date (str): The date of the version
-            major (bool): Whether the version is a major version or not
-
-        """
-
         version: str
         version_type: str
         data: str
@@ -164,15 +132,6 @@ class Tag:
 
     @dataclasses.dataclass
     class _License:
-        """
-        Represents a tag license.
-
-        Attributes:
-            short (str): The short name of the license
-            name (str): The name of the license
-
-        """
-
         short: str
         name: str
 
@@ -181,15 +140,6 @@ class Tag:
 
     @dataclasses.dataclass
     class _DonationPlatform:
-        """
-        Represents a tag donation platform.
-
-        Attributes:
-            short (str): The short name of the donation platform
-            name (str): The name of the donation platform
-
-        """
-
         short: str
         name: str
 

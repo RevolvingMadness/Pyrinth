@@ -60,7 +60,7 @@ class ProjectModel(_Model):
         client_side: str,
         server_side: str,
         body: str,
-        license_: "_projects.Project.License",
+        license: "_projects.Project.License",
         project_type: str,
         additional_categories: list[str] | None = None,
         issues_url: str | None = None,
@@ -76,7 +76,7 @@ class ProjectModel(_Model):
         self.client_side = client_side
         self.server_side = server_side
         self.body = body
-        self.license = license_._to_json()
+        self.license = license._to_json()
         self.project_type = project_type
         self.additional_categories = additional_categories
         self.issues_url = issues_url
@@ -270,23 +270,6 @@ class VersionModel(_Model):
 
 
 class _UserModel(_Model):
-    """The model used for the User class.
-
-    Attributes:
-        username (str): The user's username
-        id (str): The user's ID
-        avatar_url (str): The user's avatar URL
-        created (str): The time at which the user was created
-        role (str): The user's role
-        name (str): The user's display name
-        email (str): The user's email (only when your own is ever displayed)
-        bio (str): A description of the user
-        payout_data (, optional): Various data relating to the user's payouts status (you can only see your own)
-        github_id (int): The user's GitHub ID
-        badges (list[str]): Any badges applicable to this user. These are currently unused and undisplayed, and as such are subject to change
-        auth (str): Authentication token for the user
-    """
-
     username: str
     id: str
     avatar_url: str
