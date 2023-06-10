@@ -123,7 +123,7 @@ class ProjectModel(_Model):
             project_model_json.get("source_url"),
             project_model_json.get("wiki_url"),
             project_model_json.get("discord_url"),
-            project_model_json.get("authorization", ...),
+            project_model_json.get("authorization", ""),
         )
         result.id = project_model_json.get("id", ...)
         result.downloads = project_model_json.get("downloads", ...)
