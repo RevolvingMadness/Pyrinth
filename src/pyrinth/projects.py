@@ -1148,9 +1148,9 @@ class Project:
         @staticmethod
         def _from_json(dependency_json: dict) -> Project.Dependency:
             result = Project.Dependency(
+                dependency_json["dependency_type"],
                 dependency_json["version_id"],
                 dependency_json["project_id"],
-                dependency_json["dependency_type"],
                 dependency_json["file_name"],
             )
             return result
@@ -1160,7 +1160,9 @@ class Project:
             id = self.project_id
             if self.version_id:
                 id = self.version_id
-            return Project.Version.get(id)  # type: ignore
+                return Project.Version.get(id)  # type: ignore
+            else:
+                return Project.get(id).get_latest_version()
 
         @property
         def is_required(self) -> bool:
