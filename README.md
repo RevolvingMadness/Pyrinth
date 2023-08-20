@@ -1,3 +1,5 @@
+# Pyrinth has been archived as Modrinth now has their own launcher
+
 <div align="center">
 
 <div id="user-content-toc">
